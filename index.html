@@ -94,7 +94,7 @@
   .inputrow{display:flex;gap:8px;margin-bottom:14px;align-items:stretch}
   textarea{
     flex:1;background:var(--panel);border:1px solid #3A3F38;border-radius:3px;color:var(--text);
-    font-family:var(--mono);font-size:16px;padding:9px 10px;line-height:1.5;resize:vertical;min-height:44px;width:100%;
+    font-family:var(--mono);font-size:16px;padding:9px 10px;line-height:1.5;resize:vertical;min-height:70px;width:100%;
   }
   .hintpanel{padding:4px 0 14px;border-bottom:1px solid var(--line2)}
   .hintbtns{display:flex;gap:8px;flex-wrap:wrap}
@@ -241,7 +241,7 @@ const SECTIONS = [
 ];
 
 
-const BUILD = "7.1 · STANDALONE";
+const BUILD = "7.2 · STANDALONE";
 const KEY = "hiu-plat-v1";
 const ALL_ITEMS = SECTIONS.flatMap(s => s.items);
 const MISS_IDS = ALL_ITEMS.filter(i => i.tag === "MISS" || i.tag === "WARN").map(i => i.id);
@@ -393,7 +393,7 @@ function render(){
   h += '<section><div class="sechead"><div><div class="kicker">PERSONAL LOG</div><h2>Field notes</h2></div>'+
     '<div class="seccount">'+state.notes.length+'</div></div>'+
     '<div class="notehint">Sealed doors, unsolved symbols, places to revisit — log them here before the game lets you forget. Notes survive a run reset. Nudge hands the note to Claude at the spoiler level you pick.</div>'+
-    '<div class="inputrow"><textarea id="draft" rows="2" placeholder="e.g. Locked tower in Vyssa Hills, pedestal wants an item…">'+esc(state.draft)+'</textarea>'+
+    '<div class="inputrow"><textarea id="draft" rows="2" placeholder="e.g. Locked tower in Vyssa Hills…">'+esc(state.draft)+'</textarea>'+
     '<button class="chip'+(state.draft.trim()?" go":"")+'" data-act="lognote" '+(state.draft.trim()?"":"disabled")+' style="align-self:stretch">Log note</button></div>'+
     (state.notes.length ? '<div style="margin-bottom:10px"><button class="chip'+(state.copied?" go":"")+'" data-act="copynotes">'+(state.copied?"Copied ✓":"Copy all notes")+'</button></div>' : "");
   for(const n of state.notes){
@@ -410,7 +410,7 @@ function render(){
     '<div class="secright"><span class="seccount">'+(state.ui.askOpen?"−":"+")+'</span></div></button>';
   if(state.ui.askOpen){
     h += '<div class="notehint">Describe where you\'re stuck and pick how much you want revealed. Nudge points, Hint narrows, Spoil it answers. Each button copies a ready-made prompt and opens Claude.</div>'+
-    '<textarea id="stuck" rows="2" placeholder="e.g. Can\'t figure out the pillar puzzle in the marshes temple…" style="margin-bottom:8px">'+esc(state.stuckDraft)+'</textarea>'+
+    '<textarea id="stuck" rows="2" placeholder="e.g. The pillar puzzle in the marshes…" style="margin-bottom:8px">'+esc(state.stuckDraft)+'</textarea>'+
     hintPanelHTML("stuck", state.stuckDraft);
   }
   h += '</section>';

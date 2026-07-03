@@ -20,22 +20,6 @@ Progress and notes are in `localStorage`, scoped per browser per device. The hom
 
 **Export backup** downloads your run as JSON; **Import backup** restores it. Export at milestones. It takes ten seconds and has already justified itself.
 
-## Updating the tracker
-
-1. Replace `index.html` here (Add file → Upload files → commit to main)
-2. Pages redeploys in ~1 minute to the same URL
-3. Verify the **BUILD** stamp in the header changed
-4. Your data is untouched — it lives in the browser, not this repo
-
-## Changing the icon
-
-Replacing `apple-touch-icon.png` does **not** update an existing home-screen icon; iOS captures artwork at add-time. The safe dance:
-
-1. In the app: **Export backup**
-2. Replace the icon file here, wait for redeploy
-3. Delete the home-screen icon, re-add from Safari
-4. **Import backup** if progress didn't survive (deleting a home-screen web app may delete its stored data)
-
 ## Build log
 
 - **7.1** — larger type, collapsible phases (persistent), hint box folded behind "Stuck? Ask for a hint"

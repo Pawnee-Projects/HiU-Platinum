@@ -22,6 +22,7 @@ Progress and notes are in `localStorage`, scoped per browser per device. The hom
 
 ## Build log
 
+- **7.2** — icon badge inset past Apple's corner mask; note boxes sized for the 16px font
 - **7.1** — larger type, collapsible phases (persistent), hint box folded behind "Stuck? Ask for a hint"
 - **7.0 · STANDALONE** — escaped claude.ai: vanilla JS, localStorage + export/import, hint handoff via prefilled Claude link, home-screen icon
 

@@ -20,19 +20,19 @@
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;background:var(--bg)}
   body{
-    color:var(--text);font-family:var(--mono);font-size:14px;line-height:1.55;
+    color:var(--text);font-family:var(--mono);font-size:15.5px;line-height:1.55;
     -webkit-text-size-adjust:100%;
   }
   #app{
     max-width:720px;margin:0 auto;
     padding:calc(20px + env(safe-area-inset-top)) 14px calc(80px + env(safe-area-inset-bottom));
   }
-  .kicker{font-size:10px;letter-spacing:.22em;color:var(--muted);margin-bottom:4px}
-  h1{font-size:26px;letter-spacing:.14em;margin:0 0 14px;font-weight:700;color:var(--bright)}
-  h2{font-size:17px;margin:0;letter-spacing:.08em;color:var(--bright);font-weight:700}
+  .kicker{font-size:11px;letter-spacing:.22em;color:var(--muted);margin-bottom:4px}
+  h1{font-size:28px;letter-spacing:.14em;margin:0 0 14px;font-weight:700;color:var(--bright)}
+  h2{font-size:18px;margin:0;letter-spacing:.08em;color:var(--bright);font-weight:700}
   header{border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:14px}
-  .readout{font-size:13px;letter-spacing:.1em;margin-bottom:8px}
-  .sub{font-size:11px;color:var(--muted);margin-top:8px;letter-spacing:.04em}
+  .readout{font-size:14px;letter-spacing:.1em;margin-bottom:8px}
+  .sub{font-size:12px;color:var(--muted);margin-top:8px;letter-spacing:.04em}
   .bar{height:4px;background:#22271F;border-radius:2px;overflow:hidden}
   .bar>div{height:100%;background:linear-gradient(90deg,#3E8F84,var(--cyan));transition:width .4s ease}
   .blink{animation:blink 1.1s steps(1) infinite;margin-left:6px;color:var(--cyan)}
@@ -40,7 +40,7 @@
   @media (prefers-reduced-motion:reduce){.blink{animation:none}}
   .controls{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 22px}
   button.chip{
-    font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:transparent;
+    font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;background:transparent;
     border:1px solid #3A3F38;color:var(--muted);border-radius:3px;padding:7px 12px;cursor:pointer;
   }
   button.chip.on{border-color:var(--amber);color:var(--amber)}
@@ -49,59 +49,61 @@
   button.chip:disabled{border-color:#3A3F38;color:var(--faint);cursor:default}
   button:focus-visible,textarea:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
   section{margin-bottom:30px}
-  .sechead{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:10px}
-  .seccount{font-size:12px;color:var(--muted)}
+  .sechead{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:10px;width:100%;background:none;border:none;padding:0;color:inherit;font-family:inherit;text-align:left;cursor:pointer}
+  .chev{color:var(--faint);font-size:13px;margin-right:8px}
+  .secright{display:flex;align-items:baseline;gap:10px}
+  .seccount{font-size:13px;color:var(--muted)}
   .deadline{
     border:1px solid rgba(196,87,74,.4);background:rgba(196,87,74,.08);color:#DE9186;
-    font-size:12px;padding:10px 12px;border-radius:3px;margin-bottom:12px;
+    font-size:13px;padding:10px 12px;border-radius:3px;margin-bottom:12px;
   }
   .deadline b{color:var(--red);font-weight:400;margin-right:4px}
   .row{border-bottom:1px solid var(--line2);padding:2px 0}
   .row.done{opacity:.45}
   .rowtop{display:flex;align-items:flex-start;gap:10px;padding:10px 0}
   .cb{
-    width:22px;height:22px;min-width:22px;border-radius:3px;border:1.5px solid var(--faint);
+    width:24px;height:24px;min-width:24px;border-radius:3px;border:1.5px solid var(--faint);
     display:inline-flex;align-items:center;justify-content:center;cursor:pointer;margin-top:1px;
     font-size:13px;background:transparent;color:var(--bg);padding:0;
   }
   .cb.on{border-color:var(--cyan);background:var(--cyan);font-weight:700}
   .rowlabel{
     display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;background:none;border:none;
-    color:inherit;font-family:inherit;font-size:13.5px;text-align:left;cursor:pointer;padding:0;
+    color:inherit;font-family:inherit;font-size:15px;text-align:left;cursor:pointer;padding:0;
     flex:1;line-height:1.5;
   }
   .row.done .rowtitle{text-decoration:line-through}
   .tag{
-    font-size:9px;letter-spacing:.16em;border:1px solid;border-radius:2px;padding:1px 5px;
+    font-size:10px;letter-spacing:.16em;border:1px solid;border-radius:2px;padding:1px 5px;
     flex-shrink:0;transform:translateY(-1px);
   }
   .plus{color:var(--faint);margin-left:auto;flex-shrink:0}
   .detail{
-    font-size:12.5px;color:#9AA394;margin-left:10px;padding:0 0 14px 20px;
+    font-size:14px;color:#9AA394;margin-left:10px;padding:0 0 14px 20px;
     border-left:2px solid var(--line);line-height:1.65;
   }
-  .notehint{font-size:11.5px;color:var(--muted);margin-bottom:10px;line-height:1.6}
+  .notehint{font-size:12.5px;color:var(--muted);margin-bottom:10px;line-height:1.6}
   .noterow{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid var(--line2);padding:10px 0}
-  .notetext{font-size:13px;color:var(--text);line-height:1.55;white-space:pre-wrap;word-break:break-word}
-  .notets{font-size:10px;color:var(--dim);margin-top:3px;letter-spacing:.1em}
+  .notetext{font-size:14.5px;color:var(--text);line-height:1.55;white-space:pre-wrap;word-break:break-word}
+  .notets{font-size:11px;color:var(--dim);margin-top:3px;letter-spacing:.1em}
   .notebtn{
     background:none;border:1px solid #3A3F38;border-radius:3px;color:var(--muted);
-    font-family:var(--mono);font-size:11px;padding:4px 8px;cursor:pointer;flex-shrink:0;margin-top:2px;
+    font-family:var(--mono);font-size:12px;padding:5px 9px;cursor:pointer;flex-shrink:0;margin-top:2px;
   }
   .notebtn.on{color:var(--cyan);border-color:var(--cyan)}
   .inputrow{display:flex;gap:8px;margin-bottom:14px;align-items:stretch}
   textarea{
     flex:1;background:var(--panel);border:1px solid #3A3F38;border-radius:3px;color:var(--text);
-    font-family:var(--mono);font-size:13px;padding:9px 10px;line-height:1.5;resize:vertical;min-height:44px;width:100%;
+    font-family:var(--mono);font-size:16px;padding:9px 10px;line-height:1.5;resize:vertical;min-height:44px;width:100%;
   }
   .hintpanel{padding:4px 0 14px;border-bottom:1px solid var(--line2)}
   .hintbtns{display:flex;gap:8px;flex-wrap:wrap}
-  .hintstatus{font-size:11px;color:var(--cyan);letter-spacing:.06em;margin-top:10px;line-height:1.6}
+  .hintstatus{font-size:12px;color:var(--cyan);letter-spacing:.06em;margin-top:10px;line-height:1.6}
   footer{
-    font-size:10.5px;color:var(--dim);border-top:1px solid var(--line);padding-top:14px;
+    font-size:11.5px;color:var(--dim);border-top:1px solid var(--line);padding-top:14px;
     letter-spacing:.03em;line-height:1.7;
   }
-  .savestate{font-size:11px;letter-spacing:.04em;margin-top:6px}
+  .savestate{font-size:12px;letter-spacing:.04em;margin-top:6px}
 </style>
 </head>
 <body>
@@ -239,7 +241,7 @@ const SECTIONS = [
 ];
 
 
-const BUILD = "7.0 · STANDALONE";
+const BUILD = "7.1 · STANDALONE";
 const KEY = "hiu-plat-v1";
 const ALL_ITEMS = SECTIONS.flatMap(s => s.items);
 const MISS_IDS = ALL_ITEMS.filter(i => i.tag === "MISS" || i.tag === "WARN").map(i => i.id);
@@ -251,7 +253,16 @@ let state = {
   checked:{}, notes:[], open:{}, hintOpen:{}, filterMiss:false,
   confirmReset:false, draft:"", stuckDraft:"", saveState:"idle",
   hintMsg:{}, copied:false,
+  ui:{ collapsed:{}, askOpen:false },
 };
+const UI_KEY = "hiu-ui-v1";
+function loadUI(){
+  try{ const raw = localStorage.getItem(UI_KEY);
+    if(raw){ const p = JSON.parse(raw);
+      state.ui.collapsed = (p && p.collapsed) || {};
+      state.ui.askOpen = !!(p && p.askOpen); } }catch(e){}
+}
+function saveUI(){ try{ localStorage.setItem(UI_KEY, JSON.stringify(state.ui)); }catch(e){} }
 
 function loadState(){
   try{
@@ -393,19 +404,27 @@ function render(){
   }
   h += '</section>';
 
-  // Freeform hint box
-  h += '<section><div class="sechead"><div><div class="kicker">ARCHIVE QUERY</div><h2>Stuck on something else?</h2></div></div>'+
-    '<div class="notehint">Describe where you\'re stuck and pick how much you want revealed. Nudge points, Hint narrows, Spoil it answers. Each button copies a ready-made prompt and opens Claude.</div>'+
+  // Freeform hint box (collapsed to one line until needed)
+  h += '<section><button class="sechead" data-act="askhdr">'+
+    '<div><div class="kicker">HINTS</div><h2><span class="chev">'+(state.ui.askOpen?"▾":"▸")+'</span>Stuck? Ask for a hint</h2></div>'+
+    '<div class="secright"><span class="seccount">'+(state.ui.askOpen?"−":"+")+'</span></div></button>';
+  if(state.ui.askOpen){
+    h += '<div class="notehint">Describe where you\'re stuck and pick how much you want revealed. Nudge points, Hint narrows, Spoil it answers. Each button copies a ready-made prompt and opens Claude.</div>'+
     '<textarea id="stuck" rows="2" placeholder="e.g. Can\'t figure out the pillar puzzle in the marshes temple…" style="margin-bottom:8px">'+esc(state.stuckDraft)+'</textarea>'+
-    hintPanelHTML("stuck", state.stuckDraft)+'</section>';
+    hintPanelHTML("stuck", state.stuckDraft);
+  }
+  h += '</section>';
 
   // Checklist sections
   for(const sec of SECTIONS){
     const items = state.filterMiss ? sec.items.filter(i => i.tag==="MISS"||i.tag==="WARN") : sec.items;
     if(!items.length) continue;
     const done = sec.items.filter(i => state.checked[i.id]).length;
-    h += '<section><div class="sechead"><div><div class="kicker">'+esc(sec.kicker)+'</div><h2>'+esc(sec.title)+'</h2></div>'+
-      '<div class="seccount">'+done+'/'+sec.items.length+'</div></div>';
+    const folded = !!state.ui.collapsed[sec.id];
+    h += '<section><button class="sechead" data-act="fold" data-id="'+sec.id+'">'+
+      '<div><div class="kicker">'+esc(sec.kicker)+'</div><h2><span class="chev">'+(folded?"▸":"▾")+'</span>'+esc(sec.title)+'</h2></div>'+
+      '<div class="secright"><span class="seccount">'+done+'/'+sec.items.length+'</span></div></button>';
+    if(folded){ h += '</section>'; continue; }
     if(sec.deadline) h += '<div class="deadline"><b>⚠</b> '+esc(sec.deadline)+'</div>';
     for(const it of items){
       const on = !!state.checked[it.id], op = !!state.open[it.id];
@@ -435,6 +454,9 @@ document.getElementById("app").addEventListener("click", e => {
   else if(act==="lognote") addNote();
   else if(act==="copynotes") copyNotes();
   else if(act==="filter"){ state.filterMiss = !state.filterMiss; render(); }
+  else if(act==="fold"){ const s = b.dataset.id;
+    state.ui.collapsed[s] = !state.ui.collapsed[s]; saveUI(); render(); }
+  else if(act==="askhdr"){ state.ui.askOpen = !state.ui.askOpen; saveUI(); render(); }
   else if(act==="reset"){ state.confirmReset = true; render(); }
   else if(act==="resetno"){ state.confirmReset = false; render(); }
   else if(act==="resetgo") resetRun();
@@ -468,6 +490,7 @@ document.getElementById("importFile").addEventListener("change", e => {
 });
 
 loadState();
+loadUI();
 render();
 </script>
 </body>

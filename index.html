@@ -32,9 +32,10 @@
   h2{font-size:18px;margin:0;letter-spacing:.08em;color:var(--bright);font-weight:700}
   header{border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:14px}
   .readout{font-size:14px;letter-spacing:.1em;margin-bottom:8px}
-  .sub{font-size:12px;color:var(--muted);margin-top:8px;letter-spacing:.04em}
-  .readrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-  .readrow .hintbtn{margin-left:auto}   /* right-align, incl. when it wraps to its own line on mobile */
+  .sub{font-size:12px;color:var(--muted);letter-spacing:.04em}
+  /* header footer band: "All boxes checked" on the left, Ask-a-Hint right-aligned in the empty space */
+  .headfoot{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px}
+  .headfoot .hintbtn{margin-left:auto}   /* right-align in that band, incl. when it wraps on a narrow screen */
   /* Ask-for-a-Hint: a distinct action (hand off to Claude), NOT a filter — faint amber, the
      hint family's colour, and lifted out of the controls row into the header. */
   .hintbtn{font-family:var(--mono);font-size:12px;letter-spacing:.06em;background:rgba(217,164,65,.07);
@@ -75,7 +76,7 @@
   .donezone{font-size:11px;color:var(--dim);letter-spacing:.28em;text-align:center;margin:26px 0 16px;border-top:1px solid var(--line);padding-top:18px}
   .secdone{color:var(--cyan);font-size:12px}
   .tucked .sechead{opacity:.72}
-  .hintbox{margin:14px 0 22px}
+  .hintbox{margin:14px 0 22px;padding:13px 14px 3px;border:1px solid var(--line);border-radius:4px}
   .row{border-bottom:1px solid var(--line2);padding:2px 0}
   .row.done{opacity:.45}
   .rowtop{display:flex;align-items:flex-start;gap:10px;padding:10px 0}
@@ -160,9 +161,12 @@
 <script>
 "use strict";
 const HINT_LEVELS = [
-  { n: 1, label: "Nudge", color: "#6FD5C6", blurb: "a vague pointer, no names", desc: "a vague directional nudge ONLY: no location names, no item names, no puzzle mechanics. Just tell the player what to pay attention to or reconsider, in one or two sentences." },
-  { n: 2, label: "Hint", color: "#D9A441", blurb: "the area or kind of thing", desc: "a concrete hint: name the relevant area or the KIND of thing they should look for or do, but do not state the final solution, code, or exact item." },
-  { n: 3, label: "Spoil it", color: "#C4574A", blurb: "the full solution", desc: "the full solution, stated plainly and step by step. Still do not reveal story plot points, character fates, or anything beyond this specific puzzle/objective." },
+  // `color` is a single-hue VIOLET intensity ramp (faint → bold = gentle → full spoiler) — a
+  // reveal scale, deliberately its OWN colour, NOT the categorical tag palette
+  // (MISSABLE amber / WARNING red / STORY blue / RULE cyan).
+  { n: 1, label: "Nudge", color: "#7F72A6", blurb: "a vague pointer, no names", desc: "a vague directional nudge ONLY: no location names, no item names, no puzzle mechanics. Just tell the player what to pay attention to or reconsider, in one or two sentences." },
+  { n: 2, label: "Hint", color: "#9E8BC8", blurb: "the area or kind of thing", desc: "a concrete hint: name the relevant area or the KIND of thing they should look for or do, but do not state the final solution, code, or exact item." },
+  { n: 3, label: "Spoil it", color: "#BEA9EC", blurb: "the full solution", desc: "the full solution, stated plainly and step by step. Still do not reveal story plot points, character fates, or anything beyond this specific puzzle/objective." },
 ];
 
 const SECTIONS = [
@@ -296,7 +300,7 @@ const SECTIONS = [
 // BUILD split into number + codename (Roadmap 8, item 6). Display shape: "9.0 (FRONTIER)".
 // Used verbatim in the header kicker, the export payload's `build` field, and mirrored in
 // the README build log + the CLAUDE.md pin.
-const BUILD_N = "9.0.1";
+const BUILD_N = "9.0.2";
 const BUILD_NAME = "FRONTIER";
 const BUILD = BUILD_N + " (" + BUILD_NAME + ")";
 const KEY = "hiu-plat-v1";
@@ -341,7 +345,8 @@ function loadUI(){
   try{ const raw = localStorage.getItem(UI_KEY);
     if(raw){ const p = JSON.parse(raw);
       state.ui.collapsed = (p && p.collapsed) || {};
-      state.ui.askOpen = !!(p && p.askOpen);
+      // askOpen is deliberately NOT restored — the hint box is a transient "stuck right now"
+      // tool, so it always starts closed rather than springing open on load.
       state.ui.tab = (p && p.tab === "completionist") ? "completionist" : "campaign";
       state.ui.noticeSeen = !!(p && p.noticeSeen);
       state.ui.tucked = (p && p.tucked) || {}; } }catch(e){}
@@ -613,10 +618,10 @@ function render(){
   let h = '<header'+(cleared?' class="cleared"':'')+'>'+
     '<div class="kicker">HADEA FIELD LOG · SINGLE-RUN PLATINUM · BUILD '+BUILD+'</div>'+
     '<h1>HELL IS US</h1>'+
-    '<div class="readrow">'+readout+hintBtn+'</div>'+
+    readout+
     '<div class="bar'+(cleared?' clear':'')+'"><div style="width:'+pct+'%"></div></div>'+
-    '<div class="sub">'+(cleared ? "Every missable secured — nothing in this list can be lost. Mop up the collectibles whenever."
-      : "All boxes checked: "+allDone+"/"+ALL_ITEMS.length)+'</div>'+
+    '<div class="headfoot"><div class="sub">'+(cleared ? "Every missable secured — nothing in this list can be lost. Mop up the collectibles whenever."
+      : "All boxes checked: "+allDone+"/"+ALL_ITEMS.length)+'</div>'+hintBtn+'</div>'+
     '<div class="savestate">'+saveHTML+'</div></header>';
 
   h += noticeHTML();

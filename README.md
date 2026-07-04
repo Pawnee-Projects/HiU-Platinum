@@ -22,6 +22,7 @@ Progress and notes are in `localStorage`, scoped per browser per device. The hom
 
 ## Build log
 
+- **8.1 · OFFLINE** — cache-first service worker (`sw.js`); the app now opens and works with no network after the first visit. Caches only its own files; no external calls
 - **8.0 · COMPLETIONIST** — second top-level tab: an itemized ledger of 122 collectibles (26 deeds, 29 relics, 43 mysteries, 10 caps, 14 timeloops) with per-category counts, the fold mechanic, and a "Remaining only" filter. Ledger checkboxes are shared with the Campaign view (one tick, both places). Data fixes: baseball caps 7–10 located; the upgrade-trophy row (Good Vibrations / Accessorizing / To the Teeth) corrected and split; Good Deed 6 now notes both sheet musics
 - **7.2** — icon badge inset past Apple's corner mask; note boxes sized for the 16px font
 - **7.1** — larger type, collapsible phases (persistent), hint box folded behind "Stuck? Ask for a hint"

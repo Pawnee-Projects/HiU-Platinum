@@ -248,7 +248,7 @@ const SECTIONS = [
 ];
 
 
-const BUILD = "8.0 · COMPLETIONIST";
+const BUILD = "8.1 · OFFLINE";
 const KEY = "hiu-plat-v1";
 const ALL_ITEMS = SECTIONS.flatMap(s => s.items);
 const MISS_IDS = ALL_ITEMS.filter(i => i.tag === "MISS" || i.tag === "WARN").map(i => i.id);
@@ -562,6 +562,15 @@ document.getElementById("importFile").addEventListener("change", e => {
 loadState();
 loadUI();
 render();
+
+// Offline support (Roadmap item 2): register the cache-first service worker.
+// Relative path → scope is this directory, so it works under the GitHub Pages
+// project subpath. http(s) only; failures are non-fatal (app still runs online).
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  });
+}
 </script>
 </body>
 </html>

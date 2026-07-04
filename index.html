@@ -58,6 +58,15 @@
     font-size:13px;padding:10px 12px;border-radius:3px;margin-bottom:12px;
   }
   .deadline b{color:var(--red);font-weight:400;margin-right:4px}
+  /* Opt-in tuck (Roadmap 8): a secured phase shows a done banner in place, then folds into
+     a COMPLETED zone when tucked. Cyan = the app's success/secured colour. */
+  .donebanner{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    border:1px solid rgba(111,213,198,.35);background:rgba(111,213,198,.06);padding:9px 12px;border-radius:3px;margin-bottom:12px}
+  .donebadge{color:var(--cyan);font-size:12px;letter-spacing:.16em;font-weight:700}
+  .donezone{font-size:11px;color:var(--dim);letter-spacing:.28em;text-align:center;margin:26px 0 16px;border-top:1px solid var(--line);padding-top:18px}
+  .secdone{color:var(--cyan);font-size:12px}
+  .tucked .sechead{opacity:.72}
+  .hintbox{margin:0 0 24px}
   .row{border-bottom:1px solid var(--line2);padding:2px 0}
   .row.done{opacity:.45}
   .rowtop{display:flex;align-items:flex-start;gap:10px;padding:10px 0}
@@ -77,7 +86,7 @@
     font-size:10px;letter-spacing:.16em;border:1px solid;border-radius:2px;padding:1px 5px;
     flex-shrink:0;transform:translateY(-1px);
   }
-  .plus{color:var(--faint);margin-left:auto;flex-shrink:0}
+  .plus{color:var(--dim);margin-left:auto;flex-shrink:0}
   .detail{
     font-size:14px;color:#9AA394;margin-left:10px;padding:0 0 14px 20px;
     border-left:2px solid var(--line);line-height:1.65;
@@ -147,8 +156,10 @@ const HINT_LEVELS = [
 const SECTIONS = [
   {
     id: "setup",
-    kicker: "PHASE 00",
-    title: "Before you start",
+    kicker: "",
+    title: "Standing Orders",
+    sub: "Rules that hold for the entire playthrough—check each off once you understand it.",
+    doneLabel: "✓ ALL UNDERSTOOD",
     deadline: null,
     items: [
       {
@@ -268,7 +279,12 @@ const SECTIONS = [
 ];
 
 
-const BUILD = "8.6.2 · AMEND";
+// BUILD split into number + codename (Roadmap 8, item 6). Display shape: "9.0 (FRONTIER)".
+// Used verbatim in the header kicker, the export payload's `build` field, and mirrored in
+// the README build log + the CLAUDE.md pin.
+const BUILD_N = "9.0";
+const BUILD_NAME = "FRONTIER";
+const BUILD = BUILD_N + " (" + BUILD_NAME + ")";
 const KEY = "hiu-plat-v1";
 const ALL_ITEMS = SECTIONS.flatMap(s => s.items);
 const MISS_IDS = ALL_ITEMS.filter(i => i.tag === "MISS" || i.tag === "WARN").map(i => i.id);
@@ -287,13 +303,24 @@ function isDone(id){
   const m = AGGREGATES[id];
   return m ? m.every(k => !!state.checked[k]) : !!state.checked[id];
 }
+// Phase completion for the opt-in tuck (Roadmap 8): a phase is tuckable when its
+// point-of-no-return work is finished. Standing Orders = all six understood; Acts =
+// HAS missables AND every MISS/WARN secured (never retire a missable-less phase vacuously);
+// the endgame terminus never tucks.
+function phaseMiss(sec){ return sec.items.filter(i => i.tag === "MISS" || i.tag === "WARN"); }
+function phaseTuckable(sec){
+  if(sec.id === "endgame") return false;
+  if(sec.id === "setup") return sec.items.every(i => isDone(i.id));
+  const miss = phaseMiss(sec);
+  return miss.length > 0 && miss.every(i => isDone(i.id));
+}
 
 // ————— state —————
 let state = {
   checked:{}, notes:[], open:{}, hintOpen:{}, filterMiss:false, filterRemaining:false,
   confirmReset:false, draft:"", stuckDraft:"", saveState:"idle",
   hintMsg:{}, copied:false, lastExport:null, editId:null, editDraft:"",
-  ui:{ collapsed:{}, askOpen:false, tab:"campaign", noticeSeen:false },
+  ui:{ collapsed:{}, askOpen:false, tab:"campaign", noticeSeen:false, tucked:{} },
 };
 const UI_KEY = "hiu-ui-v1";
 function loadUI(){
@@ -302,7 +329,8 @@ function loadUI(){
       state.ui.collapsed = (p && p.collapsed) || {};
       state.ui.askOpen = !!(p && p.askOpen);
       state.ui.tab = (p && p.tab === "completionist") ? "completionist" : "campaign";
-      state.ui.noticeSeen = !!(p && p.noticeSeen); } }catch(e){}
+      state.ui.noticeSeen = !!(p && p.noticeSeen);
+      state.ui.tucked = (p && p.tucked) || {}; } }catch(e){}
 }
 function saveUI(){ try{ localStorage.setItem(UI_KEY, JSON.stringify(state.ui)); }catch(e){} }
 
@@ -372,6 +400,15 @@ function toggleCheck(id){
   const m = AGGREGATES[id];
   if(m){ const allOn = m.every(k => !!state.checked[k]); m.forEach(k => { state.checked[k] = !allOn; }); }
   else { state.checked[id] = !state.checked[id]; }
+  // Auto-surface: a tucked phase that's no longer complete returns to the live area — an
+  // incomplete phase must never hide in COMPLETED. Re-checking flips it back to done-in-place
+  // (with a fresh Tuck away ↓), so nothing ever re-sinks on its own.
+  let surfaced = false;
+  for(const secId of Object.keys(state.ui.tucked)){
+    const sec = SECTIONS.find(s => s.id === secId);
+    if(!sec || !phaseTuckable(sec)){ delete state.ui.tucked[secId]; state.ui.collapsed[secId] = false; surfaced = true; }
+  }
+  if(surfaced) saveUI();
   persist(); render();
 }
 function toggleOpen(id){ state.open[id] = !state.open[id]; render(); }
@@ -474,7 +511,7 @@ function dataControlsHTML(){
 }
 function renderCompletionist(){
   let h = '<div class="controls">'+
-    '<button class="chip'+(state.filterRemaining?" on":"")+'" data-act="filterrem">'+(state.filterRemaining?"◉":"○")+' Remaining only</button>'+
+    '<button class="chip'+(state.filterRemaining?" on":"")+'" data-act="filterrem">'+(state.filterRemaining?"◉":"○")+' FILTER: remaining only</button>'+
     '</div>';
   if(!CATS.length){
     return h + '<div class="notehint">Ledger data unavailable — ledger-data.js did not load.</div>';
@@ -504,6 +541,37 @@ function renderCompletionist(){
   h += '<div class="excl">Not tracked here: kill counts, one-off trophies, and story progress — your PS5 trophy list counts those. The Campaign\'s final phase has the pre-endgame audit.</div>';
   return h;
 }
+// One Campaign phase block. inZone = rendered inside the COMPLETED zone (tucked, folded,
+// un-foldable for reference — no deadline/banner shown there).
+function phaseHTML(sec, inZone){
+  const secured = phaseTuckable(sec);
+  const items = state.filterMiss ? sec.items.filter(i => i.tag === "MISS" || i.tag === "WARN") : sec.items;
+  if(!inZone && !items.length) return "";                 // filter hid every row in a live phase
+  const done = sec.items.filter(i => isDone(i.id)).length; // isDone() so aggregate rows (b4) count
+  const folded = !!state.ui.collapsed[sec.id];
+  const kick = sec.kicker ? '<div class="kicker">'+esc(sec.kicker)+'</div>' : "";
+  let h = '<section'+(inZone ? ' class="tucked"' : '')+'><button class="sechead" data-act="fold" data-id="'+sec.id+'">'+
+    '<div>'+kick+'<h2><span class="chev">'+(folded?"▸":"▾")+'</span>'+esc(sec.title)+'</h2></div>'+
+    '<div class="secright">'+(secured?'<span class="secdone">✓</span>':'')+'<span class="seccount">'+done+'/'+sec.items.length+'</span></div></button>';
+  if(folded) return h+'</section>';
+  if(sec.sub) h += '<div class="notehint">'+esc(sec.sub)+'</div>';
+  if(secured && !inZone){
+    h += '<div class="donebanner"><span class="donebadge">'+esc(sec.doneLabel || "✓ MISSABLES SECURED")+'</span>'+
+      '<button class="chip go" data-act="tuck" data-id="'+sec.id+'">Tuck away ↓</button></div>';
+  } else if(sec.deadline && !inZone){
+    h += '<div class="deadline"><b>⚠</b> '+esc(sec.deadline)+'</div>';
+  }
+  for(const it of items){
+    const on = isDone(it.id), op = !!state.open[it.id];
+    h += '<div class="row'+(on?" done":"")+'"><div class="rowtop">'+
+      '<button class="cb'+(on?" on":"")+'" data-act="check" data-id="'+it.id+'" aria-label="'+(on?"Mark incomplete":"Mark complete")+'">'+(on?"✓":"")+'</button>'+
+      '<button class="rowlabel" data-act="open" data-id="'+it.id+'">'+
+      '<span class="tag" style="color:'+TAG_COLOR[it.tag]+';border-color:'+TAG_COLOR[it.tag]+'">'+TAG_LABEL[it.tag]+'</span>'+
+      '<span class="rowtitle">'+esc(it.title)+'</span><span class="plus">'+(op?"−":"+")+'</span></button></div>'+
+      (op ? '<div class="detail">'+esc(it.detail)+'</div>' : "")+'</div>';
+  }
+  return h+'</section>';
+}
 function render(){
   const missDone = MISS_IDS.filter(id => isDone(id)).length;
   const allDone = ALL_ITEMS.filter(i => isDone(i.id)).length;
@@ -526,7 +594,7 @@ function render(){
     readout+
     '<div class="bar'+(cleared?' clear':'')+'"><div style="width:'+pct+'%"></div></div>'+
     '<div class="sub">'+(cleared ? "Every missable secured — nothing in this list can be lost. Mop up the collectibles whenever."
-      : "All boxes checked: "+allDone+"/"+ALL_ITEMS.length+" · tap any row for the how-to")+'</div>'+
+      : "All boxes checked: "+allDone+"/"+ALL_ITEMS.length)+'</div>'+
     '<div class="savestate">'+saveHTML+'</div></header>';
 
   h += noticeHTML();
@@ -546,9 +614,17 @@ function render(){
     return;
   }
 
-  h += '<div class="controls">'+
-    '<button class="chip'+(state.filterMiss?" on":"")+'" data-act="filter">'+(state.filterMiss?"◉":"○")+' Missables &amp; warnings only</button>'+
+  h += '<div class="controls"'+(state.ui.askOpen?' style="margin-bottom:10px"':'')+'>'+
+    '<button class="chip'+(state.filterMiss?" on":"")+'" data-act="filter">'+(state.filterMiss?"◉":"○")+' FILTER: missables &amp; warnings only</button>'+
+    '<button class="chip'+(state.ui.askOpen?" go":"")+'" data-act="askhdr">Ask for a Hint '+(state.ui.askOpen?"▾":"▸")+'</button>'+
     '</div>';
+  if(state.ui.askOpen){
+    h += '<div class="hintbox">'+
+      '<div class="notehint">Describe where you\'re stuck and pick how much you want revealed. Nudge points, Hint narrows, Spoil it answers. Each button copies a ready-made prompt and opens Claude.</div>'+
+      '<textarea id="stuck" rows="2" placeholder="e.g. The pillar puzzle in the marshes…" style="margin-bottom:8px">'+esc(state.stuckDraft)+'</textarea>'+
+      hintPanelHTML("stuck", state.stuckDraft)+
+    '</div>';
+  }
 
   // Field notes
   h += '<section><div class="sechead"><div><div class="kicker">PERSONAL LOG</div><h2>Field notes</h2></div>'+
@@ -582,38 +658,16 @@ function render(){
   }
   h += '</section>';
 
-  // Freeform hint box (collapsed to one line until needed)
-  h += '<section><button class="sechead" data-act="askhdr">'+
-    '<div><div class="kicker">HINTS</div><h2><span class="chev">'+(state.ui.askOpen?"▾":"▸")+'</span>Stuck? Ask for a hint</h2></div>'+
-    '<div class="secright"><span class="seccount">'+(state.ui.askOpen?"−":"+")+'</span></div></button>';
-  if(state.ui.askOpen){
-    h += '<div class="notehint">Describe where you\'re stuck and pick how much you want revealed. Nudge points, Hint narrows, Spoil it answers. Each button copies a ready-made prompt and opens Claude.</div>'+
-    '<textarea id="stuck" rows="2" placeholder="e.g. The pillar puzzle in the marshes…" style="margin-bottom:8px">'+esc(state.stuckDraft)+'</textarea>'+
-    hintPanelHTML("stuck", state.stuckDraft);
-  }
-  h += '</section>';
-
-  // Checklist sections
+  // Checklist sections — live phases in play order, then a COMPLETED zone for tucked ones.
+  // Standing Orders (setup) leads while live; the endgame terminus never tucks.
+  const liveSecs = [], tuckedSecs = [];
   for(const sec of SECTIONS){
-    const items = state.filterMiss ? sec.items.filter(i => i.tag==="MISS"||i.tag==="WARN") : sec.items;
-    if(!items.length) continue;
-    const done = sec.items.filter(i => state.checked[i.id]).length;
-    const folded = !!state.ui.collapsed[sec.id];
-    h += '<section><button class="sechead" data-act="fold" data-id="'+sec.id+'">'+
-      '<div><div class="kicker">'+esc(sec.kicker)+'</div><h2><span class="chev">'+(folded?"▸":"▾")+'</span>'+esc(sec.title)+'</h2></div>'+
-      '<div class="secright"><span class="seccount">'+done+'/'+sec.items.length+'</span></div></button>';
-    if(folded){ h += '</section>'; continue; }
-    if(sec.deadline) h += '<div class="deadline"><b>⚠</b> '+esc(sec.deadline)+'</div>';
-    for(const it of items){
-      const on = isDone(it.id), op = !!state.open[it.id];
-      h += '<div class="row'+(on?" done":"")+'"><div class="rowtop">'+
-        '<button class="cb'+(on?" on":"")+'" data-act="check" data-id="'+it.id+'" aria-label="'+(on?"Mark incomplete":"Mark complete")+'">'+(on?"✓":"")+'</button>'+
-        '<button class="rowlabel" data-act="open" data-id="'+it.id+'">'+
-        '<span class="tag" style="color:'+TAG_COLOR[it.tag]+';border-color:'+TAG_COLOR[it.tag]+'">'+TAG_LABEL[it.tag]+'</span>'+
-        '<span class="rowtitle">'+esc(it.title)+'</span><span class="plus">'+(op?"−":"+")+'</span></button></div>'+
-        (op ? '<div class="detail">'+esc(it.detail)+'</div>' : "")+'</div>';
-    }
-    h += '</section>';
+    (state.ui.tucked[sec.id] && phaseTuckable(sec) ? tuckedSecs : liveSecs).push(sec);
+  }
+  for(const sec of liveSecs) h += phaseHTML(sec, false);
+  if(tuckedSecs.length){
+    h += '<div class="donezone">── COMPLETED ──</div>';
+    for(const sec of tuckedSecs) h += phaseHTML(sec, true);
   }
 
   h += dataControlsHTML();
@@ -642,6 +696,7 @@ document.getElementById("app").addEventListener("click", e => {
   else if(act==="dismissnotice"){ state.ui.noticeSeen = true; saveUI(); render(); }
   else if(act==="fold"){ const s = b.dataset.id;
     state.ui.collapsed[s] = !state.ui.collapsed[s]; saveUI(); render(); }
+  else if(act==="tuck"){ state.ui.tucked[id] = true; state.ui.collapsed[id] = true; saveUI(); render(); }
   else if(act==="askhdr"){ state.ui.askOpen = !state.ui.askOpen; saveUI(); render(); }
   else if(act==="reset"){ state.confirmReset = true; render(); }
   else if(act==="resetno"){ state.confirmReset = false; render(); }

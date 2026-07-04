@@ -22,6 +22,7 @@ Progress and notes are in `localStorage`, scoped per browser per device. The hom
 
 ## Build log
 
+- **9.0 (FRONTIER)** — the checklist becomes a self-organizing surface. Completed phases flip to a done state *in place* (`✓ ALL UNDERSTOOD` / `✓ MISSABLES SECURED`) with a `Tuck away ↓` control; tapping folds the block into a `── COMPLETED ──` zone at the bottom, still un-foldable for reference. Nothing sinks on its own — you tap to tuck; unchecking a secured box auto-surfaces its phase. PHASE 00 becomes **Standing Orders** (no phase number). Hints moves from a standalone section to an `Ask for a Hint` chip beside the filter. Filter chips relabelled `FILTER: …`; the `BUILD` kicker gains its codename in parentheses
 - **8.6 · AMEND** — logged field notes are now editable in place: each note gets an **Edit** button that swaps its text for a prefilled box (Save / Cancel). The note's original date is preserved — editing never re-dates it. One note editable at a time. *(8.6.1–8.6.2: note buttons stack — Edit/✕ over a full-width Nudge? that carries a faint cyan tint to set the hint action apart — so text keeps full width, and the in-place editor is a roomy auto-sizing box that fits the whole note)*
 - **8.5 · CLEAR** — when all 31 missables are secured, the header readout flips to a "THREATS: CLEAR" treatment (cyan flag, glow, cyan header rule)
 - **8.4 · BACKUP** — footer shows "Last export: N days ago" (stamped when you Export backup); turns amber after a week or if you've never backed up

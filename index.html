@@ -90,8 +90,16 @@
     background:none;border:1px solid #3A3F38;border-radius:3px;color:var(--muted);
     font-family:var(--mono);font-size:12px;padding:5px 9px;cursor:pointer;flex-shrink:0;margin-top:2px;
   }
+  /* Nudge is a different kind of action (hand off to Claude), so it carries a faint cyan tint
+     — distinct from the neutral Edit/✕ note-manipulation buttons. Sits BEFORE .on so the active
+     state still wins the border/text; the faint background persists underneath it. */
+  .notebtn.nudge{border-color:#3B4A46;color:#93A8A2;background:rgba(111,213,198,.05)}
   .notebtn.on{color:var(--cyan);border-color:var(--cyan)}
   .notebtn:disabled{color:var(--faint);border-color:#2F342D;cursor:default}
+  .notebtns{display:flex;flex-direction:column;align-items:stretch;gap:6px;flex-shrink:0}
+  .notebtns .notebtn{margin-top:0}
+  .notebtnrow{display:flex;gap:8px}
+  .editbtns{display:flex;gap:8px;margin-top:8px}
   .inputrow{display:flex;gap:8px;margin-bottom:14px;align-items:stretch}
   textarea{
     flex:1;background:var(--panel);border:1px solid #3A3F38;border-radius:3px;color:var(--text);
@@ -260,7 +268,7 @@ const SECTIONS = [
 ];
 
 
-const BUILD = "8.6 · AMEND";
+const BUILD = "8.6.2 · AMEND";
 const KEY = "hiu-plat-v1";
 const ALL_ITEMS = SECTIONS.flatMap(s => s.items);
 const MISS_IDS = ALL_ITEMS.filter(i => i.tag === "MISS" || i.tag === "WARN").map(i => i.id);
@@ -357,6 +365,7 @@ async function hintGo(panelId, topic, levelN){
 // ————— helpers —————
 function esc(s){ return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 function stamp(){ return new Date().toLocaleDateString(undefined,{month:"short",day:"numeric"}); }
+function autosize(el){ if(!el) return; el.style.height="auto"; el.style.height=(el.scrollHeight+2)+"px"; }
 
 // ————— actions —————
 function toggleCheck(id){
@@ -378,6 +387,8 @@ function startEdit(id){
   state.editId = id; state.editDraft = n.text;
   state.hintOpen[id] = false;     // don't leave a stale hint panel open over the editor
   render();
+  const ed = document.getElementById("editdraft");   // size to the note, focus, cursor to end
+  if(ed){ autosize(ed); ed.focus(); ed.setSelectionRange(ed.value.length, ed.value.length); }
 }
 function saveEdit(id){
   const t = state.editDraft.trim();
@@ -549,17 +560,24 @@ function render(){
   for(const n of state.notes){
     if(state.editId === n.id){
       const has = !!state.editDraft.trim();
-      h += '<div class="noterow"><div style="flex:1">'+
-        '<textarea id="editdraft" rows="2" style="margin-bottom:6px">'+esc(state.editDraft)+'</textarea>'+
-        '<div class="notets">'+esc(n.ts)+'</div></div>'+
-        '<button class="notebtn'+(has?" on":"")+'" data-act="savenote" data-id="'+n.id+'"'+(has?"":" disabled")+'>Save</button>'+
-        '<button class="notebtn" data-act="canceledit" data-id="'+n.id+'">Cancel</button></div>';
+      h += '<div class="noterow"><div style="flex:1">'+          // full-width editor: textarea spans the row, buttons drop below
+        '<textarea id="editdraft" rows="3">'+esc(state.editDraft)+'</textarea>'+
+        '<div class="notets" style="margin-top:4px">'+esc(n.ts)+'</div>'+
+        '<div class="editbtns">'+
+          '<button class="notebtn'+(has?" on":"")+'" data-act="savenote" data-id="'+n.id+'"'+(has?"":" disabled")+'>Save</button>'+
+          '<button class="notebtn" data-act="canceledit" data-id="'+n.id+'">Cancel</button>'+
+        '</div></div></div>';
       continue;
     }
+    // Buttons stack at right (Edit/✕ over Nudge?) so the note text keeps its horizontal width.
     h += '<div class="noterow"><div style="flex:1"><div class="notetext">'+esc(n.text)+'</div><div class="notets">'+esc(n.ts)+'</div></div>'+
-      '<button class="notebtn'+(state.hintOpen[n.id]?" on":"")+'" data-act="nudge" data-id="'+n.id+'">Nudge?</button>'+
-      '<button class="notebtn" data-act="edit" data-id="'+n.id+'">Edit</button>'+
-      '<button class="notebtn" data-act="delnote" data-id="'+n.id+'" aria-label="Delete note">✕</button></div>';
+      '<div class="notebtns">'+
+        '<div class="notebtnrow">'+
+          '<button class="notebtn" data-act="edit" data-id="'+n.id+'">Edit</button>'+
+          '<button class="notebtn" data-act="delnote" data-id="'+n.id+'" aria-label="Delete note">✕</button>'+
+        '</div>'+
+        '<button class="notebtn nudge'+(state.hintOpen[n.id]?" on":"")+'" data-act="nudge" data-id="'+n.id+'">Nudge?</button>'+
+      '</div></div>';
     if(state.hintOpen[n.id]) h += hintPanelHTML(n.id, n.text);
   }
   h += '</section>';
@@ -602,6 +620,7 @@ function render(){
   h += footerHTML();
 
   document.getElementById("app").innerHTML = h;
+  autosize(document.getElementById("editdraft"));   // fit the in-place editor to the note height
 }
 
 // ————— events —————
@@ -646,7 +665,8 @@ document.getElementById("app").addEventListener("input", e => {
     if(btn){ btn.disabled = !state.draft.trim(); btn.classList.toggle("go", !!state.draft.trim()); } }
   if(e.target.id==="editdraft"){ state.editDraft = e.target.value;
     const btn = document.querySelector('[data-act="savenote"]');
-    if(btn){ btn.disabled = !state.editDraft.trim(); btn.classList.toggle("on", !!state.editDraft.trim()); } }
+    if(btn){ btn.disabled = !state.editDraft.trim(); btn.classList.toggle("on", !!state.editDraft.trim()); }
+    autosize(e.target); }
   if(e.target.id==="stuck"){ state.stuckDraft = e.target.value;
     // re-enable hint buttons without full re-render (keeps focus)
     document.querySelectorAll('[data-act="hint"][data-panel="stuck"]').forEach((el,i)=>{

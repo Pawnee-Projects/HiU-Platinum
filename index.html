@@ -110,6 +110,10 @@
   .tabsub{font-size:12px;color:var(--muted);margin:9px 0 18px;letter-spacing:.03em;line-height:1.5}
   .zone{font-size:11px;color:var(--dim);letter-spacing:.05em;white-space:nowrap}
   .excl{font-size:12px;color:var(--muted);border-top:1px solid var(--line2);padding-top:13px;margin-top:6px;line-height:1.65}
+  .notice{border:1px solid var(--cyan);background:rgba(111,213,198,.06);border-radius:4px;padding:14px 16px;margin-bottom:18px}
+  .notice h2{color:var(--bright);margin-bottom:8px}
+  .notice p{font-size:13.5px;color:var(--text);line-height:1.6;margin:0 0 10px}
+  .notice b{color:var(--bright);font-weight:700}
 </style>
 </head>
 <body>
@@ -248,7 +252,7 @@ const SECTIONS = [
 ];
 
 
-const BUILD = "8.2 · FLARES";
+const BUILD = "8.3 · WELCOME";
 const KEY = "hiu-plat-v1";
 const ALL_ITEMS = SECTIONS.flatMap(s => s.items);
 const MISS_IDS = ALL_ITEMS.filter(i => i.tag === "MISS" || i.tag === "WARN").map(i => i.id);
@@ -273,7 +277,7 @@ let state = {
   checked:{}, notes:[], open:{}, hintOpen:{}, filterMiss:false, filterRemaining:false,
   confirmReset:false, draft:"", stuckDraft:"", saveState:"idle",
   hintMsg:{}, copied:false,
-  ui:{ collapsed:{}, askOpen:false, tab:"campaign" },
+  ui:{ collapsed:{}, askOpen:false, tab:"campaign", noticeSeen:false },
 };
 const UI_KEY = "hiu-ui-v1";
 function loadUI(){
@@ -281,7 +285,8 @@ function loadUI(){
     if(raw){ const p = JSON.parse(raw);
       state.ui.collapsed = (p && p.collapsed) || {};
       state.ui.askOpen = !!(p && p.askOpen);
-      state.ui.tab = (p && p.tab === "completionist") ? "completionist" : "campaign"; } }catch(e){}
+      state.ui.tab = (p && p.tab === "completionist") ? "completionist" : "campaign";
+      state.ui.noticeSeen = !!(p && p.noticeSeen); } }catch(e){}
 }
 function saveUI(){ try{ localStorage.setItem(UI_KEY, JSON.stringify(state.ui)); }catch(e){} }
 
@@ -396,6 +401,17 @@ function hintPanelHTML(panelId, topic){
     (msg ? '<div class="hintstatus">'+esc(msg)+'</div>' : "")+'</div>';
 }
 
+function noticeHTML(){
+  if(state.ui.noticeSeen) return "";
+  return '<div class="notice">'+
+    '<div class="kicker">FIRST VISIT</div>'+
+    '<h2>What this is</h2>'+
+    '<p>A companion for the <b>Hell is Us</b> platinum — the campaign’s missables in play order, plus an itemized ledger of every deed, relic, mystery, cap, and timeloop.</p>'+
+    '<p><b>Light spoilers ahead.</b> Entries name NPCs, locations, and side-quest titles — no story or plot content.</p>'+
+    '<p><b>Everything stays on this device.</b> Your progress and notes live in this browser’s storage; nothing is ever sent anywhere. Use <b>Export backup</b> for a portable copy.</p>'+
+    '<button class="chip go" data-act="dismissnotice">Got it</button>'+
+    '</div>';
+}
 function footerHTML(){
   return '<footer>Compiled 2 Jul 2026 from PowerPyx (trophy, missables &amp; walkthrough pages + reader reports), Push Square, Game8, Neoseeker, PSNProfiles &amp; TrueTrophies threads, and official patch notes (1.4–1.6). Data lives in this browser\'s storage on this device — use Export backup for a portable copy.</footer>';
 }
@@ -458,6 +474,8 @@ function render(){
     '<div class="sub">'+(pct===100 ? "THREATS: CLEAR — nothing left in this list can be lost."
       : "All boxes checked: "+allDone+"/"+ALL_ITEMS.length+" · tap any row for the how-to")+'</div>'+
     '<div class="savestate">'+saveHTML+'</div></header>';
+
+  h += noticeHTML();
 
   const tab = (state.ui.tab === "completionist") ? "completionist" : "campaign";
   h += '<div class="tabs">'+
@@ -546,6 +564,7 @@ document.getElementById("app").addEventListener("click", e => {
   else if(act==="filter"){ state.filterMiss = !state.filterMiss; render(); }
   else if(act==="filterrem"){ state.filterRemaining = !state.filterRemaining; render(); }
   else if(act==="tab"){ state.ui.tab = b.dataset.tab === "completionist" ? "completionist" : "campaign"; saveUI(); render(); }
+  else if(act==="dismissnotice"){ state.ui.noticeSeen = true; saveUI(); render(); }
   else if(act==="fold"){ const s = b.dataset.id;
     state.ui.collapsed[s] = !state.ui.collapsed[s]; saveUI(); render(); }
   else if(act==="askhdr"){ state.ui.askOpen = !state.ui.askOpen; saveUI(); render(); }

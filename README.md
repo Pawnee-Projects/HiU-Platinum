@@ -22,6 +22,7 @@ Progress and notes are in `localStorage`, scoped per browser per device. The hom
 
 ## Build log
 
+- **8.3 · WELCOME** — dismissible first-visit notice (what this is, light-spoiler warning, "data stays on your device"); dismissal persists per device
 - **8.2 · FLARES** — the four "A Light in the Dark" flare deeds are now tracked individually in the Completionist view instead of sharing one checkbox; the Campaign's single flares row aggregates them (done when all four are)
 - **8.1 · OFFLINE** — cache-first service worker (`sw.js`); the app now opens and works with no network after the first visit. Caches only its own files; no external calls
 - **8.0 · COMPLETIONIST** — second top-level tab: an itemized ledger of 122 collectibles (26 deeds, 29 relics, 43 mysteries, 10 caps, 14 timeloops) with per-category counts, the fold mechanic, and a "Remaining only" filter. Ledger checkboxes are shared with the Campaign view (one tick, both places). Data fixes: baseball caps 7–10 located; the upgrade-trophy row (Good Vibrations / Accessorizing / To the Teeth) corrected and split; Good Deed 6 now notes both sheet musics

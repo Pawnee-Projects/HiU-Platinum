@@ -33,9 +33,11 @@
   header{border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:14px}
   .readout{font-size:14px;letter-spacing:.1em;margin-bottom:8px}
   .sub{font-size:12px;color:var(--muted);letter-spacing:.04em}
-  /* header footer band: "All boxes checked" on the left, Ask-a-Hint right-aligned in the empty space */
-  .headfoot{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px}
-  .headfoot .hintbtn{margin-left:auto}   /* right-align in that band, incl. when it wraps on a narrow screen */
+  /* header footer band: counter+save on the left, Ask-a-Hint sitting in the open space to the
+     right — vertically centred across both lines, and centred within the blank (not edge-wedged). */
+  .headfoot{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .headfoot-text{flex:0 1 auto;min-width:0}
+  .headfoot .hintbtn{margin:0 auto}
   /* Ask-for-a-Hint: a distinct action (hand off to Claude), NOT a filter — faint amber, the
      hint family's colour, and lifted out of the controls row into the header. */
   .hintbtn{font-family:var(--mono);font-size:12px;letter-spacing:.06em;background:rgba(217,164,65,.07);
@@ -300,7 +302,7 @@ const SECTIONS = [
 // BUILD split into number + codename (Roadmap 8, item 6). Display shape: "9.0 (FRONTIER)".
 // Used verbatim in the header kicker, the export payload's `build` field, and mirrored in
 // the README build log + the CLAUDE.md pin.
-const BUILD_N = "9.0.2";
+const BUILD_N = "9.0.3";
 const BUILD_NAME = "FRONTIER";
 const BUILD = BUILD_N + " (" + BUILD_NAME + ")";
 const KEY = "hiu-plat-v1";
@@ -620,9 +622,9 @@ function render(){
     '<h1>HELL IS US</h1>'+
     readout+
     '<div class="bar'+(cleared?' clear':'')+'"><div style="width:'+pct+'%"></div></div>'+
-    '<div class="headfoot"><div class="sub">'+(cleared ? "Every missable secured — nothing in this list can be lost. Mop up the collectibles whenever."
-      : "All boxes checked: "+allDone+"/"+ALL_ITEMS.length)+'</div>'+hintBtn+'</div>'+
-    '<div class="savestate">'+saveHTML+'</div></header>';
+    '<div class="headfoot"><div class="headfoot-text"><div class="sub">'+(cleared ? "Every missable secured — nothing in this list can be lost. Mop up the collectibles whenever."
+      : "All boxes checked: "+allDone+"/"+ALL_ITEMS.length)+'</div>'+
+    '<div class="savestate">'+saveHTML+'</div></div>'+hintBtn+'</div></header>';
 
   h += noticeHTML();
 

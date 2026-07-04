@@ -6,7 +6,7 @@
 // All paths are RELATIVE so this works under the GitHub Pages project
 // subpath (/HiU-Platinum/) and at a domain root alike.
 // ————————————————————————————————————————————————————————————————
-const CACHE = "hadea-9.0.2";
+const CACHE = "hadea-9.0.3";
 const CORE = ["./", "index.html", "ledger-data.js"];   // must cache for the app to run offline
 const EXTRA = ["apple-touch-icon.png"];                 // best-effort; absence must not fail install
 

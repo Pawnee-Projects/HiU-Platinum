@@ -248,7 +248,7 @@ const SECTIONS = [
 ];
 
 
-const BUILD = "8.1 · OFFLINE";
+const BUILD = "8.2 · FLARES";
 const KEY = "hiu-plat-v1";
 const ALL_ITEMS = SECTIONS.flatMap(s => s.items);
 const MISS_IDS = ALL_ITEMS.filter(i => i.tag === "MISS" || i.tag === "WARN").map(i => i.id);
@@ -259,6 +259,14 @@ const CATS = (typeof LEDGER !== "undefined" && Array.isArray(LEDGER)) ? LEDGER :
 // Shared-checkbox key: ledger items with a campaignId tick the SAME storage id as their
 // Campaign row (so existing progress shows through automatically); others use their own id.
 function ledgerKey(it){ return it.campaignId || it.id; }
+// Aggregate rows: one Campaign checkbox that stands for several independent ledger items.
+// The Campaign row is "done" only when every member is; toggling it sets/clears all members.
+// (b4 = the four "A Light in the Dark" flares gd13–16, tracked individually in Completionist.)
+const AGGREGATES = { b4: ["gd13","gd14","gd15","gd16"] };
+function isDone(id){
+  const m = AGGREGATES[id];
+  return m ? m.every(k => !!state.checked[k]) : !!state.checked[id];
+}
 
 // ————— state —————
 let state = {
@@ -293,6 +301,15 @@ function persist(){
     state.saveState = "saved";
   }catch(e){ console.error(e); state.saveState = "error"; }
 }
+function migrateState(){
+  // 8.2: the four "A Light in the Dark" flares moved off the shared b4 key onto
+  // individual keys. Fan a legacy b4 tick out to all four, then drop the dead key.
+  if(state.checked.b4){
+    (AGGREGATES.b4 || []).forEach(k => { state.checked[k] = true; });
+    delete state.checked.b4;
+    persist();
+  }
+}
 
 // ————— hint handoff —————
 function hintPrompt(topic, levelN){
@@ -324,7 +341,12 @@ function esc(s){ return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&l
 function stamp(){ return new Date().toLocaleDateString(undefined,{month:"short",day:"numeric"}); }
 
 // ————— actions —————
-function toggleCheck(id){ state.checked[id] = !state.checked[id]; persist(); render(); }
+function toggleCheck(id){
+  const m = AGGREGATES[id];
+  if(m){ const allOn = m.every(k => !!state.checked[k]); m.forEach(k => { state.checked[k] = !allOn; }); }
+  else { state.checked[id] = !state.checked[id]; }
+  persist(); render();
+}
 function toggleOpen(id){ state.open[id] = !state.open[id]; render(); }
 function toggleHint(id){ state.hintOpen[id] = !state.hintOpen[id]; render(); }
 function addNote(){
@@ -419,8 +441,8 @@ function renderCompletionist(){
   return h;
 }
 function render(){
-  const missDone = MISS_IDS.filter(id => state.checked[id]).length;
-  const allDone = ALL_ITEMS.filter(i => state.checked[i.id]).length;
+  const missDone = MISS_IDS.filter(id => isDone(id)).length;
+  const allDone = ALL_ITEMS.filter(i => isDone(i.id)).length;
   const pct = Math.round(missDone / MISS_IDS.length * 100);
   const ss = state.saveState;
   const saveHTML = ss==="saved" ? '<span style="color:var(--cyan)">SAVED ✓ · on this device</span>'
@@ -494,7 +516,7 @@ function render(){
     if(folded){ h += '</section>'; continue; }
     if(sec.deadline) h += '<div class="deadline"><b>⚠</b> '+esc(sec.deadline)+'</div>';
     for(const it of items){
-      const on = !!state.checked[it.id], op = !!state.open[it.id];
+      const on = isDone(it.id), op = !!state.open[it.id];
       h += '<div class="row'+(on?" done":"")+'"><div class="rowtop">'+
         '<button class="cb'+(on?" on":"")+'" data-act="check" data-id="'+it.id+'" aria-label="'+(on?"Mark incomplete":"Mark complete")+'">'+(on?"✓":"")+'</button>'+
         '<button class="rowlabel" data-act="open" data-id="'+it.id+'">'+
@@ -560,6 +582,7 @@ document.getElementById("importFile").addEventListener("change", e => {
 });
 
 loadState();
+migrateState();
 loadUI();
 render();
 

@@ -6,7 +6,8 @@
 //   cross-checked vs S4G official trophy descriptions.
 // Integration spec lives in CLAUDE.md (Completionist view, roadmap item 1).
 // miss:true = permanently losable · campaignId = shared checkbox with the
-// Campaign view (same storage id; gd13–16 intentionally share b4).
+// Campaign view (same storage id). gd13–16 track individually here; the Campaign's
+// single b4 row aggregates them (see AGGREGATES in index.html).
 // ————————————————————————————————————————————————————————————————
 
 const LEDGER = [
@@ -23,10 +24,10 @@ const LEDGER = [
  {id:"gd10", name:"Heart of Gold", zone:"Vyssa Hills", miss:true, campaignId:"b2", detail:"Keys – ON Vehicle drop from the Vyssa Timeloop; give to Atticus only AFTER Good Deeds 11 and 12."},
  {id:"gd11", name:"On Death's Door", zone:"Vyssa Hills", miss:true, campaignId:"a12", detail:"Pill Bottle – Atenolol by the rock pile near Vitalis' grave → woman at the north camp. Deadline: end of Act 1, and strictly before GD10."},
  {id:"gd12", name:"Man's Best Friend", zone:"Acasa → Vyssa Hills", miss:true, campaignId:"b1", detail:"Act 2 start: free the dog west of Jova → Dog Collar to the man at the Vyssa refugee camp. Complete before the abbey events so the dog reaches the lake (Ever After)."},
- {id:"gd13", name:"A Light in the Dark (1/4)", zone:"Talju", miss:true, campaignId:"b4", detail:"Flares from the Town Hall door. Recipient 1: the woman in the house east of Town Hall (ramp + ladder). Counts complete when survivors leave."},
- {id:"gd14", name:"A Light in the Dark (2/4)", zone:"Talju", miss:true, campaignId:"b4", detail:"Recipient 2: Boro Juven in the garage near the APC."},
- {id:"gd15", name:"A Light in the Dark (3/4)", zone:"Talju", miss:true, campaignId:"b4", detail:"Recipient 3: the woman upstairs in the Vanderlyn Trust building (kill the three Hollows first)."},
- {id:"gd16", name:"A Light in the Dark (4/4)", zone:"Talju", miss:true, campaignId:"b4", detail:"Recipient 4: the man in the barn window at the west map edge. All four before the Town Hall parking-lot Hollow fight."},
+ {id:"gd13", name:"A Light in the Dark (1/4)", zone:"Talju", miss:true, campaignId:null, detail:"Flares from the Town Hall door. Recipient 1: the woman in the house east of Town Hall (ramp + ladder). Counts complete when survivors leave."},
+ {id:"gd14", name:"A Light in the Dark (2/4)", zone:"Talju", miss:true, campaignId:null, detail:"Recipient 2: Boro Juven in the garage near the APC."},
+ {id:"gd15", name:"A Light in the Dark (3/4)", zone:"Talju", miss:true, campaignId:null, detail:"Recipient 3: the woman upstairs in the Vanderlyn Trust building (kill the three Hollows first)."},
+ {id:"gd16", name:"A Light in the Dark (4/4)", zone:"Talju", miss:true, campaignId:null, detail:"Recipient 4: the man in the barn window at the west map edge. All four before the Town Hall parking-lot Hollow fight."},
  {id:"gd17", name:"Insult to Injury", zone:"Marastan", miss:false, campaignId:null, detail:"Key – Antenna behind the crying-barn SW of the APC; use it on the box at the base of the radio tower (drop down from the statue cave path) and switch it off."},
  {id:"gd18", name:"Power to the People", zone:"Marastan", miss:false, campaignId:null, detail:"3 fuses from the open-door house south of the church village; insert into the three fuse boxes (behind the pickup house NW; north of Talis' building; basement house west on the north road)."},
  {id:"gd19", name:"The Depths of Hell", zone:"Marastan", miss:false, campaignId:null, detail:"After placing a fuse: use the radio in the fused house (community note Feb 2026 — talk to the girls via the radio on the kitchen table, third house with the basement ladder) so the man appears at the pier. Gas Canister from the dock below the statue → man at the blue-house dock near the APC."},

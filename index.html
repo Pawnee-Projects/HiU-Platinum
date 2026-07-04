@@ -114,6 +114,8 @@
   .notice h2{color:var(--bright);margin-bottom:8px}
   .notice p{font-size:13.5px;color:var(--text);line-height:1.6;margin:0 0 10px}
   .notice b{color:var(--bright);font-weight:700}
+  .lastexp{margin-bottom:8px;color:var(--muted)}
+  .lastexp.stale{color:var(--amber)}
 </style>
 </head>
 <body>
@@ -252,7 +254,7 @@ const SECTIONS = [
 ];
 
 
-const BUILD = "8.3 · WELCOME";
+const BUILD = "8.4 · BACKUP";
 const KEY = "hiu-plat-v1";
 const ALL_ITEMS = SECTIONS.flatMap(s => s.items);
 const MISS_IDS = ALL_ITEMS.filter(i => i.tag === "MISS" || i.tag === "WARN").map(i => i.id);
@@ -276,7 +278,7 @@ function isDone(id){
 let state = {
   checked:{}, notes:[], open:{}, hintOpen:{}, filterMiss:false, filterRemaining:false,
   confirmReset:false, draft:"", stuckDraft:"", saveState:"idle",
-  hintMsg:{}, copied:false,
+  hintMsg:{}, copied:false, lastExport:null,
   ui:{ collapsed:{}, askOpen:false, tab:"campaign", noticeSeen:false },
 };
 const UI_KEY = "hiu-ui-v1";
@@ -289,6 +291,11 @@ function loadUI(){
       state.ui.noticeSeen = !!(p && p.noticeSeen); } }catch(e){}
 }
 function saveUI(){ try{ localStorage.setItem(UI_KEY, JSON.stringify(state.ui)); }catch(e){} }
+
+const META_KEY = "hiu-meta-v1";   // operational metadata (kept out of the sync-reserved run data)
+function loadMeta(){ try{ const raw = localStorage.getItem(META_KEY);
+  if(raw){ const p = JSON.parse(raw); if(p && typeof p.lastExport === "string") state.lastExport = p.lastExport; } }catch(e){} }
+function saveMeta(){ try{ localStorage.setItem(META_KEY, JSON.stringify({lastExport: state.lastExport})); }catch(e){} }
 
 function loadState(){
   try{
@@ -366,11 +373,13 @@ function copyNotes(){
     setTimeout(()=>{ state.copied = false; render(); }, 2000); });
 }
 function exportData(){
-  const blob = new Blob([JSON.stringify({checked:state.checked, notes:state.notes, build:BUILD, exportedAt:new Date().toISOString()}, null, 2)], {type:"application/json"});
+  const now = new Date();
+  const blob = new Blob([JSON.stringify({checked:state.checked, notes:state.notes, build:BUILD, exportedAt:now.toISOString()}, null, 2)], {type:"application/json"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "hadea-field-log-backup-" + new Date().toISOString().slice(0,10) + ".json";
+  a.download = "hadea-field-log-backup-" + now.toISOString().slice(0,10) + ".json";
   document.body.appendChild(a); a.click(); a.remove();
+  state.lastExport = now.toISOString(); saveMeta(); render();
 }
 function importData(file){
   const r = new FileReader();
@@ -412,8 +421,18 @@ function noticeHTML(){
     '<button class="chip go" data-act="dismissnotice">Got it</button>'+
     '</div>';
 }
+function exportStatus(){
+  if(!state.lastExport) return { text:"Last export: never — back up to keep your run safe.", stale:true };
+  const then = new Date(state.lastExport).getTime();
+  if(isNaN(then)) return { text:"", stale:false };
+  const days = Math.floor((Date.now() - then) / 86400000);
+  const when = days <= 0 ? "today" : days === 1 ? "yesterday" : days + " days ago";
+  return { text:"Last export: " + when + ".", stale: days >= 7 };
+}
 function footerHTML(){
-  return '<footer>Compiled 2 Jul 2026 from PowerPyx (trophy, missables &amp; walkthrough pages + reader reports), Push Square, Game8, Neoseeker, PSNProfiles &amp; TrueTrophies threads, and official patch notes (1.4–1.6). Data lives in this browser\'s storage on this device — use Export backup for a portable copy.</footer>';
+  const es = exportStatus();
+  const line = es.text ? '<div class="lastexp'+(es.stale?" stale":"")+'">'+esc(es.text)+'</div>' : "";
+  return '<footer>'+line+'Compiled 2 Jul 2026 from PowerPyx (trophy, missables &amp; walkthrough pages + reader reports), Push Square, Game8, Neoseeker, PSNProfiles &amp; TrueTrophies threads, and official patch notes (1.4–1.6). Data lives in this browser\'s storage on this device — use Export backup for a portable copy.</footer>';
 }
 function dataControlsHTML(){
   return '<div class="controls" style="margin-top:14px">'+
@@ -603,6 +622,7 @@ document.getElementById("importFile").addEventListener("change", e => {
 loadState();
 migrateState();
 loadUI();
+loadMeta();
 render();
 
 // Offline support (Roadmap item 2): register the cache-first service worker.

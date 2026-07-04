@@ -22,6 +22,7 @@ Progress and notes are in `localStorage`, scoped per browser per device. The hom
 
 ## Build log
 
+- **8.4 · BACKUP** — footer shows "Last export: N days ago" (stamped when you Export backup); turns amber after a week or if you've never backed up
 - **8.3 · WELCOME** — dismissible first-visit notice (what this is, light-spoiler warning, "data stays on your device"); dismissal persists per device
 - **8.2 · FLARES** — the four "A Light in the Dark" flare deeds are now tracked individually in the Completionist view instead of sharing one checkbox; the Campaign's single flares row aggregates them (done when all four are)
 - **8.1 · OFFLINE** — cache-first service worker (`sw.js`); the app now opens and works with no network after the first visit. Caches only its own files; no external calls

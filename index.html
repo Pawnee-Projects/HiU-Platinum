@@ -104,11 +104,18 @@
     letter-spacing:.03em;line-height:1.7;
   }
   .savestate{font-size:12px;letter-spacing:.04em;margin-top:6px}
+  .tabs{display:flex;margin:2px 0 0;border-bottom:1px solid var(--line)}
+  .tab{flex:1;font-family:var(--mono);font-size:13px;letter-spacing:.14em;background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);padding:11px 6px;cursor:pointer;text-align:center}
+  .tab.on{color:var(--bright);border-bottom-color:var(--cyan)}
+  .tabsub{font-size:12px;color:var(--muted);margin:9px 0 18px;letter-spacing:.03em;line-height:1.5}
+  .zone{font-size:11px;color:var(--dim);letter-spacing:.05em;white-space:nowrap}
+  .excl{font-size:12px;color:var(--muted);border-top:1px solid var(--line2);padding-top:13px;margin-top:6px;line-height:1.65}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <input type="file" id="importFile" accept=".json,application/json" style="display:none">
+<script src="ledger-data.js"></script>
 <script>
 "use strict";
 const HINT_LEVELS = [
@@ -171,7 +178,7 @@ const SECTIONS = [
       { id: "a6", tag: "MISS", title: "Good Deed 3 — Land of Milk and Honey", detail: "Speak with the woman in the underground level of the house on Jova's west side. Take the empty baby bottles to Ernest Caddel in Senedra Forest, bring the milk back to her." },
       { id: "a7", tag: "MISS", title: "Good Deed 4 — Love Thy Neighbour  ★ feeds Ever After", detail: "Speak to the woman in the house near Abbot Jaffer. Grab the Bloodied Plushie from the tree with the hanging bodies east of Jova, trade it to the man in the house above the milk-quest woman, then trade the picture you get back to the first woman. Must be done in Act 1 — one of the trophies for gathering everyone later depends on it." },
       { id: "a8", tag: "MISS", title: "Good Deed 5 — Asunder", detail: "Find the 'Worried Wife' letter behind the house with the drunk soldier in Jova; deliver it to the man by the excavator at the area entrance." },
-      { id: "a9", tag: "MISS", title: "Good Deed 6 — Performance of a Lifetime (start)", detail: "Talk to the man playing violin on the truck near Captain Vaas. The sheet music he wants is in Vyssa Hills — you'll close this out below." },
+      { id: "a9", tag: "MISS", title: "Good Deed 6 — Performance of a Lifetime (start)", detail: "Talk to the man playing violin on the truck near Captain Vaas. He needs TWO sheet musics: 'Our Pride' here in Jova (south, hostile end — on a table by the shops / the piano behind the graffiti house) and 'Losilus Dreaming' in Vyssa Hills. Grab 'Our Pride' now; you'll close this out below." },
       { id: "a10", tag: "STORY", title: "Jova — Victor Gaz", detail: "At the blacksmith shop after the tunnel rescue. Story-required." },
       { id: "a11", tag: "WARN", title: "Vyssa Hills — do NOT give Atticus the ON Vehicle Keys", detail: "Handing over the keys is Good Deed 10 and it empties the camp — done too early it permanently voids Good Deed 11. You'll find the keys after closing this area's Timeloop. Keep them in your pocket until the Act 2 step tells you otherwise." },
       { id: "a12", tag: "MISS", title: "Good Deed 11 — On Death's Door", detail: "Find the Atenolol pill bottle in Vyssa Hills and give it to the woman at the camp in the north of the area. Must be done before Atticus gets the keys." },
@@ -179,7 +186,7 @@ const SECTIONS = [
       { id: "a14", tag: "STORY", title: "Vyssa Hills — Tania Alver", detail: "West of the area. Story-required." },
       { id: "a15", tag: "MISS", title: "Vyssa Hills — Atticus (talk only, no keys)", detail: "On the paths between Tania's location and the hideout. Converse for the NPC counter. Keys stay put." },
       { id: "a16", tag: "MISS", title: "Vyssa Hills — Gildas Brom", detail: "Inside the hideout, available after the story beat there. He's also who you'll return Good Deed rewards to all game — get him logged now." },
-      { id: "a17", tag: "MISS", title: "Good Deed 6 — Performance of a Lifetime (finish)", detail: "The sheet music is in Vyssa Hills. Carry it back to the violinist in Jova." },
+      { id: "a17", tag: "MISS", title: "Good Deed 6 — Performance of a Lifetime (finish)", detail: "The second sheet music, 'Losilus Dreaming' (a Sabinian ballad), is in Vyssa Hills — northeast of the APC, by the suitcase SE of the statue tree. Carry BOTH pieces back to the violinist in Jova to complete the deed before Act 1 ends." },
       { id: "a18", tag: "RULE", title: "Gate check — everything above done?", detail: "If yes, head to Lake Cynon and finish Act 1. If anything above is unchecked, do it first; it cannot be recovered later." },
     ],
   },
@@ -232,7 +239,7 @@ const SECTIONS = [
       "One soft deadline left: audit your Haze counters BEFORE closing your final Timeloops. Everything else is safe after the credits.",
     items: [
       { id: "d1", tag: "WARN", title: "Audit Phol trackers before closing the last Timeloops", detail: "Closing all Timeloops stops enemy respawns. Open the PS5 trophy list and check progress on the three 40-kill Haze trophies (tiers I, II, III) and the kill-every-enemy-type trophies. Farm any shortfall while things still respawn — tier III at 39/40 with nothing left alive is the classic heartbreak." },
-      { id: "d2", tag: "SAFE", title: "Max upgrades: To the Teeth, Accessorizing, Good Vibrations", detail: "Upgrade one weapon of each type to Grade 5, plus the gear/vest lines. If you hoarded shards per the ground rules, you'll have enough banked even after respawns end." },
+      { id: "d2", tag: "SAFE", title: "Upgrade trophies: Good Vibrations, Accessorizing, To the Teeth", detail: "Three separate trophies, worked at the Acasa blacksmith. GOOD VIBRATIONS: upgrade one weapon of EACH of the four types (Sword, Twin Axes, Polearm, Greatsword) to Grade 5. ACCESSORIZING: imbue any ONE Defensive Gear to Grade 4. TO THE TEETH: an EQUIP check, not an upgrade — once you own two Grade 5 weapons and two Grade 4 Defensive Gear, equip all four at once in your loadout. Upgrading that second gear piece to Grade 4 for the To the Teeth loadout also covers Accessorizing. If you hoarded shards per the ground rules, you'll have enough banked even after respawns end." },
       { id: "d3", tag: "SAFE", title: "Post-credits free roam", detail: "After Act 3, reloading your save drops you back in the final area with full travel. Clean up remaining Mysteries (43 total), Vaults, research items, caps, glyphs and drone modules at leisure — none are missable." },
       { id: "d4", tag: "SAFE", title: "Legend of the Phol — clear every zone", detail: "Close all 14 Timeloops, then hunt every remaining enemy until each zone's APC map reads 'Threats: Clear.' Known snags from forum threads: a hidden mine room in Vyssa Hills (mine entrance in the ruin by the snake head → down the ladder → first left) holds two easily-missed enemies; and the map's hover status can display stale info — physically re-enter a zone to refresh it." },
       { id: "d5", tag: "SAFE", title: "If one thing slipped: the cross-save carryover", detail: "Multiple PowerPyx readers confirmed (Sept–Nov 2025) that Good Deed/Relic progression carries across save files — start a fresh save, beeline only the missed deed, and the cumulative trophy pops in 1–2 hours. Not re-verified on the 2026 patches, but it's your parachute before considering a full replay. A launch-era trophy-tracker turn-in exploit also existed; treat it as likely patched." },
@@ -241,26 +248,32 @@ const SECTIONS = [
 ];
 
 
-const BUILD = "7.2 · STANDALONE";
+const BUILD = "8.0 · COMPLETIONIST";
 const KEY = "hiu-plat-v1";
 const ALL_ITEMS = SECTIONS.flatMap(s => s.items);
 const MISS_IDS = ALL_ITEMS.filter(i => i.tag === "MISS" || i.tag === "WARN").map(i => i.id);
 const TAG_COLOR = { MISS:"var(--amber)", WARN:"var(--red)", STORY:"var(--story)", RULE:"var(--cyan)", SAFE:"var(--muted)" };
 const TAG_LABEL = { MISS:"MISSABLE", WARN:"WARNING", STORY:"STORY", RULE:"RULE", SAFE:"SAFE" };
+// Completionist ledger (from ledger-data.js; empty-safe if that file fails to load)
+const CATS = (typeof LEDGER !== "undefined" && Array.isArray(LEDGER)) ? LEDGER : [];
+// Shared-checkbox key: ledger items with a campaignId tick the SAME storage id as their
+// Campaign row (so existing progress shows through automatically); others use their own id.
+function ledgerKey(it){ return it.campaignId || it.id; }
 
 // ————— state —————
 let state = {
-  checked:{}, notes:[], open:{}, hintOpen:{}, filterMiss:false,
+  checked:{}, notes:[], open:{}, hintOpen:{}, filterMiss:false, filterRemaining:false,
   confirmReset:false, draft:"", stuckDraft:"", saveState:"idle",
   hintMsg:{}, copied:false,
-  ui:{ collapsed:{}, askOpen:false },
+  ui:{ collapsed:{}, askOpen:false, tab:"campaign" },
 };
 const UI_KEY = "hiu-ui-v1";
 function loadUI(){
   try{ const raw = localStorage.getItem(UI_KEY);
     if(raw){ const p = JSON.parse(raw);
       state.ui.collapsed = (p && p.collapsed) || {};
-      state.ui.askOpen = !!(p && p.askOpen); } }catch(e){}
+      state.ui.askOpen = !!(p && p.askOpen);
+      state.ui.tab = (p && p.tab === "completionist") ? "completionist" : "campaign"; } }catch(e){}
 }
 function saveUI(){ try{ localStorage.setItem(UI_KEY, JSON.stringify(state.ui)); }catch(e){} }
 
@@ -361,6 +374,50 @@ function hintPanelHTML(panelId, topic){
     (msg ? '<div class="hintstatus">'+esc(msg)+'</div>' : "")+'</div>';
 }
 
+function footerHTML(){
+  return '<footer>Compiled 2 Jul 2026 from PowerPyx (trophy, missables &amp; walkthrough pages + reader reports), Push Square, Game8, Neoseeker, PSNProfiles &amp; TrueTrophies threads, and official patch notes (1.4–1.6). Data lives in this browser\'s storage on this device — use Export backup for a portable copy.</footer>';
+}
+function dataControlsHTML(){
+  return '<div class="controls" style="margin-top:14px">'+
+    (state.confirmReset
+      ? '<button class="chip danger" data-act="resetgo">Confirm reset</button><button class="chip" data-act="resetno">Keep</button>'
+      : '<button class="chip" data-act="reset">Reset run</button>')+
+    '<button class="chip" data-act="export">Export backup</button>'+
+    '<button class="chip" data-act="import">Import backup</button>'+
+    '</div>';
+}
+function renderCompletionist(){
+  let h = '<div class="controls">'+
+    '<button class="chip'+(state.filterRemaining?" on":"")+'" data-act="filterrem">'+(state.filterRemaining?"◉":"○")+' Remaining only</button>'+
+    '</div>';
+  if(!CATS.length){
+    return h + '<div class="notehint">Ledger data unavailable — ledger-data.js did not load.</div>';
+  }
+  for(const cat of CATS){
+    const items = state.filterRemaining ? cat.items.filter(it => !state.checked[ledgerKey(it)]) : cat.items;
+    const done = cat.items.filter(it => state.checked[ledgerKey(it)]).length;
+    const folded = !!state.ui.collapsed[cat.id];
+    h += '<section><button class="sechead" data-act="fold" data-id="'+cat.id+'">'+
+      '<div><div class="kicker">'+esc(cat.trophy)+'</div><h2><span class="chev">'+(folded?"▸":"▾")+'</span>'+esc(cat.title)+'</h2></div>'+
+      '<div class="secright"><span class="seccount">'+done+'/'+cat.count+'</span></div></button>';
+    if(folded){ h += '</section>'; continue; }
+    if(!items.length){ h += '<div class="notehint">All '+cat.count+' done.</div></section>'; continue; }
+    for(const it of items){
+      const key = ledgerKey(it), on = !!state.checked[key], op = !!state.open[it.id];
+      h += '<div class="row'+(on?" done":"")+'"><div class="rowtop">'+
+        '<button class="cb'+(on?" on":"")+'" data-act="check" data-id="'+key+'" aria-label="'+(on?"Mark incomplete":"Mark complete")+'">'+(on?"✓":"")+'</button>'+
+        '<button class="rowlabel" data-act="open" data-id="'+it.id+'">'+
+        (it.miss ? '<span class="tag" style="color:var(--amber);border-color:var(--amber)">MISSABLE</span>' : "")+
+        '<span class="rowtitle">'+esc(it.name)+'</span>'+
+        '<span class="zone">'+esc(it.zone)+'</span>'+
+        '<span class="plus">'+(op?"−":"+")+'</span></button></div>'+
+        (op ? '<div class="detail">'+esc(it.detail)+'</div>' : "")+'</div>';
+    }
+    h += '</section>';
+  }
+  h += '<div class="excl">Not tracked here: kill counts, one-off trophies, and story progress — your PS5 trophy list counts those. The Campaign\'s final phase has the pre-endgame audit.</div>';
+  return h;
+}
 function render(){
   const missDone = MISS_IDS.filter(id => state.checked[id]).length;
   const allDone = ALL_ITEMS.filter(i => state.checked[i.id]).length;
@@ -380,13 +437,23 @@ function render(){
       : "All boxes checked: "+allDone+"/"+ALL_ITEMS.length+" · tap any row for the how-to")+'</div>'+
     '<div class="savestate">'+saveHTML+'</div></header>';
 
+  const tab = (state.ui.tab === "completionist") ? "completionist" : "campaign";
+  h += '<div class="tabs">'+
+    '<button class="tab'+(tab==="campaign"?" on":"")+'" data-act="tab" data-tab="campaign">CAMPAIGN</button>'+
+    '<button class="tab'+(tab==="completionist"?" on":"")+'" data-act="tab" data-tab="completionist">COMPLETIONIST</button>'+
+    '</div>'+
+    '<div class="tabsub">'+(tab==="campaign"
+      ? "The playthrough in order—every point of no return flagged."
+      : "Itemized lists for deeds, relics, mysteries, caps, and timeloops.")+'</div>';
+
+  if(tab==="completionist"){
+    h += renderCompletionist() + dataControlsHTML() + footerHTML();
+    document.getElementById("app").innerHTML = h;
+    return;
+  }
+
   h += '<div class="controls">'+
     '<button class="chip'+(state.filterMiss?" on":"")+'" data-act="filter">'+(state.filterMiss?"◉":"○")+' Missables &amp; warnings only</button>'+
-    (state.confirmReset
-      ? '<button class="chip danger" data-act="resetgo">Confirm reset</button><button class="chip" data-act="resetno">Keep</button>'
-      : '<button class="chip" data-act="reset">Reset run</button>')+
-    '<button class="chip" data-act="export">Export backup</button>'+
-    '<button class="chip" data-act="import">Import backup</button>'+
     '</div>';
 
   // Field notes
@@ -438,7 +505,8 @@ function render(){
     h += '</section>';
   }
 
-  h += '<footer>Compiled 2 Jul 2026 from PowerPyx (trophy, missables &amp; walkthrough pages + reader reports), Push Square, Game8, Neoseeker, PSNProfiles &amp; TrueTrophies threads, and official patch notes (1.4–1.6). Data lives in this browser\'s storage on this device — use Export backup for a portable copy.</footer>';
+  h += dataControlsHTML();
+  h += footerHTML();
 
   document.getElementById("app").innerHTML = h;
 }
@@ -454,6 +522,8 @@ document.getElementById("app").addEventListener("click", e => {
   else if(act==="lognote") addNote();
   else if(act==="copynotes") copyNotes();
   else if(act==="filter"){ state.filterMiss = !state.filterMiss; render(); }
+  else if(act==="filterrem"){ state.filterRemaining = !state.filterRemaining; render(); }
+  else if(act==="tab"){ state.ui.tab = b.dataset.tab === "completionist" ? "completionist" : "campaign"; saveUI(); render(); }
   else if(act==="fold"){ const s = b.dataset.id;
     state.ui.collapsed[s] = !state.ui.collapsed[s]; saveUI(); render(); }
   else if(act==="askhdr"){ state.ui.askOpen = !state.ui.askOpen; saveUI(); render(); }

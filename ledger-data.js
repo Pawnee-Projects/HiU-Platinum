@@ -2,7 +2,7 @@
 // HADEA FIELD LOG — COMPLETIONIST LEDGER DATA
 // Compiled 3 Jul 2026 from PowerPyx guides (verified fetches):
 //   good-deeds, all-relic-locations, all-mysteries-locations-solutions,
-//   all-legend-of-the-phol-timeloops, all-baseball-cap-locations (partial),
+//   all-legend-of-the-phol-timeloops, all-baseball-cap-locations,
 //   cross-checked vs S4G official trophy descriptions.
 // Integration spec lives in CLAUDE.md (Completionist view, roadmap item 1).
 // miss:true = permanently losable · campaignId = shared checkbox with the
@@ -121,13 +121,13 @@ const LEDGER = [
  {id:"cap1", name:"Starting cap", zone:"—", miss:false, campaignId:null, detail:"In your inventory from the beginning. Still needs to be worn once (no-hat toggle off)."},
  {id:"cap2", name:"Cap – Samo's chest", zone:"Marastan", miss:false, campaignId:null, detail:"Mystery #21: Lost Keys — chest in the back of Samo's General Store."},
  {id:"cap3", name:"Cap – Library car", zone:"Lethe – Library", miss:false, campaignId:null, detail:"Mystery #33: Suspicious Activity — blue car trunk outside the Library."},
- {id:"cap4", name:"Cap – Sabinian", zone:"Acasa Marshes", miss:false, campaignId:null, detail:"Prison tower room (with the Prison Manifest research item and Vaas' Plan recording)."},
+ {id:"cap4", name:"Cap – Sabinian", zone:"Acasa Marshes", miss:false, campaignId:null, detail:"Mystery #8: The Captain's Office — Captain Vaas' office in Jova (the caved-in-roof house; ramp up, ladder to the attic, drop to the balcony). Trade both mead bottles to the drunk soldier for Key – Jova Office; cap is on the hanger inside, with the Prison Manifest research item and the Vaas' Plan recording."},
  {id:"cap5", name:"Cap – Gilded", zone:"Eye of God", miss:false, campaignId:null, detail:"Desk south of the final story Timeloop's location — grab during the ending area or post-story."},
  {id:"cap6", name:"Cap – Vyssa cave", zone:"Vyssa Hills", miss:false, campaignId:null, detail:"During the Keystone of Ecstasy return: cave NW of the Moon door, drop at the broken platform, tunnel right, ladder up, left then right to the wooden-platform ledge."},
- {id:"cap7", name:"Cap (location unverified)", zone:"TBD", miss:false, campaignId:null, detail:"CODE TASK: complete from the PowerPyx caps guide. Remaining named caps: Veteran, Grief, Terror, Palomist, Quebec, Rage, Ecstasy."},
- {id:"cap8", name:"Cap (location unverified)", zone:"TBD", miss:false, campaignId:null, detail:"CODE TASK: see cap7."},
- {id:"cap9", name:"Cap (location unverified)", zone:"TBD", miss:false, campaignId:null, detail:"CODE TASK: see cap7."},
- {id:"cap10", name:"Cap (location unverified)", zone:"TBD", miss:false, campaignId:null, detail:"CODE TASK: see cap7."},
+ {id:"cap7", name:"Cap – Palomist", zone:"Talju", miss:false, campaignId:null, detail:"In a chest inside the barn in the NW corner of town (the same barn as the Talju Timeloop); climb the ladder around the back to reach it."},
+ {id:"cap8", name:"Cap – Quebec", zone:"Jeljin", miss:false, campaignId:null, detail:"On the crane scaffolding during Good Deed #24: Separated — sitting directly below the ranged enemy you kill up top. Grab it while working the crane platform puzzle."},
+ {id:"cap9", name:"Cap – Rage", zone:"Lethe – Ministry", miss:false, campaignId:null, detail:"Just inside the Ministry of Cultural Primacy entrance: drop down and pick it up from underneath the stairs to the left."},
+ {id:"cap10", name:"Cap – Veteran", zone:"Lake Cynon", miss:false, campaignId:null, detail:"On a ledge reached by climbing the cliff to the left of the flower-filled area below the APC."},
 ]},
 
 { id:"loops", title:"Timeloops", count:14, trophy:"End the Suffering → Legend of the Phol", items:[
@@ -159,5 +159,7 @@ const LEDGER = [
 // F3 (community, Feb 2026, unverified in-game): GD19 trigger — after placing a
 //   fuse, use the radio in the fused house (girls, kitchen table) before the dock
 //   man appears; consider completing before placing all three fuses.
-// F4 (CODE TASK): caps 7–10 locations — one fetch of
-//   powerpyx.com/hell-is-us-all-baseball-cap-locations completes them.
+// F4 (DONE, 4 Jul 2026, one fetch of powerpyx.com/hell-is-us-all-baseball-cap-locations):
+//   caps 7–10 filled — Palomist (Talju barn), Quebec (Jeljin, GD#24 scaffolding),
+//   Rage (Lethe Ministry, under entrance stairs), Veteran (Lake Cynon, cliff ledge below APC).
+//   The other six were already present under generic labels (caps 1–6).

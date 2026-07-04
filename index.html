@@ -91,6 +91,7 @@
     font-family:var(--mono);font-size:12px;padding:5px 9px;cursor:pointer;flex-shrink:0;margin-top:2px;
   }
   .notebtn.on{color:var(--cyan);border-color:var(--cyan)}
+  .notebtn:disabled{color:var(--faint);border-color:#2F342D;cursor:default}
   .inputrow{display:flex;gap:8px;margin-bottom:14px;align-items:stretch}
   textarea{
     flex:1;background:var(--panel);border:1px solid #3A3F38;border-radius:3px;color:var(--text);
@@ -259,7 +260,7 @@ const SECTIONS = [
 ];
 
 
-const BUILD = "8.5 · CLEAR";
+const BUILD = "8.6 · AMEND";
 const KEY = "hiu-plat-v1";
 const ALL_ITEMS = SECTIONS.flatMap(s => s.items);
 const MISS_IDS = ALL_ITEMS.filter(i => i.tag === "MISS" || i.tag === "WARN").map(i => i.id);
@@ -283,7 +284,7 @@ function isDone(id){
 let state = {
   checked:{}, notes:[], open:{}, hintOpen:{}, filterMiss:false, filterRemaining:false,
   confirmReset:false, draft:"", stuckDraft:"", saveState:"idle",
-  hintMsg:{}, copied:false, lastExport:null,
+  hintMsg:{}, copied:false, lastExport:null, editId:null, editDraft:"",
   ui:{ collapsed:{}, askOpen:false, tab:"campaign", noticeSeen:false },
 };
 const UI_KEY = "hiu-ui-v1";
@@ -372,6 +373,18 @@ function addNote(){
   state.draft = ""; persist(); render();
 }
 function delNote(id){ state.notes = state.notes.filter(n => n.id !== id); persist(); render(); }
+function startEdit(id){
+  const n = state.notes.find(x => x.id === id); if(!n) return;
+  state.editId = id; state.editDraft = n.text;
+  state.hintOpen[id] = false;     // don't leave a stale hint panel open over the editor
+  render();
+}
+function saveEdit(id){
+  const t = state.editDraft.trim();
+  if(t){ const n = state.notes.find(x => x.id === id); if(n){ n.text = t; persist(); } }  // ts preserved — never re-dated
+  state.editId = null; state.editDraft = ""; render();   // empty save reverts (mirrors addNote's guard)
+}
+function cancelEdit(){ state.editId = null; state.editDraft = ""; render(); }
 function copyNotes(){
   const txt = state.notes.map(n => "["+n.ts+"] "+n.text).join("\n");
   navigator.clipboard.writeText(txt).then(()=>{ state.copied = true; render();
@@ -534,8 +547,18 @@ function render(){
     '<button class="chip'+(state.draft.trim()?" go":"")+'" data-act="lognote" '+(state.draft.trim()?"":"disabled")+' style="align-self:stretch">Log note</button></div>'+
     (state.notes.length ? '<div style="margin-bottom:10px"><button class="chip'+(state.copied?" go":"")+'" data-act="copynotes">'+(state.copied?"Copied ✓":"Copy all notes")+'</button></div>' : "");
   for(const n of state.notes){
+    if(state.editId === n.id){
+      const has = !!state.editDraft.trim();
+      h += '<div class="noterow"><div style="flex:1">'+
+        '<textarea id="editdraft" rows="2" style="margin-bottom:6px">'+esc(state.editDraft)+'</textarea>'+
+        '<div class="notets">'+esc(n.ts)+'</div></div>'+
+        '<button class="notebtn'+(has?" on":"")+'" data-act="savenote" data-id="'+n.id+'"'+(has?"":" disabled")+'>Save</button>'+
+        '<button class="notebtn" data-act="canceledit" data-id="'+n.id+'">Cancel</button></div>';
+      continue;
+    }
     h += '<div class="noterow"><div style="flex:1"><div class="notetext">'+esc(n.text)+'</div><div class="notets">'+esc(n.ts)+'</div></div>'+
       '<button class="notebtn'+(state.hintOpen[n.id]?" on":"")+'" data-act="nudge" data-id="'+n.id+'">Nudge?</button>'+
+      '<button class="notebtn" data-act="edit" data-id="'+n.id+'">Edit</button>'+
       '<button class="notebtn" data-act="delnote" data-id="'+n.id+'" aria-label="Delete note">✕</button></div>';
     if(state.hintOpen[n.id]) h += hintPanelHTML(n.id, n.text);
   }
@@ -589,6 +612,9 @@ document.getElementById("app").addEventListener("click", e => {
   else if(act==="open") toggleOpen(id);
   else if(act==="nudge") toggleHint(id);
   else if(act==="delnote") delNote(id);
+  else if(act==="edit") startEdit(id);
+  else if(act==="savenote") saveEdit(id);
+  else if(act==="canceledit") cancelEdit();
   else if(act==="lognote") addNote();
   else if(act==="copynotes") copyNotes();
   else if(act==="filter"){ state.filterMiss = !state.filterMiss; render(); }
@@ -618,6 +644,9 @@ document.getElementById("app").addEventListener("input", e => {
   if(e.target.id==="draft"){ state.draft = e.target.value;
     const btn = document.querySelector('[data-act="lognote"]');
     if(btn){ btn.disabled = !state.draft.trim(); btn.classList.toggle("go", !!state.draft.trim()); } }
+  if(e.target.id==="editdraft"){ state.editDraft = e.target.value;
+    const btn = document.querySelector('[data-act="savenote"]');
+    if(btn){ btn.disabled = !state.editDraft.trim(); btn.classList.toggle("on", !!state.editDraft.trim()); } }
   if(e.target.id==="stuck"){ state.stuckDraft = e.target.value;
     // re-enable hint buttons without full re-render (keeps focus)
     document.querySelectorAll('[data-act="hint"][data-panel="stuck"]').forEach((el,i)=>{

@@ -116,6 +116,11 @@
   .notice b{color:var(--bright);font-weight:700}
   .lastexp{margin-bottom:8px;color:var(--muted)}
   .lastexp.stale{color:var(--amber)}
+  header.cleared{border-bottom-color:var(--cyan)}
+  .readout.clear{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .clearflag{color:var(--cyan);font-weight:700;letter-spacing:.2em;font-size:16px;text-shadow:0 0 12px rgba(111,213,198,.45)}
+  .clearcnt{color:var(--muted);font-size:12px;letter-spacing:.1em}
+  .bar.clear>div{background:var(--cyan)}
 </style>
 </head>
 <body>
@@ -254,7 +259,7 @@ const SECTIONS = [
 ];
 
 
-const BUILD = "8.4 · BACKUP";
+const BUILD = "8.5 · CLEAR";
 const KEY = "hiu-plat-v1";
 const ALL_ITEMS = SECTIONS.flatMap(s => s.items);
 const MISS_IDS = ALL_ITEMS.filter(i => i.tag === "MISS" || i.tag === "WARN").map(i => i.id);
@@ -479,18 +484,24 @@ function render(){
   const missDone = MISS_IDS.filter(id => isDone(id)).length;
   const allDone = ALL_ITEMS.filter(i => isDone(i.id)).length;
   const pct = Math.round(missDone / MISS_IDS.length * 100);
+  const cleared = missDone === MISS_IDS.length;
   const ss = state.saveState;
   const saveHTML = ss==="saved" ? '<span style="color:var(--cyan)">SAVED ✓ · on this device</span>'
     : ss==="error" ? '<span style="color:var(--red)">SAVE FAILED — storage unavailable (private browsing?)</span>' : "";
 
-  let h = '<header>'+
+  const readout = cleared
+    ? '<div class="readout clear"><span class="clearflag">THREATS: CLEAR</span>'+
+      '<span class="clearcnt">'+missDone+'/'+MISS_IDS.length+' secured</span><span class="blink">▌</span></div>'
+    : '<div class="readout"><span style="color:var(--muted)">MISSABLES SECURED&nbsp;</span>'+
+      '<span style="color:var(--bright)">'+missDone+'/'+MISS_IDS.length+'</span>'+
+      '<span class="blink">▌</span></div>';
+
+  let h = '<header'+(cleared?' class="cleared"':'')+'>'+
     '<div class="kicker">HADEA FIELD LOG · SINGLE-RUN PLATINUM · BUILD '+BUILD+'</div>'+
     '<h1>HELL IS US</h1>'+
-    '<div class="readout"><span style="color:var(--muted)">MISSABLES SECURED&nbsp;</span>'+
-    '<span style="color:'+(pct===100?"var(--cyan)":"var(--bright)")+'">'+missDone+'/'+MISS_IDS.length+'</span>'+
-    '<span class="blink">▌</span></div>'+
-    '<div class="bar"><div style="width:'+pct+'%"></div></div>'+
-    '<div class="sub">'+(pct===100 ? "THREATS: CLEAR — nothing left in this list can be lost."
+    readout+
+    '<div class="bar'+(cleared?' clear':'')+'"><div style="width:'+pct+'%"></div></div>'+
+    '<div class="sub">'+(cleared ? "Every missable secured — nothing in this list can be lost. Mop up the collectibles whenever."
       : "All boxes checked: "+allDone+"/"+ALL_ITEMS.length+" · tap any row for the how-to")+'</div>'+
     '<div class="savestate">'+saveHTML+'</div></header>';
 

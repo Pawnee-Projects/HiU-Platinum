@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Hadea Guide">
 <meta name="theme-color" content="#08131C">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
 <title>Hadea Field Guide — Hell is Us Platinum Tracker</title>
 <style>
@@ -77,7 +78,8 @@
   .sub{font-size:12px;color:var(--muted);letter-spacing:.04em}
   /* gear ⚙ — the app's one concession to iconography; discloses the Settings sheet. Neutral chrome. */
   .gearbtn{position:absolute;top:0;right:0;background:none;border:1px solid var(--faint);border-radius:3px;
-    color:var(--chrome);font-size:15px;line-height:1;padding:5px 8px;cursor:pointer}
+    color:var(--chrome);line-height:0;padding:5px 7px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+  .gearbtn .gico{width:16px;height:16px;display:block;pointer-events:none}
   .gearbtn.on{border-color:var(--chrome-active);color:var(--chrome-active);background:color-mix(in srgb,var(--chrome-active) 10%,transparent)}
   header>.kicker{padding-right:44px}   /* reserve room so the long BUILD kicker never runs under the gear */
   /* header footer band: counter+save on the left, Ask-a-Hint sitting in the open space to the
@@ -161,10 +163,14 @@
   /* mechnote = how the app behaves (fine print), visually quieter than the .notehint purpose copy;
      italic sets the "how it works" asides apart from the instructional copy */
   .mechnote{font-size:11.5px;color:var(--dim);margin:-4px 0 12px;line-height:1.55;letter-spacing:.02em;font-style:italic}
-  .hintlegend{font-size:11.5px;color:var(--muted);margin-bottom:9px;line-height:1.7;letter-spacing:.02em}
+  .hintlegend{font-size:11.5px;color:var(--muted);margin-bottom:11px;letter-spacing:.02em}
+  .hintlegend .lgh{margin-bottom:7px;line-height:1.4}
+  .lgrid{display:grid;grid-template-columns:auto 1fr;gap:5px 14px}
+  .lgrid .lvl{color:var(--text);font-weight:600;white-space:nowrap}
+  .lgrid .lvd{color:var(--muted);line-height:1.35}
   .noterow{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid var(--line2);padding:10px 0}
   .notetext{font-size:14.5px;color:var(--text);line-height:1.55;white-space:pre-wrap;word-break:break-word}
-  .notets{font-size:11px;color:var(--dim);margin-top:3px;letter-spacing:.1em}
+  .notets{font-size:11px;color:var(--dim);margin-top:3px;letter-spacing:.02em;white-space:nowrap}
   .notebtn{
     background:none;border:1px solid var(--faint);border-radius:3px;color:var(--chrome);
     font-family:var(--mono);font-size:12px;padding:5px 9px;cursor:pointer;flex-shrink:0;margin-top:2px;
@@ -268,9 +274,9 @@ const HINT_LEVELS = [
   // A reveal intensity ramp (gentle → full spoiler), chosen via a segmented selector then Ask.
   // Under the two-layer colour model the control is hue-free chrome (the old violet ramp was a
   // content-style accent on what is really an interface control), so no per-level colour here.
-  { n: 1, label: "Nudge", blurb: "a vague pointer, no names", desc: "a vague directional nudge ONLY: no location names, no item names, no puzzle mechanics. Just tell the player what to pay attention to or reconsider, in one or two sentences." },
-  { n: 2, label: "Hint", blurb: "the area or kind of thing", desc: "a concrete hint: name the relevant area or the KIND of thing they should look for or do, but do not state the final solution, code, or exact item." },
-  { n: 3, label: "Spoil it", blurb: "the full solution", desc: "the full solution, stated plainly and step by step. Still do not reveal story plot points, character fates, or anything beyond this specific puzzle/objective." },
+  { n: 1, label: "Nudge", blurb: "what to pay attention to — no names", desc: "a vague directional nudge ONLY: no location names, no item names, no puzzle mechanics. Just tell the player what to pay attention to or reconsider, in one or two sentences." },
+  { n: 2, label: "Hint", blurb: "the area and what to look for — not the answer", desc: "a concrete hint: name the relevant area or the KIND of thing they should look for or do, but do not state the final solution, code, or exact item." },
+  { n: 3, label: "Spoil it", blurb: "the full step-by-step solution", desc: "the full solution, stated plainly and step by step. Still do not reveal story plot points, character fates, or anything beyond this specific puzzle/objective." },
 ];
 
 const SECTIONS = [
@@ -404,9 +410,13 @@ const SECTIONS = [
 // BUILD split into number + codename (Roadmap 8, item 6). Display shape: "9.0 (FRONTIER)".
 // Used verbatim in the header kicker, the export payload's `build` field, and mirrored in
 // the README build log + the CLAUDE.md pin.
-const BUILD_N = "9.2";
-const BUILD_NAME = "LANDFALL";
+const BUILD_N = "9.3";
+const BUILD_NAME = "BEACON";
 const BUILD = BUILD_N + " (" + BUILD_NAME + ")";
+// Inline vector gear — monochrome, inherits currentColor so it tracks --chrome / --chrome-active
+// like every other control (no OS colour emoji). Rounded "settings" cog. aria-hidden: the button
+// carries the label; pointer-events:none (in CSS) keeps taps landing on the button, not the path.
+const GEAR = '<svg class="gico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>';
 const KEY = "hiu-plat-v1";
 const ALL_ITEMS = SECTIONS.flatMap(s => s.items);
 const MISS_IDS = ALL_ITEMS.filter(i => i.tag === "MISS" || i.tag === "WARN").map(i => i.id);
@@ -443,7 +453,7 @@ let state = {
   confirmReset:false, draft:"", stuckDraft:"", saveState:"idle",
   hintMsg:{}, revealLevel:{}, copied:false, lastExport:null, editId:null, editDraft:"",
   settingsOpen:false,   // transient — the gear sheet always starts closed (never persisted)
-  ui:{ collapsed:{}, askOpen:false, tab:"campaign", noticeSeen:false, tucked:{}, theme:"auto" },
+  ui:{ collapsed:{}, askOpen:false, tab:"campaign", noticeSeen:false, tucked:{}, theme:"dark" },   // first-launch default = Datapad (dark); Auto/Parchment are opt-in via the gear
 };
 const UI_KEY = "hiu-ui-v1";
 function loadUI(){
@@ -455,7 +465,9 @@ function loadUI(){
       state.ui.tab = (p && p.tab === "completionist") ? "completionist" : "campaign";
       state.ui.noticeSeen = !!(p && p.noticeSeen);
       state.ui.tucked = (p && p.tucked) || {};
-      state.ui.theme = (p && (p.theme === "dark" || p.theme === "light")) ? p.theme : "auto"; } }catch(e){}
+      // accept a stored "auto" as an explicit choice (so picking Auto survives reloads); anything
+      // missing/invalid falls back to the Datapad default rather than Auto.
+      state.ui.theme = (p && (p.theme === "dark" || p.theme === "light" || p.theme === "auto")) ? p.theme : "dark"; } }catch(e){}
 }
 // Apply the chosen theme: a manual pick sets [data-theme] (beats the media query); Auto clears it
 // and follows iOS. Either way, swap the status-bar chrome to match the EFFECTIVE mode.
@@ -615,8 +627,9 @@ function hintPanelHTML(panelId, topic){
   const msg = state.hintMsg[panelId];
   const copyBtn = msg ? '<button class="chip" data-act="copyprompt" data-panel="'+panelId+'">Copy prompt</button>' : "";
   // Spoiler-level legend travels with the picker — explained at every Nudge?, not just the top box.
-  const legend = HINT_LEVELS.map(lv => '<b>'+esc(lv.label)+'</b> '+esc(lv.blurb)).join(' · ');
-  return '<div class="hintpanel"><div class="hintlegend">How much to reveal — '+legend+'</div>'+
+  // Aligned two-column grid (label | blurb) so each level's meaning is scannable, not run together.
+  const legend = HINT_LEVELS.map(lv => '<div class="lvl">'+esc(lv.label)+'</div><div class="lvd">'+esc(lv.blurb)+'</div>').join('');
+  return '<div class="hintpanel"><div class="hintlegend"><div class="lgh">How much to reveal</div><div class="lgrid">'+legend+'</div></div>'+
     '<div class="revrow"><div class="seg">'+seg+'</div>'+
     '<button class="chip'+(usable?" go":"")+'" '+(usable?"":"disabled ")+'data-act="ask" data-panel="'+panelId+'">Ask ↗</button>'+
     copyBtn+'</div>'+
@@ -628,26 +641,27 @@ function settingsHTML(){
     '<button class="'+(th===val?"on":"")+'" data-act="settheme" data-theme="'+val+'"><span class="swatch '+sw+'"></span>'+label+'</button>';
   const data = state.confirmReset
     ? '<button class="chip danger" data-act="resetgo">Confirm Reset</button><button class="chip" data-act="resetno">Keep</button>'
-    : '<button class="chip" data-act="reset">Reset Run</button>';
+    : '<button class="chip" data-act="reset">Reset</button>';
   return '<div class="settings">'+
     '<div class="setgroup"><div class="setlabel">THEME</div><div class="seg">'+
       themeBtn("auto","Auto","auto")+themeBtn("dark","Datapad","dark")+themeBtn("light","Parchment","light")+
     '</div></div>'+
-    '<div class="setgroup"><div class="setlabel">DATA</div><div class="setrow">'+data+
+    '<div class="setgroup"><div class="setlabel">DATA</div><div class="setrow">'+
       '<button class="chip" data-act="export">Export Backup</button>'+
       '<button class="chip" data-act="import">Import Backup</button>'+
-    '</div><div class="setnote">Everything\'s saved in this browser on this device. Export backup makes a portable JSON copy; Reset clears your run only — field notes survive.</div></div>'+
+      data+
+    '</div><div class="setnote">Everything\'s saved in this browser on this device. Export backup makes a portable JSON copy. Reset clears checkboxes only—field notes remain.</div></div>'+
     '<div class="setgroup"><div class="setlabel">ABOUT</div><div class="setrow">'+
       '<button class="chip" data-act="reopennotice">Field Guide Intro</button>'+
       '<a class="srclink" href="https://github.com/pawnee-projects/HiU-Platinum" target="_blank" rel="noopener">View Source ↗</a>'+
     '</div>'+
-    '<div class="setnote">Compiled 2 Jul 2026 from '+
+    '<div class="setnote">Compiled July 2026 from '+
       '<a href="https://www.powerpyx.com/hell-is-us-trophy-guide-roadmap/" target="_blank" rel="noopener">PowerPyx</a> (trophy, missables &amp; walkthrough pages + reader reports), '+
-      '<a href="https://www.pushsquare.com/games/ps5/hell_is_us" target="_blank" rel="noopener">Push Square</a>, '+
       '<a href="https://game8.co/games/Hell-is-Us" target="_blank" rel="noopener">Game8</a>, '+
       '<a href="https://www.neoseeker.com/hell-is-us/walkthrough" target="_blank" rel="noopener">Neoseeker</a>, '+
       '<a href="https://psnprofiles.com/trophies/35802-hell-is-us" target="_blank" rel="noopener">PSNProfiles</a> &amp; '+
-      '<a href="https://www.truetrophies.com/game/Hell-is-Us/trophies" target="_blank" rel="noopener">TrueTrophies</a> threads, and official patch notes (1.4–1.6).</div>'+
+      '<a href="https://www.truetrophies.com/game/Hell-is-Us/trophies" target="_blank" rel="noopener">TrueTrophies</a> threads, and '+
+      '<a href="https://hellisus.wiki.fextralife.com/Patch_Notes" target="_blank" rel="noopener">Fextralife patch notes</a> (1.4–1.6).</div>'+
     '</div>'+
   '</div>';
 }
@@ -761,7 +775,7 @@ function render(){
 
   const hintBtn = '<button class="hintbtn'+(state.ui.askOpen?" on":"")+'" data-act="askhdr">Ask a Hint '+(state.ui.askOpen?"▾":"▸")+'</button>';
   let h = '<header'+(cleared?' class="cleared"':'')+'>'+
-    '<button class="gearbtn'+(state.settingsOpen?" on":"")+'" data-act="gear" aria-label="Settings" aria-expanded="'+(state.settingsOpen?"true":"false")+'">⚙</button>'+
+    '<button class="gearbtn'+(state.settingsOpen?" on":"")+'" data-act="gear" aria-label="Settings" aria-expanded="'+(state.settingsOpen?"true":"false")+'">'+GEAR+'</button>'+
     '<div class="kicker kflex"><span class="kseg">HELL IS US</span><span class="kseg">SINGLE-RUN PLATINUM</span><span class="kseg">BUILD '+BUILD+'</span></div>'+
     '<h1>HADEA FIELD GUIDE</h1>'+
     readout+

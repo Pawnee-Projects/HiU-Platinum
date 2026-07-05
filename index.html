@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Hadea Guide">
 <meta name="theme-color" content="#08131C">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
 <title>Hadea Field Guide — Hell is Us Platinum Tracker</title>
 <style>
   /* ————— HADEA COLD (Roadmap 10) — two-layer colour —————
@@ -403,8 +404,8 @@ const SECTIONS = [
 // BUILD split into number + codename (Roadmap 8, item 6). Display shape: "9.0 (FRONTIER)".
 // Used verbatim in the header kicker, the export payload's `build` field, and mirrored in
 // the README build log + the CLAUDE.md pin.
-const BUILD_N = "9.1.2";
-const BUILD_NAME = "HADEA";
+const BUILD_N = "9.2";
+const BUILD_NAME = "LANDFALL";
 const BUILD = BUILD_N + " (" + BUILD_NAME + ")";
 const KEY = "hiu-plat-v1";
 const ALL_ITEMS = SECTIONS.flatMap(s => s.items);
@@ -939,6 +940,18 @@ if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("sw.js").catch(() => {});
   });
+}
+
+// Storage durability (Roadmap item 11 · LANDFALL): ask the browser to mark our
+// localStorage persistent so it's evictable only under real disk pressure, never on
+// a timer. Silent on Chrome (an installed PWA is a grant heuristic → returns true);
+// a local decision elsewhere; a no-op on iOS home-screen apps (already eviction-exempt).
+// This is a LOCAL storage-permission request, NOT a network call — Hard Rule #1 holds.
+// Only requested when not already persisted, so an installed app never re-asks.
+if (navigator.storage && navigator.storage.persist) {
+  navigator.storage.persisted()
+    .then(p => { if (!p) return navigator.storage.persist(); })
+    .catch(() => {});
 }
 </script>
 </body>

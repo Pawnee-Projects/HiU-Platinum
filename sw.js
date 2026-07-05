@@ -6,9 +6,9 @@
 // All paths are RELATIVE so this works under the GitHub Pages project
 // subpath (/HiU-Platinum/) and at a domain root alike.
 // ————————————————————————————————————————————————————————————————
-const CACHE = "hadea-9.1.2";
-const CORE = ["./", "index.html", "ledger-data.js"];   // must cache for the app to run offline
-const EXTRA = ["apple-touch-icon.png"];                 // best-effort; absence must not fail install
+const CACHE = "hadea-9.2";
+const CORE = ["./", "index.html", "ledger-data.js", "manifest.webmanifest"];   // must cache for the app to run offline (+ manifest for installability)
+const EXTRA = ["apple-touch-icon.png", "icon-192.png", "icon-512.png", "icon-maskable-512.png"];  // best-effort; absence must not fail install
 
 self.addEventListener("install", e => {
   e.waitUntil(

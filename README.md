@@ -8,7 +8,10 @@ A single-page platinum trophy companion for **Hell is Us** (Rogue Factor, 2025).
 
 ## Using it
 
-Open the link, tap around. On iOS 26+: Safari → Share → **Add to Home Screen** (keep "Open as Web App" on) for a full-screen app with its own icon.
+Open the link, tap around. To install it as a full-screen app with its own icon:
+
+- **iOS 26+:** Safari → Share → **Add to Home Screen** (keep "Open as Web App" on).
+- **Android:** Chrome → ⋮ menu → **Install app** (or **Add to Home screen**) → creates a standalone WebAPK.
 
 - Tap phase headers to collapse acts you've finished — the fold state persists
 - **Nudge / Hint / Spoil it** copies a ready-made prompt and opens Claude; paste if the composer arrives empty
@@ -16,12 +19,16 @@ Open the link, tap around. On iOS 26+: Safari → Share → **Add to Home Screen
 
 ## Where the data lives (read before doing anything drastic)
 
-Progress and notes are in `localStorage`, scoped per browser per device. The home-screen web app has its **own storage container, separate from Safari** — always enter progress through the icon. Home-screen apps are exempt from Safari's 7-day storage cleanup, and using the app resets the timer regardless.
+Progress and notes live in `localStorage`, scoped per browser per device. The storage rules differ by platform:
 
-**Export backup** downloads your run as JSON; **Import backup** restores it. Export at milestones. It takes ten seconds and has already justified itself.
+- **iOS:** the home-screen web app has its **own storage container, separate from Safari** — always enter progress through the icon; progress in one is invisible to the other. Home-screen apps are exempt from Safari's 7-day storage cleanup (using the app resets the timer regardless). **Deleting the home-screen icon deletes its data** — Export first.
+- **Android:** the installed app **shares** storage with the same-origin Chrome tab (no silo), and **uninstalling does not wipe your data** — it lives in the Chrome profile until you clear the site's data. No inactivity eviction. On install the app also requests *persistent* storage, so it's evictable only under real disk pressure.
+
+**Export backup** downloads your run as JSON; **Import backup** restores it. Export at milestones regardless of platform — it takes ten seconds and has already justified itself.
 
 ## Build log
 
+- **9.2 (LANDFALL)** — Android / cross-platform install. The app is now a first-class installable PWA on Android Chrome (⋮ → **Install app** → a standalone WebAPK), not just an iOS home-screen app. Adds a Web App Manifest (`manifest.webmanifest`) with **relative** scope/start-url so it survives the GitHub Pages project subpath, `display: standalone`, and three purpose-tagged icons — `any` 192/512 (the cover art, for the install prompt and splash) and a `maskable` 512 (the cyan trophy, authored to survive Android's aggressive adaptive mask). Requests **persistent** storage on load (local-only; durable except under real disk pressure). The iOS icon is unchanged (`apple-touch-icon` keeps precedence, so the manifest can't break it) and there's no new network behaviour — the manifest is a static declaration. The README storage section now **branches per platform**: Android shares storage with the Chrome tab and survives uninstall, while the iOS silo / delete-wipes-data rules stay iOS-only. *(Desktop-Chrome verified; real WebAPK install + on-device mask render + Android `persisted()===true` still pending a physical Android device.)*
 - **9.1.2 (HADEA)** — Settings + on-device polish over 9.1: warm Parchment paper, the field-notes list folds on its own (the count moves to the header when collapsed), light-mode tags fill in, and the header puts the game name up top with **Hadea Field Guide** as the title. Settings sheet: Title-Case action buttons, **Field Guide Intro** (was "Show intro"), a warmed Parchment theme swatch + light-mode status-bar colour (both were a cool carryover), italic fine-print, and the source credits (PowerPyx, Push Square, Game8, Neoseeker, PSNProfiles, TrueTrophies) are now links to each site's Hell is Us page. Includes a **service-worker cache bump** each deploy so installed apps reliably purge the old cache and pick up changes — earlier redeploys reused the same cache name and left service-worker-cached devices on stale files.
 - **9.1 (HADEA)** — colour redesign + light/dark theming. A new **Hadea Cold** palette grounded in the game's navy datapad screens: under a two-layer model, the content accents (success / missable / warning / story) colour *game content only* while all interface chrome is a hue-free neutral. Two surfaces — **Datapad** (dark, navy) and **Parchment** (light, warm paper) — chosen from a new **⚙ Settings sheet** (Auto / Datapad / Parchment; Auto follows your device). In light mode the category tags flip from outline to filled chips. Export / Import / Reset and an About group (re-open the first-visit notice, view source) moved into that sheet. The hint reveal control is now a segmented **Nudge / Hint / Spoil it** picker + one **Ask** (so a spoiler can't fire on a single stray tap); field notes gain a faint graph-paper texture with a dashed input and per-note cards; the footer's "last export" line is now tappable → Export
 - **9.0.3 (FRONTIER)** — `Ask a Hint` repositioned within the header band: vertically centered across the counter/save lines and centered in the blank space to their right (was pinned hard against the edge)

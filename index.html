@@ -276,7 +276,7 @@ const HINT_LEVELS = [
   // content-style accent on what is really an interface control), so no per-level colour here.
   { n: 1, label: "Nudge", blurb: "what to pay attention to — no names", desc: "a vague directional nudge ONLY: no location names, no item names, no puzzle mechanics. Just tell the player what to pay attention to or reconsider, in one or two sentences." },
   { n: 2, label: "Hint", blurb: "the area and what to look for — not the answer", desc: "a concrete hint: name the relevant area or the KIND of thing they should look for or do, but do not state the final solution, code, or exact item." },
-  { n: 3, label: "Spoil it", blurb: "the full step-by-step solution", desc: "the full solution, stated plainly and step by step. Still do not reveal story plot points, character fates, or anything beyond this specific puzzle/objective." },
+  { n: 3, label: "Spoil", blurb: "the full step-by-step solution", desc: "the full solution, stated plainly and step by step. Still do not reveal story plot points, character fates, or anything beyond this specific puzzle/objective." },
 ];
 
 const SECTIONS = [
@@ -410,7 +410,7 @@ const SECTIONS = [
 // BUILD split into number + codename (Roadmap 8, item 6). Display shape: "9.0 (FRONTIER)".
 // Used verbatim in the header kicker, the export payload's `build` field, and mirrored in
 // the README build log + the CLAUDE.md pin.
-const BUILD_N = "9.3";
+const BUILD_N = "9.3.1";
 const BUILD_NAME = "BEACON";
 const BUILD = BUILD_N + " (" + BUILD_NAME + ")";
 // Inline vector gear — monochrome, inherits currentColor so it tracks --chrome / --chrome-active

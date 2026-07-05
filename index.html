@@ -6,10 +6,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Hadea Log">
+<meta name="apple-mobile-web-app-title" content="Hadea Guide">
 <meta name="theme-color" content="#08131C">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<title>Hadea Field Log — Hell is Us Platinum Tracker</title>
+<title>Hadea Field Guide — Hell is Us Platinum Tracker</title>
 <style>
   /* ————— HADEA COLD (Roadmap 10) — two-layer colour —————
      Content accents (success/missable/warning/story) colour GAME CONTENT only;
@@ -31,8 +31,9 @@
   /* Parchment (light) — follow iOS unless a manual theme is set */
   @media (prefers-color-scheme: light){
     :root:not([data-theme]){
-      --bg:#DCE3EB; --panel:#E8EDF2; --line:#BEC8D2; --line2:#D0D8E0;
-      --text:#10202E; --bright:#06111C; --muted:#556270; --dim:#78838F; --faint:#A2AEBA;
+      /* Parchment = warm off-white ("whiter Mist") — slight warm cast, high lightness (5 Jul 2026) */
+      --bg:#F4F3EF; --panel:#FBFAF6; --line:#D4D3CB; --line2:#E4E3DB;
+      --text:#201F1A; --bright:#121210; --muted:#6C6B62; --dim:#9A988D; --faint:#C8C7BD;
       --success:#0A9078; --missable:#8A6210; --warning:#CC3F3B; --story:#35588C;
       --chrome:#5F6076; --chrome-active:#33334A;
     }
@@ -45,8 +46,9 @@
     --chrome:#6E7A86; --chrome-active:#D8E0E9;
   }
   :root[data-theme="light"]{
-    --bg:#DCE3EB; --panel:#E8EDF2; --line:#BEC8D2; --line2:#D0D8E0;
-    --text:#10202E; --bright:#06111C; --muted:#556270; --dim:#78838F; --faint:#A2AEBA;
+    /* Parchment = warm off-white ("whiter Mist") — kept in sync with the media-query block above */
+    --bg:#F4F3EF; --panel:#FBFAF6; --line:#D4D3CB; --line2:#E4E3DB;
+    --text:#201F1A; --bright:#121210; --muted:#6C6B62; --dim:#9A988D; --faint:#C8C7BD;
     --success:#0A9078; --missable:#8A6210; --warning:#CC3F3B; --story:#35588C;
     --chrome:#5F6076; --chrome-active:#33334A;
   }
@@ -61,6 +63,12 @@
     padding:calc(20px + env(safe-area-inset-top)) 14px calc(80px + env(safe-area-inset-bottom));
   }
   .kicker{font-size:11px;letter-spacing:.22em;color:var(--muted);margin-bottom:4px}
+  /* Kicker as wrapping segments: "·" separators sit in the flex column-gap. A segment that wraps
+     to a new line starts at x=0, so its leading dot (pulled left by -1.1em) pokes into negative x
+     where overflow:hidden clips it — the dot before a dropped segment (e.g. BUILD) just vanishes. */
+  .kflex{display:flex;flex-wrap:wrap;gap:0 1.1em;overflow:hidden}
+  .kseg{white-space:nowrap}
+  .kseg:not(:first-child)::before{content:"·";display:inline-block;width:1.1em;margin-left:-1.1em;text-align:center;letter-spacing:normal}
   h1{font-size:28px;letter-spacing:.14em;margin:0 0 14px;font-weight:700;color:var(--bright)}
   h2{font-size:18px;margin:0;letter-spacing:.08em;color:var(--bright);font-weight:700}
   header{border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:14px;position:relative}
@@ -133,18 +141,25 @@
     flex:1;line-height:1.5;
   }
   .row.done .rowtitle{text-decoration:line-through}
+  /* --tagc is set inline per row (the accent). Dark = outline (colour text + border, no fill);
+     light (Parchment) flips to a filled chip with knockout text — see the light overrides below. */
   .tag{
-    font-size:10px;letter-spacing:.16em;border:1px solid;border-radius:2px;padding:1px 5px;
-    flex-shrink:0;transform:translateY(-1px);
+    font-size:10px;letter-spacing:.16em;border:1px solid var(--tagc);border-radius:2px;padding:1px 5px;
+    flex-shrink:0;transform:translateY(-1px);color:var(--tagc);background:transparent;
   }
+  /* knockout ink = warm near-white (not the paper --bg) — lifts the label contrast on the lighter
+     accents (success/warning) while staying warm; the one deliberate literal in the tokenised sheet */
+  :root[data-theme="light"] .tag{background:var(--tagc);color:#FBF8F1}
+  @media (prefers-color-scheme:light){:root:not([data-theme]) .tag{background:var(--tagc);color:#FBF8F1}}
   .plus{color:var(--dim);margin-left:auto;flex-shrink:0}
   .detail{
     font-size:14px;color:var(--detail);margin-left:10px;padding:0 0 14px 20px;
     border-left:2px solid var(--line);line-height:1.65;
   }
   .notehint{font-size:12.5px;color:var(--muted);margin-bottom:10px;line-height:1.6}
-  /* mechnote = how the app behaves (fine print), visually quieter than the .notehint purpose copy */
-  .mechnote{font-size:11.5px;color:var(--dim);margin:-4px 0 12px;line-height:1.55;letter-spacing:.02em}
+  /* mechnote = how the app behaves (fine print), visually quieter than the .notehint purpose copy;
+     italic sets the "how it works" asides apart from the instructional copy */
+  .mechnote{font-size:11.5px;color:var(--dim);margin:-4px 0 12px;line-height:1.55;letter-spacing:.02em;font-style:italic}
   .hintlegend{font-size:11.5px;color:var(--muted);margin-bottom:9px;line-height:1.7;letter-spacing:.02em}
   .noterow{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid var(--line2);padding:10px 0}
   .notetext{font-size:14.5px;color:var(--text);line-height:1.55;white-space:pre-wrap;word-break:break-word}
@@ -153,9 +168,10 @@
     background:none;border:1px solid var(--faint);border-radius:3px;color:var(--chrome);
     font-family:var(--mono);font-size:12px;padding:5px 9px;cursor:pointer;flex-shrink:0;margin-top:2px;
   }
-  /* Nudge? hands the note to Claude — but under the two-layer model it's still chrome, so it's
-     neutral like Edit/✕ now (the old cyan tint was a content hue on a control). Kept as a hook. */
-  .notebtn.nudge{border-color:var(--faint);color:var(--chrome);background:transparent}
+  /* Nudge? hands the note to Claude — a different KIND of action than Edit/✕, so it gets a subtle
+     filled neutral chip + stronger border to set it apart. Distinction stays WITHIN neutral (no
+     content hue on a control, per the two-layer model). */
+  .notebtn.nudge{border-color:var(--chrome);color:var(--text);background:color-mix(in srgb,var(--chrome) 12%,transparent)}
   .notebtn.on{color:var(--chrome-active);border-color:var(--chrome-active);background:color-mix(in srgb,var(--chrome-active) 10%,transparent)}
   .notebtn:disabled{color:var(--dim);border-color:var(--faint);cursor:default}
   .notebtns{display:flex;flex-direction:column;align-items:stretch;gap:6px;flex-shrink:0}
@@ -220,10 +236,20 @@
   .notebook{
     border:1px solid var(--line);border-radius:4px;padding:15px 16px;
     background-color:var(--panel);
-    background-image:linear-gradient(color-mix(in srgb,var(--line) 55%,transparent) 1px,transparent 1px),
-      linear-gradient(90deg,color-mix(in srgb,var(--line) 55%,transparent) 1px,transparent 1px);
+    background-image:linear-gradient(color-mix(in srgb,var(--line) 26%,transparent) 1px,transparent 1px),
+      linear-gradient(90deg,color-mix(in srgb,var(--line) 26%,transparent) 1px,transparent 1px);
     background-size:22px 22px;background-position:-1px -1px;
   }
+  /* new-note input: a dashed "jot here" box over the grid (matches the mockup) */
+  .inputrow textarea{background:transparent;border:1.5px dashed var(--dim)}
+  /* each logged note sits on its own faint card so it lifts off the graph paper */
+  .notebook .noterow{background:var(--bg);border:1px solid var(--line2);border-radius:6px;padding:11px 12px;margin-bottom:9px}
+  /* opt-in fold for just the logged-notes list (header + input stay above it) */
+  .noteslog{display:flex;align-items:center;width:100%;background:none;border:none;border-top:1px solid var(--line2);
+    padding:9px 0 3px;margin-top:2px;cursor:pointer;color:var(--muted);font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-align:left}
+  /* note count sits inline next to the title (only while the list is expanded); brighter than the
+     old far-right muted badge so it actually reads */
+  .ncount{color:var(--text);font-size:16px;font-weight:400;margin-left:10px}
 </style>
 </head>
 <body>
@@ -372,7 +398,7 @@ const SECTIONS = [
 // BUILD split into number + codename (Roadmap 8, item 6). Display shape: "9.0 (FRONTIER)".
 // Used verbatim in the header kicker, the export payload's `build` field, and mirrored in
 // the README build log + the CLAUDE.md pin.
-const BUILD_N = "9.2";
+const BUILD_N = "9.1";
 const BUILD_NAME = "HADEA";
 const BUILD = BUILD_N + " (" + BUILD_NAME + ")";
 const KEY = "hiu-plat-v1";
@@ -551,7 +577,7 @@ function exportData(){
   const blob = new Blob([JSON.stringify({checked:state.checked, notes:state.notes, build:BUILD, exportedAt:now.toISOString()}, null, 2)], {type:"application/json"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "hadea-field-log-backup-" + now.toISOString().slice(0,10) + ".json";
+  a.download = "hadea-field-guide-backup-" + now.toISOString().slice(0,10) + ".json";
   document.body.appendChild(a); a.click(); a.remove();
   state.lastExport = now.toISOString(); saveMeta(); render();
 }
@@ -565,7 +591,7 @@ function importData(file){
       state.checked = p.checked || {};
       state.notes = Array.isArray(p.notes) ? p.notes : [];
       persist(); render();
-    }catch(e){ alert("That file doesn't look like a Field Log backup."); }
+    }catch(e){ alert("That file doesn't look like a Field Guide backup."); }
   };
   r.readAsText(file);
 }
@@ -600,7 +626,7 @@ function settingsHTML(){
   return '<div class="settings">'+
     '<div class="setgroup"><div class="setlabel">THEME</div><div class="seg">'+
       themeBtn("auto","Auto","auto")+themeBtn("dark","Datapad","dark")+themeBtn("light","Parchment","light")+
-    '</div><div class="setnote">Auto follows your device. Datapad is the dark cartographic surface; Parchment is cool paper.</div></div>'+
+    '</div><div class="setnote">Auto follows your device. Datapad is the dark cartographic surface; Parchment is warm paper.</div></div>'+
     '<div class="setgroup"><div class="setlabel">DATA</div><div class="setrow">'+data+
       '<button class="chip" data-act="export">Export backup</button>'+
       '<button class="chip" data-act="import">Import backup</button>'+
@@ -608,7 +634,10 @@ function settingsHTML(){
     '<div class="setgroup"><div class="setlabel">ABOUT</div><div class="setrow">'+
       '<button class="chip" data-act="reopennotice">Show first-visit notice</button>'+
       '<a class="srclink" href="https://github.com/pawnee-projects/HiU-Platinum" target="_blank" rel="noopener">View source ↗</a>'+
-    '</div></div>'+
+    '</div>'+
+    '<div class="setnote">Compiled 2 Jul 2026 from PowerPyx (trophy, missables &amp; walkthrough pages + reader reports), Push Square, Game8, Neoseeker, PSNProfiles &amp; TrueTrophies threads, and official patch notes (1.4–1.6).</div>'+
+    '<div class="setnote">Data lives in this browser\'s storage on this device — use Export backup for a portable copy.</div>'+
+    '</div>'+
   '</div>';
 }
 
@@ -635,7 +664,7 @@ function footerHTML(){
   const es = exportStatus();
   // Tappable → Export, so the backup nudge stays one tap even with Data tucked behind the gear.
   const line = es.text ? '<button class="lastexp'+(es.stale?" stale":"")+'" data-act="export" title="Export backup now">'+esc(es.text)+'</button>' : "";
-  return '<footer>'+line+'Compiled 2 Jul 2026 from PowerPyx (trophy, missables &amp; walkthrough pages + reader reports), Push Square, Game8, Neoseeker, PSNProfiles &amp; TrueTrophies threads, and official patch notes (1.4–1.6). Data lives in this browser\'s storage on this device — use Export backup for a portable copy.</footer>';
+  return '<footer>'+line+'</footer>';
 }
 function renderCompletionist(){
   let h = '<div class="controls">'+
@@ -658,7 +687,7 @@ function renderCompletionist(){
       h += '<div class="row'+(on?" done":"")+'"><div class="rowtop">'+
         '<button class="cb'+(on?" on":"")+'" data-act="check" data-id="'+key+'" aria-label="'+(on?"Mark incomplete":"Mark complete")+'">'+(on?"✓":"")+'</button>'+
         '<button class="rowlabel" data-act="open" data-id="'+it.id+'">'+
-        (it.miss ? '<span class="tag" style="color:var(--missable);border-color:var(--missable)">MISSABLE</span>' : "")+
+        (it.miss ? '<span class="tag" style="--tagc:var(--missable)">MISSABLE</span>' : "")+
         '<span class="rowtitle">'+esc(it.name)+'</span>'+
         '<span class="zone">'+esc(it.zone)+'</span>'+
         '<span class="plus">'+(op?"−":"+")+'</span></button></div>'+
@@ -690,7 +719,7 @@ function phaseHTML(sec, inZone){
     h += '<div class="row'+(on?" done":"")+'"><div class="rowtop">'+
       '<button class="cb'+(on?" on":"")+'" data-act="check" data-id="'+it.id+'" aria-label="'+(on?"Mark incomplete":"Mark complete")+'">'+(on?"✓":"")+'</button>'+
       '<button class="rowlabel" data-act="open" data-id="'+it.id+'">'+
-      '<span class="tag" style="color:'+TAG_COLOR[it.tag]+';border-color:'+TAG_COLOR[it.tag]+'">'+TAG_LABEL[it.tag]+'</span>'+
+      '<span class="tag" style="--tagc:'+TAG_COLOR[it.tag]+'">'+TAG_LABEL[it.tag]+'</span>'+
       '<span class="rowtitle">'+esc(it.title)+'</span><span class="plus">'+(op?"−":"+")+'</span></button></div>'+
       (op ? '<div class="detail">'+esc(it.detail)+'</div>' : "")+'</div>';
   }
@@ -722,8 +751,8 @@ function render(){
   const hintBtn = '<button class="hintbtn'+(state.ui.askOpen?" on":"")+'" data-act="askhdr">Ask a Hint '+(state.ui.askOpen?"▾":"▸")+'</button>';
   let h = '<header'+(cleared?' class="cleared"':'')+'>'+
     '<button class="gearbtn'+(state.settingsOpen?" on":"")+'" data-act="gear" aria-label="Settings" aria-expanded="'+(state.settingsOpen?"true":"false")+'">⚙</button>'+
-    '<div class="kicker">HADEA FIELD LOG · SINGLE-RUN PLATINUM · BUILD '+BUILD+'</div>'+
-    '<h1>HELL IS US</h1>'+
+    '<div class="kicker kflex"><span class="kseg">HELL IS US</span><span class="kseg">SINGLE-RUN PLATINUM</span><span class="kseg">BUILD '+BUILD+'</span></div>'+
+    '<h1>HADEA FIELD GUIDE</h1>'+
     readout+
     '<div class="bar'+(cleared?' clear':'')+'"><div style="width:'+pct+'%"></div></div>'+
     '<div class="headfoot"><div class="headfoot-text"><div class="sub">'+(cleared ? "Every missable secured — nothing in this list can be lost. Mop up the collectibles whenever."
@@ -740,7 +769,7 @@ function render(){
       '<div class="notehint">Describe where you\'re stuck and pick how much you want revealed.</div>'+
       '<textarea id="stuck" rows="2" placeholder="e.g. The pillar puzzle in the marshes…" style="margin-bottom:8px">'+esc(state.stuckDraft)+'</textarea>'+
       hintPanelHTML("stuck", state.stuckDraft)+
-      '<div class="mechnote" style="margin-top:8px">Each button copies a ready-made prompt and opens Claude.</div>'+
+      '<div class="mechnote" style="margin-top:8px">Ask copies a ready-made prompt and opens Claude.</div>'+
     '</div>';
   }
 
@@ -763,20 +792,29 @@ function render(){
     '<button class="chip'+(state.filterMiss?" on":"")+'" data-act="filter">'+(state.filterMiss?"◉":"○")+' FILTER: missables &amp; warnings only</button>'+
     '</div>';
 
-  // Field notes — the "your notebook" surface; graph-paper texture is scoped to this block only
-  h += '<section class="notebook"><div class="sechead"><div><div class="kicker">PERSONAL LOG</div><h2>Field notes</h2></div>'+
-    '<div class="seccount">'+state.notes.length+'</div></div>'+
+  // Field notes — the "your notebook" surface; graph-paper texture is scoped to this block only.
+  // notesCollapsed drives both the header count (shown only while expanded) and the list fold below.
+  const notesCollapsed = !!state.ui.collapsed.noteslist && !state.editId;
+  h += '<section class="notebook"><div class="sechead"><div><div class="kicker">PERSONAL LOG</div>'+
+    '<h2>Field Notes'+(state.notes.length && !notesCollapsed ? '<span class="ncount">'+state.notes.length+'</span>' : '')+'</h2></div></div>'+
     '<div class="notehint">Sealed doors, unsolved symbols, places to revisit — log them here before the game lets you forget.</div>'+
-    '<div class="mechnote">Notes survive a run reset. A note\'s Nudge? hands it to Claude for a spoiler-graded hint.</div>'+
+    '<div class="mechnote">Notes survive a run reset. A note\'s Nudge? hands it to Claude for a hint — you choose how much it reveals.</div>'+
     '<div class="inputrow"><textarea id="draft" rows="2" placeholder="e.g. Locked tower in Vyssa Hills…">'+esc(state.draft)+'</textarea>'+
     '<button class="chip'+(state.draft.trim()?" go":"")+'" data-act="lognote" '+(state.draft.trim()?"":"disabled")+' style="align-self:stretch">Log note</button></div>'+
     (state.notes.length ? '<div style="margin-bottom:10px"><button class="chip'+(state.copied?" go":"")+'" data-act="copynotes">'+(state.copied?"Copied ✓":"Copy all notes")+'</button></div>' : "");
-  for(const n of state.notes){
+  // The logged-notes list folds on its own (opt-in, state on the shared `collapsed` map) so a long
+  // list doesn't bury the checklist below, while the header + input above stay put. `notesCollapsed`
+  // is computed up top; it force-opens while editing so an in-progress editor can't hide.
+  if(state.notes.length){
+    h += '<button class="noteslog" data-act="fold" data-id="noteslist" aria-expanded="'+(notesCollapsed?"false":"true")+'">'+
+      '<span class="chev">'+(notesCollapsed?"▸":"▾")+'</span>LOGGED NOTES ('+state.notes.length+')</button>';
+  }
+  if(!notesCollapsed) for(const n of state.notes){
     if(state.editId === n.id){
       const has = !!state.editDraft.trim();
       h += '<div class="noterow"><div style="flex:1">'+          // full-width editor: textarea spans the row, buttons drop below
         '<textarea id="editdraft" rows="3">'+esc(state.editDraft)+'</textarea>'+
-        '<div class="notets" style="margin-top:4px">'+esc(n.ts)+'</div>'+
+        '<div class="notets" style="margin-top:4px">Logged: '+esc(n.ts)+'</div>'+
         '<div class="editbtns">'+
           '<button class="notebtn'+(has?" on":"")+'" data-act="savenote" data-id="'+n.id+'"'+(has?"":" disabled")+'>Save</button>'+
           '<button class="notebtn" data-act="canceledit" data-id="'+n.id+'">Cancel</button>'+
@@ -784,7 +822,7 @@ function render(){
       continue;
     }
     // Buttons stack at right (Edit/✕ over Nudge?) so the note text keeps its horizontal width.
-    h += '<div class="noterow"><div style="flex:1"><div class="notetext">'+esc(n.text)+'</div><div class="notets">'+esc(n.ts)+'</div></div>'+
+    h += '<div class="noterow"><div style="flex:1"><div class="notetext">'+esc(n.text)+'</div><div class="notets">Logged: '+esc(n.ts)+'</div></div>'+
       '<div class="notebtns">'+
         '<div class="notebtnrow">'+
           '<button class="notebtn" data-act="edit" data-id="'+n.id+'">Edit</button>'+

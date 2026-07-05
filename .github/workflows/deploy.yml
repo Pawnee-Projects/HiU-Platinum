@@ -1,34 +1,50 @@
+# ————————————————————————————————————————————————————————————————
+# HADEA FIELD LOG — GitHub Pages deploy (GitHub Actions source)
+# TWO jobs (build → deploy) is deliberate: on "Re-run failed jobs" only the
+# failed deploy re-runs, so upload-pages-artifact does NOT run twice — which
+# avoids the "Multiple artifacts named github-pages" error a single-job version
+# throws on re-run. Publishes the repo root as-is on push to main. No build
+# step, no secrets (OIDC). concurrency: cancel-in-progress supersedes a stuck run.
+# Setup: Settings → Pages → Source → "GitHub Actions".
+#
+# CI hardening (5 Jul 2026): permissions are scoped per-job (build only reads,
+# deploy holds the Pages/OIDC writes) instead of one top-level grant, and every
+# action is pinned to a full commit SHA with a version comment. Bump the SHAs by
+# hand when an action ships a release (Dependabot was considered and declined).
+# Watch-out: if a future deploy-pages run fails asking for `actions: read`, add
+# that scope to the deploy job's permissions block.
+# ————————————————————————————————————————————————————————————————
 name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [main]
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+  workflow_dispatch:          # manual "Run workflow" button in the Actions tab
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: true    # a new run cancels a stuck in-progress one
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read          # checkout only — the build never writes to Pages
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
-          path: .
+          path: .             # the site is the repo root (index.html at top level)
   deploy:
     needs: build
+    permissions:
+      pages: write            # publish the uploaded artifact to Pages
+      id-token: write         # OIDC token deploy-pages exchanges (no stored secret)
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0

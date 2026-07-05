@@ -188,7 +188,7 @@
   .revrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:2px}
   .hintstatus{font-size:12px;color:var(--chrome-active);letter-spacing:.06em;margin-top:10px;line-height:1.6}
   footer{
-    font-size:11.5px;color:var(--dim);border-top:1px solid var(--line);padding-top:14px;
+    font-size:11.5px;color:var(--dim);border-top:1px solid var(--line);padding-top:14px;margin-top:22px;
     letter-spacing:.03em;line-height:1.7;
   }
   .savestate{font-size:12px;letter-spacing:.04em;margin-top:6px}
@@ -249,7 +249,9 @@
     padding:9px 0 3px;margin-top:2px;cursor:pointer;color:var(--muted);font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-align:left}
   /* note count sits inline next to the title (only while the list is expanded); brighter than the
      old far-right muted badge so it actually reads */
-  .ncount{color:var(--text);font-size:16px;font-weight:400;margin-left:10px}
+  /* note count sits at the far right of the header (only while the list is collapsed) so you can
+     see how many are tucked at a glance; bright so it reads. Hidden when the list is open. */
+  .ncount{color:var(--bright);font-size:16px;font-weight:400}
 </style>
 </head>
 <body>
@@ -626,17 +628,16 @@ function settingsHTML(){
   return '<div class="settings">'+
     '<div class="setgroup"><div class="setlabel">THEME</div><div class="seg">'+
       themeBtn("auto","Auto","auto")+themeBtn("dark","Datapad","dark")+themeBtn("light","Parchment","light")+
-    '</div><div class="setnote">Auto follows your device. Datapad is the dark cartographic surface; Parchment is warm paper.</div></div>'+
+    '</div></div>'+
     '<div class="setgroup"><div class="setlabel">DATA</div><div class="setrow">'+data+
       '<button class="chip" data-act="export">Export backup</button>'+
       '<button class="chip" data-act="import">Import backup</button>'+
-    '</div><div class="setnote">Backups are plain JSON. Reset clears your run only — field notes survive.</div></div>'+
+    '</div><div class="setnote">Everything\'s saved in this browser on this device. Export backup makes a portable JSON copy; Reset clears your run only — field notes survive.</div></div>'+
     '<div class="setgroup"><div class="setlabel">ABOUT</div><div class="setrow">'+
-      '<button class="chip" data-act="reopennotice">Show first-visit notice</button>'+
+      '<button class="chip" data-act="reopennotice">Show intro</button>'+
       '<a class="srclink" href="https://github.com/pawnee-projects/HiU-Platinum" target="_blank" rel="noopener">View source ↗</a>'+
     '</div>'+
     '<div class="setnote">Compiled 2 Jul 2026 from PowerPyx (trophy, missables &amp; walkthrough pages + reader reports), Push Square, Game8, Neoseeker, PSNProfiles &amp; TrueTrophies threads, and official patch notes (1.4–1.6).</div>'+
-    '<div class="setnote">Data lives in this browser\'s storage on this device — use Export backup for a portable copy.</div>'+
     '</div>'+
   '</div>';
 }
@@ -796,9 +797,9 @@ function render(){
   // notesCollapsed drives both the header count (shown only while expanded) and the list fold below.
   const notesCollapsed = !!state.ui.collapsed.noteslist && !state.editId;
   h += '<section class="notebook"><div class="sechead"><div><div class="kicker">PERSONAL LOG</div>'+
-    '<h2>Field Notes'+(state.notes.length && !notesCollapsed ? '<span class="ncount">'+state.notes.length+'</span>' : '')+'</h2></div></div>'+
+    '<h2>Field Notes</h2></div>'+(state.notes.length && notesCollapsed ? '<div class="ncount">'+state.notes.length+'</div>' : '')+'</div>'+
     '<div class="notehint">Sealed doors, unsolved symbols, places to revisit — log them here before the game lets you forget.</div>'+
-    '<div class="mechnote">Notes survive a run reset. A note\'s Nudge? hands it to Claude for a hint — you choose how much it reveals.</div>'+
+    '<div class="mechnote">A note\'s Nudge? hands it to Claude for a hint — you choose how much it reveals.</div>'+
     '<div class="inputrow"><textarea id="draft" rows="2" placeholder="e.g. Locked tower in Vyssa Hills…">'+esc(state.draft)+'</textarea>'+
     '<button class="chip'+(state.draft.trim()?" go":"")+'" data-act="lognote" '+(state.draft.trim()?"":"disabled")+' style="align-self:stretch">Log note</button></div>'+
     (state.notes.length ? '<div style="margin-bottom:10px"><button class="chip'+(state.copied?" go":"")+'" data-act="copynotes">'+(state.copied?"Copied ✓":"Copy all notes")+'</button></div>' : "");

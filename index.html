@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Hadea Guide">
-<meta name="theme-color" content="#08131C">
+<meta name="theme-color" content="#08161A">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
@@ -19,13 +19,18 @@
      Parchment = light (via prefers-color-scheme + [data-theme] manual override).
      Base hexes are locked (OKLCH-placed); every tint/fill derives via color-mix. */
   :root{
-    /* ground */
-    --bg:#08131C; --panel:#102130; --line:#21394C; --line2:#152430;
-    --text:#BCC8D4; --bright:#E4EEF6; --muted:#6F7F8F; --dim:#4A5A6A; --faint:#34424F;
+    /* ground — Datapad (Katoche): cold teal-black, mirrors the game's map/menu screens */
+    --bg:#08161A; --panel:#0F2429; --line:#1E3B3E; --line2:#132A2D;
+    /* text — Layered: content near-white; framing (--muted/--dim) carries the teal cast */
+    --text:#C6D8D6; --bright:#E6F3F0; --muted:#59A79A; --dim:#3C7A6E; --faint:#2F484A;
     /* content accents — game content ONLY */
-    --success:#46D4B2; --missable:#CDA557; --warning:#F2706C; --story:#6E9AD0;
-    /* interface chrome — hue-free (Datapad = Neutral) */
-    --chrome:#6E7A86; --chrome-active:#D8E0E9;
+    --success:#4FD9C4; --missable:#B9A26A; --warning:#F2706C; --story:#5FB8C9;
+    /* interface chrome — cyan (Datapad = Katoche; the game's glowing frame) */
+    --chrome:#4E8E85; --chrome-active:#63E2CE;
+    /* low-urgency tag annotations — RULE/SAFE leave the alert-colour system (own tokens) */
+    --rule:#3E9E92; --safe:#5E6B69;
+    /* topographic contour, cyan ~9% — applied to header + Settings chrome only; none in light/nautical */
+    --contour:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='120'%20height='110'%3E%3Cg%20fill='none'%20stroke='%234FD9C4'%20stroke-opacity='0.09'%20stroke-width='1'%3E%3Cpath%20d='M0,14%20Q30,4%2060,14%20T120,14'/%3E%3Cpath%20d='M0,36%20Q30,48%2060,36%20T120,36'/%3E%3Cpath%20d='M0,58%20Q30,49%2060,58%20T120,58'/%3E%3Cpath%20d='M0,80%20Q30,92%2060,80%20T120,80'/%3E%3Cpath%20d='M0,102%20Q30,94%2060,102%20T120,102'/%3E%3C/g%3E%3C/svg%3E");
     /* derived (adapt per mode — re-resolve against the live ground/accent tokens) */
     --detail:color-mix(in srgb, var(--text) 78%, var(--muted));
     --mono:'SFMono-Regular',ui-monospace,'Cascadia Mono','Roboto Mono',Menlo,Consolas,monospace;
@@ -38,14 +43,16 @@
       --text:#201F1A; --bright:#121210; --muted:#6C6B62; --dim:#9A988D; --faint:#C8C7BD;
       --success:#0A9078; --missable:#8A6210; --warning:#CC3F3B; --story:#35588C;
       --chrome:#5F6076; --chrome-active:#33334A;
+      --rule:var(--success); --safe:var(--muted); --contour:none;
     }
   }
   /* Manual override — attribute specificity beats the media query, so a picked theme always wins */
   :root[data-theme="dark"]{
-    --bg:#08131C; --panel:#102130; --line:#21394C; --line2:#152430;
-    --text:#BCC8D4; --bright:#E4EEF6; --muted:#6F7F8F; --dim:#4A5A6A; --faint:#34424F;
-    --success:#46D4B2; --missable:#CDA557; --warning:#F2706C; --story:#6E9AD0;
-    --chrome:#6E7A86; --chrome-active:#D8E0E9;
+    --bg:#08161A; --panel:#0F2429; --line:#1E3B3E; --line2:#132A2D;
+    --text:#C6D8D6; --bright:#E6F3F0; --muted:#59A79A; --dim:#3C7A6E; --faint:#2F484A;
+    --success:#4FD9C4; --missable:#B9A26A; --warning:#F2706C; --story:#5FB8C9;
+    --chrome:#4E8E85; --chrome-active:#63E2CE;
+    --rule:#3E9E92; --safe:#5E6B69;
   }
   :root[data-theme="light"]{
     /* Parchment = warm off-white ("whiter Mist") — kept in sync with the media-query block above */
@@ -53,6 +60,7 @@
     --text:#201F1A; --bright:#121210; --muted:#6C6B62; --dim:#9A988D; --faint:#C8C7BD;
     --success:#0A9078; --missable:#8A6210; --warning:#CC3F3B; --story:#35588C;
     --chrome:#5F6076; --chrome-active:#33334A;
+    --rule:var(--success); --safe:var(--muted); --contour:none;
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;background:var(--bg)}
@@ -73,7 +81,7 @@
   .kseg:not(:first-child)::before{content:"·";display:inline-block;width:1.1em;margin-left:-1.1em;text-align:center;letter-spacing:normal}
   h1{font-size:28px;letter-spacing:.14em;margin:0 0 14px;font-weight:700;color:var(--bright)}
   h2{font-size:18px;margin:0;letter-spacing:.08em;color:var(--bright);font-weight:700}
-  header{border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:14px;position:relative}
+  header{border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:14px;position:relative;background-image:var(--contour,none);background-size:120px 110px;background-repeat:repeat}
   .readout{font-size:14px;letter-spacing:.1em;margin-bottom:8px}
   .sub{font-size:12px;color:var(--muted);letter-spacing:.04em}
   /* gear ⚙ — the app's one concession to iconography; discloses the Settings sheet. Neutral chrome. */
@@ -220,7 +228,7 @@
   .clearcnt{color:var(--muted);font-size:12px;letter-spacing:.1em}
   .bar.clear>div{background:var(--success)}
   /* ————— gear Settings sheet (Roadmap 10) — Theme / Data / About ————— */
-  .settings{border:1px solid var(--line);background:var(--panel);border-radius:4px;padding:15px 16px;margin-bottom:18px}
+  .settings{border:1px solid var(--line);background-color:var(--panel);background-image:var(--contour,none);background-size:120px 110px;background-repeat:repeat;border-radius:4px;padding:15px 16px;margin-bottom:18px}
   .setgroup{margin-bottom:16px}
   .setgroup:last-child{margin-bottom:0}
   .setlabel{font-size:11px;letter-spacing:.2em;color:var(--muted);margin-bottom:9px}
@@ -410,8 +418,8 @@ const SECTIONS = [
 // BUILD split into number + codename (Roadmap 8, item 6). Display shape: "9.0 (FRONTIER)".
 // Used verbatim in the header kicker, the export payload's `build` field, and mirrored in
 // the README build log + the CLAUDE.md pin.
-const BUILD_N = "9.3.2";
-const BUILD_NAME = "BEACON";
+const BUILD_N = "9.4";
+const BUILD_NAME = "KATOCHE";
 const BUILD = BUILD_N + " (" + BUILD_NAME + ")";
 // Inline vector gear — monochrome, inherits currentColor so it tracks --chrome / --chrome-active
 // like every other control (no OS colour emoji). Rounded "settings" cog. aria-hidden: the button
@@ -420,7 +428,7 @@ const GEAR = '<svg class="gico" viewBox="0 0 24 24" fill="none" stroke="currentC
 const KEY = "hiu-plat-v1";
 const ALL_ITEMS = SECTIONS.flatMap(s => s.items);
 const MISS_IDS = ALL_ITEMS.filter(i => i.tag === "MISS" || i.tag === "WARN").map(i => i.id);
-const TAG_COLOR = { MISS:"var(--missable)", WARN:"var(--warning)", STORY:"var(--story)", RULE:"var(--success)", SAFE:"var(--muted)" };
+const TAG_COLOR = { MISS:"var(--missable)", WARN:"var(--warning)", STORY:"var(--story)", RULE:"var(--rule)", SAFE:"var(--safe)" };
 const TAG_LABEL = { MISS:"MISSABLE", WARN:"WARNING", STORY:"STORY", RULE:"RULE", SAFE:"SAFE" };
 // Completionist ledger (from ledger-data.js; empty-safe if that file fails to load)
 const CATS = (typeof LEDGER !== "undefined" && Array.isArray(LEDGER)) ? LEDGER : [];
@@ -478,7 +486,7 @@ function applyTheme(){
   let dark = t === "dark";
   if(t === "auto"){ try{ dark = window.matchMedia("(prefers-color-scheme: dark)").matches; }catch(e){ dark = true; } }
   const tc = document.querySelector('meta[name="theme-color"]');
-  if(tc) tc.setAttribute("content", dark ? "#08131C" : "#F4F3EF");
+  if(tc) tc.setAttribute("content", dark ? "#08161A" : "#F4F3EF");
   const sb = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
   // dark: translucent bar with light glyphs over the navy ground; light: opaque bar, dark glyphs
   if(sb) sb.setAttribute("content", dark ? "black-translucent" : "default");

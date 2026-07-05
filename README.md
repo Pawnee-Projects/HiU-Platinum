@@ -4,7 +4,15 @@ A standalone companion for the **Hell is Us** (Rogue Factor, 2025) platinum trop
 
 **Live:** https://pawnee-projects.github.io/HiU-Platinum/
 
-> ⚠️ Light spoilers: checklist entries name NPCs, locations, and side-quest titles. No story content.
+> ⚠️ Light spoilers: checklist entries name NPCs, locations, and side-quest titles. No story content. The screenshots below include a few.
+
+<p align="center">
+  <img src="assets/hero-dark.png" alt="Campaign checklist — Datapad dark theme" width="240">
+  &nbsp;
+  <img src="assets/screen-completionist.png" alt="Completionist collectibles ledger" width="240">
+  &nbsp;
+  <img src="assets/screen-light.png" alt="Parchment light theme" width="240">
+</p>
 
 ## Using it
 

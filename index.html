@@ -217,10 +217,13 @@
   .setgroup{margin-bottom:16px}
   .setgroup:last-child{margin-bottom:0}
   .setlabel{font-size:11px;letter-spacing:.2em;color:var(--muted);margin-bottom:9px}
-  .setnote{font-size:11.5px;color:var(--dim);margin-top:9px;line-height:1.55}
+  /* italic, matching .mechnote — the app's "how it works" fine-print voice */
+  .setnote{font-size:11.5px;color:var(--dim);margin-top:9px;line-height:1.55;font-style:italic}
+  /* source-credit links: brighter neutral + underline so they read as tappable in the dim note */
+  .setnote a{color:var(--chrome);text-decoration:underline;text-decoration-color:var(--faint);text-underline-offset:2px}
   .setrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
   .srclink{font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;color:var(--chrome);text-decoration:none;
-    border:1px solid var(--faint);border-radius:3px;padding:7px 12px;display:inline-block}
+    border:1px solid var(--faint);border-radius:3px;padding:7px 12px;display:inline-flex;align-items:center;line-height:normal}
   /* segmented control — shared by the Theme picker and the reveal picker (hue-free chrome) */
   .seg{display:inline-flex;border:1px solid var(--faint);border-radius:3px;overflow:hidden;max-width:100%;flex-wrap:wrap}
   .seg button{font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;background:none;border:none;
@@ -229,9 +232,9 @@
   .seg button:last-child{border-right:none}
   .seg button.on{background:color-mix(in srgb,var(--chrome-active) 12%,transparent);color:var(--chrome-active)}
   .swatch{width:11px;height:11px;border-radius:2px;border:1px solid var(--faint);display:inline-block;flex-shrink:0}
-  .swatch.auto{background:linear-gradient(135deg,#08131C 0 50%,#DCE3EB 50% 100%)}
+  .swatch.auto{background:linear-gradient(135deg,#08131C 0 50%,#F4F3EF 50% 100%)}
   .swatch.dark{background:#08131C}
-  .swatch.light{background:#DCE3EB}
+  .swatch.light{background:#F4F3EF}
   /* graph-paper texture — scoped to the field-notes "notebook" surface only; checklist stays flat */
   .notebook{
     border:1px solid var(--line);border-radius:4px;padding:15px 16px;
@@ -400,7 +403,7 @@ const SECTIONS = [
 // BUILD split into number + codename (Roadmap 8, item 6). Display shape: "9.0 (FRONTIER)".
 // Used verbatim in the header kicker, the export payload's `build` field, and mirrored in
 // the README build log + the CLAUDE.md pin.
-const BUILD_N = "9.1";
+const BUILD_N = "9.1.2";
 const BUILD_NAME = "HADEA";
 const BUILD = BUILD_N + " (" + BUILD_NAME + ")";
 const KEY = "hiu-plat-v1";
@@ -462,7 +465,7 @@ function applyTheme(){
   let dark = t === "dark";
   if(t === "auto"){ try{ dark = window.matchMedia("(prefers-color-scheme: dark)").matches; }catch(e){ dark = true; } }
   const tc = document.querySelector('meta[name="theme-color"]');
-  if(tc) tc.setAttribute("content", dark ? "#08131C" : "#DCE3EB");
+  if(tc) tc.setAttribute("content", dark ? "#08131C" : "#F4F3EF");
   const sb = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
   // dark: translucent bar with light glyphs over the navy ground; light: opaque bar, dark glyphs
   if(sb) sb.setAttribute("content", dark ? "black-translucent" : "default");
@@ -623,21 +626,27 @@ function settingsHTML(){
   const themeBtn = (val,label,sw) =>
     '<button class="'+(th===val?"on":"")+'" data-act="settheme" data-theme="'+val+'"><span class="swatch '+sw+'"></span>'+label+'</button>';
   const data = state.confirmReset
-    ? '<button class="chip danger" data-act="resetgo">Confirm reset</button><button class="chip" data-act="resetno">Keep</button>'
-    : '<button class="chip" data-act="reset">Reset run</button>';
+    ? '<button class="chip danger" data-act="resetgo">Confirm Reset</button><button class="chip" data-act="resetno">Keep</button>'
+    : '<button class="chip" data-act="reset">Reset Run</button>';
   return '<div class="settings">'+
     '<div class="setgroup"><div class="setlabel">THEME</div><div class="seg">'+
       themeBtn("auto","Auto","auto")+themeBtn("dark","Datapad","dark")+themeBtn("light","Parchment","light")+
     '</div></div>'+
     '<div class="setgroup"><div class="setlabel">DATA</div><div class="setrow">'+data+
-      '<button class="chip" data-act="export">Export backup</button>'+
-      '<button class="chip" data-act="import">Import backup</button>'+
+      '<button class="chip" data-act="export">Export Backup</button>'+
+      '<button class="chip" data-act="import">Import Backup</button>'+
     '</div><div class="setnote">Everything\'s saved in this browser on this device. Export backup makes a portable JSON copy; Reset clears your run only — field notes survive.</div></div>'+
     '<div class="setgroup"><div class="setlabel">ABOUT</div><div class="setrow">'+
-      '<button class="chip" data-act="reopennotice">Show intro</button>'+
-      '<a class="srclink" href="https://github.com/pawnee-projects/HiU-Platinum" target="_blank" rel="noopener">View source ↗</a>'+
+      '<button class="chip" data-act="reopennotice">Field Guide Intro</button>'+
+      '<a class="srclink" href="https://github.com/pawnee-projects/HiU-Platinum" target="_blank" rel="noopener">View Source ↗</a>'+
     '</div>'+
-    '<div class="setnote">Compiled 2 Jul 2026 from PowerPyx (trophy, missables &amp; walkthrough pages + reader reports), Push Square, Game8, Neoseeker, PSNProfiles &amp; TrueTrophies threads, and official patch notes (1.4–1.6).</div>'+
+    '<div class="setnote">Compiled 2 Jul 2026 from '+
+      '<a href="https://www.powerpyx.com/hell-is-us-trophy-guide-roadmap/" target="_blank" rel="noopener">PowerPyx</a> (trophy, missables &amp; walkthrough pages + reader reports), '+
+      '<a href="https://www.pushsquare.com/games/ps5/hell_is_us" target="_blank" rel="noopener">Push Square</a>, '+
+      '<a href="https://game8.co/games/Hell-is-Us" target="_blank" rel="noopener">Game8</a>, '+
+      '<a href="https://www.neoseeker.com/hell-is-us/walkthrough" target="_blank" rel="noopener">Neoseeker</a>, '+
+      '<a href="https://psnprofiles.com/trophies/35802-hell-is-us" target="_blank" rel="noopener">PSNProfiles</a> &amp; '+
+      '<a href="https://www.truetrophies.com/game/Hell-is-Us/trophies" target="_blank" rel="noopener">TrueTrophies</a> threads, and official patch notes (1.4–1.6).</div>'+
     '</div>'+
   '</div>';
 }

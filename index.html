@@ -151,6 +151,13 @@
     color:inherit;font-family:inherit;font-size:15px;text-align:left;cursor:pointer;padding:0;
     flex:1;line-height:1.5;
   }
+  /* Campaign checklist rows are tag-led with no trailing label: keep the tag inline with the
+     title (the title fills the row and wraps its OWN text) instead of flex-wrap dropping the
+     long title onto a second line and orphaning the tag alone above it — which inflated every
+     tag-led row's height. Scoped to .taglead so it never touches Completionist rows, whose
+     trailing .zone label relies on flex-wrap to drop below a long title rather than be squished. */
+  .rowlabel.taglead{flex-wrap:nowrap}
+  .rowlabel.taglead .rowtitle{flex:1 1 auto;min-width:0}
   .row.done .rowtitle{text-decoration:line-through}
   /* speech-bubble marker on conversation-target rows (talk:true) + the Standing Orders legend.
      Pinned to the UI accent (--chrome-active) via currentColor so it pops off the --text title
@@ -428,8 +435,8 @@ const SECTIONS = [
 // BUILD split into number + codename (Roadmap 8, item 6). Display shape: "9.0 (FRONTIER)".
 // Used verbatim in the header kicker, the export payload's `build` field, and mirrored in
 // the README build log + the CLAUDE.md pin.
-const BUILD_N = "9.5";
-const BUILD_NAME = "PARLEY";
+const BUILD_N = "9.6";
+const BUILD_NAME = "SURVEY";
 const BUILD = BUILD_N + " (" + BUILD_NAME + ")";
 // Inline vector gear — monochrome, inherits currentColor so it tracks --chrome / --chrome-active
 // like every other control (no OS colour emoji). Rounded "settings" cog. aria-hidden: the button
@@ -450,6 +457,24 @@ const CATS = (typeof LEDGER !== "undefined" && Array.isArray(LEDGER)) ? LEDGER :
 // Shared-checkbox key: ledger items with a campaignId tick the SAME storage id as their
 // Campaign row (so existing progress shows through automatically); others use their own id.
 function ledgerKey(it){ return it.campaignId || it.id; }
+// ————— Zone lens (Completionist "By zone" view) —————
+// Canonical regions in game-progression order. Each ledger item's zones:[] (ledger-data.js)
+// lists every canonical region it touches; the zone view groups by these. A multi-zone item
+// appears under EACH of its zones — same checkbox id (via ledgerKey), so state stays synced
+// across appearances. Items with an empty zones:[] (only cap1, the region-less starting cap)
+// collect into a trailing "Unverified" group rather than being guessed into a region.
+const ZONES = [
+  "Senedra Forest","Arcas Spire","Acasa Marshes","Vyssa Hills","Lake Cynon","Lymbic Forge",
+  "Talju","Marastan","Lethe – Library","Lethe – Ministry","Plains of Mist","Jeljin",
+  "Auriga Museum","Eye of God","Vaults of Forbidden Knowledge",
+];
+// Flatten the ledger once, tagging each item with its category — the zone view mixes
+// categories under a region, so each row must show its category. It's rendered as a plain
+// muted trailing label (the SAME .zone treatment the location gets in the by-category view),
+// NOT a boxed tag — so both groupings share one grammar: title, then a muted trailing label
+// (the location in category view, the category TYPE in zone view). Title-case singular.
+const CAT_NAME = { deeds:"Good Deed", relics:"Relic", myst:"Mystery", caps:"Baseball Cap", loops:"Timeloop" };
+const LEDGER_ITEMS = CATS.flatMap(cat => cat.items.map(it => ({ it, cat })));
 // Aggregate rows: one Campaign checkbox that stands for several independent ledger items.
 // The Campaign row is "done" only when every member is; toggling it sets/clears all members.
 // (b4 = the four "A Light in the Dark" flares gd13–16, tracked individually in Completionist.)
@@ -476,7 +501,7 @@ let state = {
   confirmReset:false, draft:"", stuckDraft:"", saveState:"idle",
   hintMsg:{}, revealLevel:{}, copied:false, lastExport:null, editId:null, editDraft:"",
   settingsOpen:false,   // transient — the gear sheet always starts closed (never persisted)
-  ui:{ collapsed:{}, askOpen:false, tab:"campaign", noticeSeen:false, tucked:{}, theme:"dark" },   // first-launch default = Datapad (dark); Auto/Parchment are opt-in via the gear
+  ui:{ collapsed:{}, askOpen:false, tab:"campaign", noticeSeen:false, tucked:{}, theme:"dark", groupBy:"category" },   // first-launch default = Datapad (dark); Auto/Parchment are opt-in via the gear
 };
 const UI_KEY = "hiu-ui-v1";
 function loadUI(){
@@ -488,6 +513,8 @@ function loadUI(){
       state.ui.tab = (p && p.tab === "completionist") ? "completionist" : "campaign";
       state.ui.noticeSeen = !!(p && p.noticeSeen);
       state.ui.tucked = (p && p.tucked) || {};
+      // Completionist grouping lens — "category" (default) or "zone"; a Completionist-only pref.
+      state.ui.groupBy = (p && p.groupBy === "zone") ? "zone" : "category";
       // accept a stored "auto" as an explicit choice (so picking Auto survives reloads); anything
       // missing/invalid falls back to the Datapad default rather than Auto.
       state.ui.theme = (p && (p.theme === "dark" || p.theme === "light" || p.theme === "auto")) ? p.theme : "dark"; } }catch(e){}
@@ -714,34 +741,76 @@ function footerHTML(){
   const line = es.text ? '<button class="lastexp'+(es.stale?" stale":"")+'" data-act="export" title="Export backup now">'+esc(es.text)+'</button>' : "";
   return '<footer>'+line+'</footer>';
 }
+// One ledger row. The trailing muted label carries one grammar across both groupings: the
+// by-category view shows the item's LOCATION (showCat=false); the zone view's section already
+// IS the location, so it shows the category TYPE instead (showCat=true) and drops the location.
+// Same .zone styling either way (the muted teal-green trailing label) — category is treated
+// exactly like location, not a boxed tag. MISSABLE stays a tag (an alert flag, in both views).
+function ledgerRowHTML(it, cat, showCat){
+  const key = ledgerKey(it), on = !!state.checked[key], op = !!state.open[it.id];
+  const trail = showCat ? CAT_NAME[cat.id] : it.zone;
+  return '<div class="row'+(on?" done":"")+'"><div class="rowtop">'+
+    '<button class="cb'+(on?" on":"")+'" data-act="check" data-id="'+key+'" aria-label="'+(on?"Mark incomplete":"Mark complete")+'">'+(on?"✓":"")+'</button>'+
+    '<button class="rowlabel" data-act="open" data-id="'+it.id+'">'+
+    (it.miss ? '<span class="tag" style="--tagc:var(--missable)">MISSABLE</span>' : "")+
+    '<span class="rowtitle">'+esc(it.name)+'</span>'+
+    '<span class="zone">'+esc(trail)+'</span>'+
+    '<span class="plus">'+(op?"−":"+")+'</span></button></div>'+
+    (op ? '<div class="detail">'+esc(it.detail)+'</div>' : "")+'</div>';
+}
+// A Completionist section (a category OR a zone). rows = [{it, cat}]; done/total count the
+// full set, the Remaining filter only hides checked rows. foldId is namespaced ("z:…" for
+// zones) so zone folds never collide with category folds. `kicker`/`note` are optional trim.
+function ledgerSectionHTML(foldId, title, rows, showCat, kicker, note){
+  const total = rows.length;
+  const done = rows.filter(x => state.checked[ledgerKey(x.it)]).length;
+  const folded = !!state.ui.collapsed[foldId];
+  let h = '<section><button class="sechead" data-act="fold" data-id="'+foldId+'">'+
+    '<div>'+(kicker ? '<div class="kicker">'+esc(kicker)+'</div>' : "")+
+    '<h2><span class="chev">'+(folded?"▸":"▾")+'</span>'+esc(title)+'</h2></div>'+
+    '<div class="secright"><span class="seccount">'+done+'/'+total+'</span></div></button>';
+  if(folded) return h+'</section>';
+  if(note) h += '<div class="notehint">'+esc(note)+'</div>';
+  const vis = state.filterRemaining ? rows.filter(x => !state.checked[ledgerKey(x.it)]) : rows;
+  if(!vis.length) return h + '<div class="notehint">All '+total+' done.</div></section>';
+  for(const {it, cat} of vis) h += ledgerRowHTML(it, cat, showCat);
+  return h+'</section>';
+}
 function renderCompletionist(){
+  const byZone = state.ui.groupBy === "zone";
+  // Grouping = a mode switch (segmented control), deliberately a different shape from the
+  // FILTER toggle beside it so the two don't read as sibling filters. Composes with Remaining.
   let h = '<div class="controls">'+
+    '<div class="seg">'+
+      '<button class="'+(byZone?"":"on")+'" data-act="groupby" data-group="category">By category</button>'+
+      '<button class="'+(byZone?"on":"")+'" data-act="groupby" data-group="zone">By zone</button>'+
+    '</div>'+
     '<button class="chip'+(state.filterRemaining?" on":"")+'" data-act="filterrem">'+(state.filterRemaining?"◉":"○")+' FILTER: remaining only</button>'+
     '</div>';
   if(!CATS.length){
     return h + '<div class="notehint">Ledger data unavailable — ledger-data.js did not load.</div>';
   }
-  for(const cat of CATS){
-    const items = state.filterRemaining ? cat.items.filter(it => !state.checked[ledgerKey(it)]) : cat.items;
-    const done = cat.items.filter(it => state.checked[ledgerKey(it)]).length;
-    const folded = !!state.ui.collapsed[cat.id];
-    h += '<section><button class="sechead" data-act="fold" data-id="'+cat.id+'">'+
-      '<div><div class="kicker">'+esc(cat.trophy)+'</div><h2><span class="chev">'+(folded?"▸":"▾")+'</span>'+esc(cat.title)+'</h2></div>'+
-      '<div class="secright"><span class="seccount">'+done+'/'+cat.count+'</span></div></button>';
-    if(folded){ h += '</section>'; continue; }
-    if(!items.length){ h += '<div class="notehint">All '+cat.count+' done.</div></section>'; continue; }
-    for(const it of items){
-      const key = ledgerKey(it), on = !!state.checked[key], op = !!state.open[it.id];
-      h += '<div class="row'+(on?" done":"")+'"><div class="rowtop">'+
-        '<button class="cb'+(on?" on":"")+'" data-act="check" data-id="'+key+'" aria-label="'+(on?"Mark incomplete":"Mark complete")+'">'+(on?"✓":"")+'</button>'+
-        '<button class="rowlabel" data-act="open" data-id="'+it.id+'">'+
-        (it.miss ? '<span class="tag" style="--tagc:var(--missable)">MISSABLE</span>' : "")+
-        '<span class="rowtitle">'+esc(it.name)+'</span>'+
-        '<span class="zone">'+esc(it.zone)+'</span>'+
-        '<span class="plus">'+(op?"−":"+")+'</span></button></div>'+
-        (op ? '<div class="detail">'+esc(it.detail)+'</div>' : "")+'</div>';
+  if(byZone){
+    // Fixed canonical order (Roadmap: Zone lens req 3). NOTE — this view does NOT adopt the
+    // Campaign tab's Tuck mechanic: req 3 pins zone order, which conflicts with tuck's
+    // sink-completed-to-bottom, so canonical order wins (and the by-category view never
+    // tucked either). A finished zone stays in its slot; fold it by hand if you like.
+    for(const z of ZONES){
+      const rows = LEDGER_ITEMS.filter(x => (x.it.zones || []).includes(z));
+      if(!rows.length) continue;   // canonical zone with no ledger content — skip silently
+      h += ledgerSectionHTML("z:"+z, z, rows, true);
     }
-    h += '</section>';
+    // Trailing catch-all: region-less rows (only cap1). Named "Unverified" per spec — nothing
+    // is guessed into a region. Rendered only if such rows exist.
+    const unzoned = LEDGER_ITEMS.filter(x => !(x.it.zones && x.it.zones.length));
+    if(unzoned.length){
+      h += ledgerSectionHTML("z:__unverified", "Unverified", unzoned, true, "",
+        "No fixed region — e.g. the starting cap you carry from the opening.");
+    }
+  } else {
+    for(const cat of CATS){
+      h += ledgerSectionHTML(cat.id, cat.title, cat.items.map(it => ({ it, cat })), false, cat.trophy);
+    }
   }
   h += '<div class="excl">Not tracked here: kill counts, one-off trophies, and story progress — your PS5 trophy list counts those. The Campaign\'s final phase has the pre-endgame audit.</div>';
   return h;
@@ -791,7 +860,7 @@ function phaseHTML(sec, inZone){
     const on = isDone(it.id), op = !!state.open[it.id];
     h += '<div class="row'+(on?" done":"")+'"><div class="rowtop">'+
       '<button class="cb'+(on?" on":"")+'" data-act="check" data-id="'+it.id+'" aria-label="'+(on?"Mark incomplete":"Mark complete")+'">'+(on?"✓":"")+'</button>'+
-      '<button class="rowlabel" data-act="open" data-id="'+it.id+'">'+
+      '<button class="rowlabel taglead" data-act="open" data-id="'+it.id+'">'+
       '<span class="tag" style="--tagc:'+TAG_COLOR[it.tag]+'">'+TAG_LABEL[it.tag]+'</span>'+
       '<span class="rowtitle">'+rowTitleHTML(it)+'</span><span class="plus">'+(op?"−":"+")+'</span></button></div>'+
       (op ? '<div class="detail">'+detailHTML(it)+'</div>' : "")+'</div>';
@@ -940,6 +1009,7 @@ document.getElementById("app").addEventListener("click", e => {
   else if(act==="copynotes") copyNotes();
   else if(act==="filter"){ state.filterMiss = !state.filterMiss; render(); }
   else if(act==="filterrem"){ state.filterRemaining = !state.filterRemaining; render(); }
+  else if(act==="groupby"){ state.ui.groupBy = b.dataset.group === "zone" ? "zone" : "category"; saveUI(); render(); }
   else if(act==="tab"){ state.ui.tab = b.dataset.tab === "completionist" ? "completionist" : "campaign"; saveUI(); render(); }
   else if(act==="dismissnotice"){ state.ui.noticeSeen = true; saveUI(); render(); }
   else if(act==="fold"){ const s = b.dataset.id;

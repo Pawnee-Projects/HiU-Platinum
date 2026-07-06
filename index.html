@@ -152,6 +152,11 @@
     flex:1;line-height:1.5;
   }
   .row.done .rowtitle{text-decoration:line-through}
+  /* speech-bubble marker on conversation-target rows (talk:true) + the Standing Orders legend.
+     Pinned to the UI accent (--chrome-active) via currentColor so it pops off the --text title
+     and tracks the active theme; sized to the row text, sits just before the NPC name. Dims with
+     a done row (inherits the row's .45 opacity). */
+  .talkico{width:1em;height:1em;display:inline-block;vertical-align:-0.13em;margin-right:5px;color:var(--chrome-active)}
   /* --tagc is set inline per row (the accent). Dark = outline (colour text + border, no fill);
      light (Parchment) flips to a filled chip with knockout text — see the light overrides below. */
   .tag{
@@ -167,6 +172,11 @@
     font-size:14px;color:var(--detail);margin-left:10px;padding:0 0 14px 20px;
     border-left:2px solid var(--line);line-height:1.65;
   }
+  /* inline emphasis inside a detail — tints the phrase to the conversation-glyph green
+     (--chrome-active, echoing the bubble); colour only, no weight change (kept subtle). */
+  .detail .cue{color:var(--chrome-active)}
+  /* the legend's parenthetical bubble hugs its ( ) — drop the trailing margin in that one spot */
+  .detail .talkico{margin-right:0}
   .notehint{font-size:12.5px;color:var(--muted);margin-bottom:10px;line-height:1.6}
   /* mechnote = how the app behaves (fine print), visually quieter than the .notehint purpose copy;
      italic sets the "how it works" asides apart from the instructional copy */
@@ -313,7 +323,7 @@ const SECTIONS = [
           "Some enemies spawn a colored abstract blob (Haze). You need 40 Haze kills at each of tier I, II and III. If you burst the carrier down before the Haze spawns, or kill the pale enemy without popping the blob, the kill does NOT count — a PowerPyx reader finished world cleanup stuck at 39/40 tier III. Let the blob appear, then destroy it. Check the PS5 trophy progress trackers periodically.",
       },
       {
-        id: "s4", tag: "RULE", title: "Talk to every named NPC the moment you see them",
+        id: "s4", tag: "RULE", talkLegend: true, detailRich: true, title: "Talk to every named NPC the moment you see them",
         detail:
           "Lend an Ear needs a conversation with all 21 dialogue NPCs (the ones that open a full dialogue screen). Several die or relocate as the story moves. Habit: exhaust dialogue immediately on first sight. The checklist below flags every risky one at the right moment.",
       },
@@ -337,22 +347,22 @@ const SECTIONS = [
     deadline:
       "POINT OF NO RETURN: placing the first Keystone at Lake Cynon ends Act 1. Do not travel to Lake Cynon for the story until every box below is checked.",
     items: [
-      { id: "a1", tag: "STORY", title: "Senedra Forest — Ernest Caddel", detail: "In the basement of the first house. Story-required, can't be missed — listed so the NPC counter stays in order." },
-      { id: "a2", tag: "STORY", title: "Senedra Forest — wounded soldier by the APC", detail: "Just after Caddel's house. Story-required." },
-      { id: "a3", tag: "MISS", title: "Jova — Captain Vaas", detail: "On the platform at the entrance to the town of Jova. He dies when Act 2 begins — if you never spoke to him, Lend an Ear is gone. Talk to him now." },
-      { id: "a4", tag: "MISS", title: "Jova — Abbot Jaffer", detail: "On the road between Captain Vaas and the blacksmith shop. He later relocates; safest to talk here." },
-      { id: "a5", tag: "MISS", title: "Jova — Rebecca", detail: "On the roof of the house with the treehouse in the yard, near Captain Vaas. She later relocates; talk here." },
+      { id: "a1", tag: "STORY", talk:true, title: "Senedra Forest — Ernest Caddel", detail: "In the basement of the first house. Story-required, can't be missed — listed so the NPC counter stays in order." },
+      { id: "a2", tag: "STORY", talk:true, title: "Senedra Forest — wounded soldier by the APC", detail: "Just after Caddel's house. Story-required." },
+      { id: "a3", tag: "MISS", talk:true, title: "Jova — Captain Vaas", detail: "On the platform at the entrance to the town of Jova. You lose access to him once Act 2 begins — if you never spoke to him, Lend an Ear is gone. Talk to him now." },
+      { id: "a4", tag: "MISS", talk:true, title: "Jova — Abbot Jaffer", detail: "On the road between Captain Vaas and the blacksmith shop. He later relocates; safest to talk here." },
+      { id: "a5", tag: "MISS", talk:true, title: "Jova — Rebecca", detail: "On the roof of the house with the treehouse in the yard, near Captain Vaas. She later relocates; talk here." },
       { id: "a6", tag: "MISS", title: "Good Deed 3 — Land of Milk and Honey", detail: "Speak with the woman in the underground level of the house on Jova's west side. Take the empty baby bottles to Ernest Caddel in Senedra Forest, bring the milk back to her." },
       { id: "a7", tag: "MISS", title: "Good Deed 4 — Love Thy Neighbour  ★ feeds Ever After", detail: "Speak to the woman in the house near Abbot Jaffer. Grab the Bloodied Plushie from the tree with the hanging bodies east of Jova, trade it to the man in the house above the milk-quest woman, then trade the picture you get back to the first woman. Must be done in Act 1 — one of the trophies for gathering everyone later depends on it." },
       { id: "a8", tag: "MISS", title: "Good Deed 5 — Asunder", detail: "Find the 'Worried Wife' letter behind the house with the drunk soldier in Jova; deliver it to the man by the excavator at the area entrance." },
       { id: "a9", tag: "MISS", title: "Good Deed 6 — Performance of a Lifetime (start)", detail: "Talk to the man playing violin on the truck near Captain Vaas. He needs TWO sheet musics: 'Our Pride' here in Jova (south, hostile end — on a table by the shops / the piano behind the graffiti house) and 'Losilus Dreaming' in Vyssa Hills. Grab 'Our Pride' now; you'll close this out below." },
-      { id: "a10", tag: "STORY", title: "Jova — Victor Gaz", detail: "At the blacksmith shop after the tunnel rescue. Story-required." },
+      { id: "a10", tag: "STORY", talk:true, title: "Jova — Victor Gaz", detail: "At the blacksmith shop after the tunnel rescue. Story-required." },
       { id: "a11", tag: "WARN", title: "Vyssa Hills — do NOT give Atticus the ON Vehicle Keys", detail: "Handing over the keys is Good Deed 10 and it empties the camp — done too early it permanently voids Good Deed 11. You'll find the keys after closing this area's Timeloop. Keep them in your pocket until the Act 2 step tells you otherwise." },
       { id: "a12", tag: "MISS", title: "Good Deed 11 — On Death's Door", detail: "Find the Atenolol pill bottle in Vyssa Hills and give it to the woman at the camp in the north of the area. Must be done before Atticus gets the keys." },
-      { id: "a13", tag: "STORY", title: "Vyssa Hills — Vitalis", detail: "Northeast of the area. Story-required." },
-      { id: "a14", tag: "STORY", title: "Vyssa Hills — Tania Alver", detail: "West of the area. Story-required." },
-      { id: "a15", tag: "MISS", title: "Vyssa Hills — Atticus (talk only, no keys)", detail: "On the paths between Tania's location and the hideout. Converse for the NPC counter. Keys stay put." },
-      { id: "a16", tag: "MISS", title: "Vyssa Hills — Gildas Brom", detail: "Inside the hideout, available after the story beat there. He's also who you'll return Good Deed rewards to all game — get him logged now." },
+      { id: "a13", tag: "STORY", talk:true, title: "Vyssa Hills — Vitalis", detail: "Northeast of the area. Story-required." },
+      { id: "a14", tag: "STORY", talk:true, title: "Vyssa Hills — Tania Alver", detail: "West of the area. Story-required." },
+      { id: "a15", tag: "MISS", talk:true, title: "Vyssa Hills — Atticus (talk only, no keys)", detail: "On the paths between Tania's location and the hideout. Converse for the NPC counter. Keys stay put." },
+      { id: "a16", tag: "MISS", talk:true, title: "Vyssa Hills — Gildas Brom", detail: "Inside the hideout, available after the story beat there. He's also who you'll return Good Deed rewards to all game — get him logged now." },
       { id: "a17", tag: "MISS", title: "Good Deed 6 — Performance of a Lifetime (finish)", detail: "The second sheet music, 'Losilus Dreaming' (a Sabinian ballad), is in Vyssa Hills — northeast of the APC, by the suitcase SE of the statue tree. Carry BOTH pieces back to the violinist in Jova to complete the deed before Act 1 ends." },
     ],
   },
@@ -366,18 +376,18 @@ const SECTIONS = [
     items: [
       { id: "b1", tag: "MISS", title: "FIRST: Good Deed 12 — Man's Best Friend  ★ feeds Ever After", detail: "Do this before anything else in Act 2, and strictly before touching anything related to the abbey (which relocates Jaffer and Rebecca). In Jova, release the dog the soldier was sitting beside, then take the collar to the man at the camp in Vyssa Hills. Done late, the dog never reaches the lake and Ever After is lost. (One reader reports the trophy still popped giving the collar after the couple moved near the mine — but the guide author's timing is the only verified-safe route.)" },
       { id: "b2", tag: "MISS", title: "Good Deed 10 — Heart of Gold (NOW give Atticus the keys)", detail: "With Good Deeds 11 and 12 complete, hand Atticus the ON Vehicle Keys. Order matters; this is the moment." },
-      { id: "b3", tag: "MISS", title: "Talju — Boro Juven, BEFORE entering town", detail: "In the garage near the APC at the area start. If ignored, he dies without ever being logged (he's one of the flare recipients below). Talk first, then proceed." },
+      { id: "b3", tag: "MISS", talk:true, title: "Talju — Boro Juven, BEFORE entering town", detail: "In the garage near the APC at the area start. If ignored, your window to log him closes (he's one of the flare recipients below). Talk first, then proceed." },
       { id: "b4", tag: "MISS", title: "Talju — Good Deeds 13–16: A Light in the Dark (all four flares)", detail: "Grab the flares in front of the Town Hall and hand one to each of the four people around town. Deadline: before killing the Hollow in the Town Hall parking lot (it makes all survivors leave). To be extra safe, finish all four before giving the radio to Lukhan. These count as four separate Good Deeds — missing one flare costs both Man of the People and a Relic." },
-      { id: "b5", tag: "STORY", title: "Talju — Caspian Fran", detail: "In the town hall. Story-required." },
+      { id: "b5", tag: "STORY", talk:true, title: "Talju — Caspian Fran", detail: "In the town hall. Story-required." },
       { id: "b6", tag: "MISS", title: "Good Deed 2 — Forlorn Fate (start)", detail: "In the Vanderlyn Trust building in Talju, pick up the Flame symbol and the Senedra Mountain map." },
-      { id: "b7", tag: "MISS", title: "Talju — Lukhan Fran (talk BEFORE the radio hand-in)", detail: "At the back of the school. Pre-patch-1.5 this was the infamous Lend an Ear killer — handing the radio without talking first voided the trophy. It's fixed now, but the safe order is still: converse, then quest item." },
+      { id: "b7", tag: "MISS", talk:true, title: "Talju — Lukhan Fran (BEFORE turning in the radio)", detail: "At the back of the school. Pre-patch-1.5 this was the infamous Lend an Ear killer — handing the radio without talking first voided the trophy. It's fixed now, but the safe order is still: converse, then quest item." },
       { id: "b8", tag: "MISS", title: "Good Deed 7 — Waylaid (part 1 of 3)", detail: "Open the pharmacy in Talju and take the Metformin pill bottle. Two more pieces below." },
       { id: "b9", tag: "MISS", title: "Senedra Forest — Good Deed 2 (finish)", detail: "Open the door in the trench area with the Flame symbol and trade the Senedra Mountain map to the woman inside." },
-      { id: "b10", tag: "MISS", title: "Marastan — Talis", detail: "On a balcony in the upper town. Easy to walk past; he's a Lend an Ear requirement." },
-      { id: "b11", tag: "MISS", title: "Marastan — Father Bramante", detail: "In the fenced area in front of the statue, near the radio tower." },
-      { id: "b12", tag: "STORY", title: "Lethe, National Library — Iblis", detail: "Upper floor. Story-required. (The Library and the Ministry are two separate map destinations side by side.)" },
-      { id: "b13", tag: "WARN", title: "Lethe, Ministry — do not leave until Good Deed 22 is done", detail: "Leaving the Ministry mid-visit kills the ON Soldier and instantly fails the deed. (One player reports leaving was safe because they hadn't talked to her yet — treat that as unverified and just finish before exiting.)" },
-      { id: "b14", tag: "MISS", title: "Ministry — Maeve Tristana, BEFORE killing the ranged Hollow", detail: "The distressed woman locked in a room (left at the king's portrait; the enemy is to the right). Speak to her before defeating the ranged Hollow or she may never register in the People menu. If you botched it: players report she can appear later in the parking garage — check there before writing her off." },
+      { id: "b10", tag: "MISS", talk:true, title: "Marastan — Talis", detail: "On a balcony in the upper town. Easy to walk past; he's a Lend an Ear requirement." },
+      { id: "b11", tag: "MISS", talk:true, title: "Marastan — Father Bramante", detail: "In the fenced area in front of the statue, near the radio tower." },
+      { id: "b12", tag: "STORY", talk:true, title: "Lethe, National Library — Iblis", detail: "Upper floor. Story-required. (The Library and the Ministry are two separate map destinations side by side.)" },
+      { id: "b13", tag: "WARN", title: "Lethe, Ministry — do not leave until Good Deed 22 is done", detail: "Leaving the Ministry mid-visit costs you the ON Soldier and instantly fails the deed. (One player reports leaving was safe because they hadn't talked to her yet — treat that as unverified and just finish before exiting.)" },
+      { id: "b14", tag: "MISS", talk:true, title: "Ministry — Maeve Tristana, BEFORE killing the ranged Hollow", detail: "The distressed woman locked in a room (left at the king's portrait; the enemy is to the right). Speak to her before defeating the ranged Hollow or she may never register in the People menu. If you botched it: players report she can appear later in the parking garage — check there before writing her off." },
       { id: "b15", tag: "MISS", title: "Ministry — Good Deed 7 (part 2 of 3)", detail: "Find the Satellite Radio in this location." },
       { id: "b16", tag: "MISS", title: "Ministry — Good Deed 22: Incognito", detail: "Use the keycard from the parking garage on the top-floor door to get the Woman's Clothing, then take it to the ON Soldier on the top floor. Only then is it safe to leave the Ministry." },
       { id: "b17", tag: "MISS", title: "Acasa Marshes — Good Deed 7: Waylaid (finish)", detail: "Southwest of town at the stone pillar, two ON Soldiers wait in a room underneath. Trade them the Metformin and the Satellite Radio. This is the final missable Good Deed — after this, only the Museum NPCs remain time-sensitive." },
@@ -391,11 +401,11 @@ const SECTIONS = [
     deadline:
       "Last missable zone in the game. One switch here can permanently kill an NPC you need.",
     items: [
-      { id: "c1", tag: "WARN", title: "B1 switch: clear the room BEFORE flipping PURPLE → YELLOW", detail: "At the B1 switch with PURPLE and YELLOW options: kill every Hollow in the large room opposite the Timeloop first. Flip to YELLOW early and Dr. Ballam Lamech — trapped in the observation room — is killed when the doors open." },
-      { id: "c2", tag: "STORY", title: "B3 — Dr. Marga Hamil", detail: "In the laboratory. Story-required." },
-      { id: "c3", tag: "STORY", title: "B1 — Seo Kagin", detail: "In the training area. Story-required." },
-      { id: "c4", tag: "MISS", title: "B1 — Dr. Ballam Lamech", detail: "In the large room opposite the Timeloop, once the enemies are dead and the doors are open. He only survives if you handled the switch correctly." },
-      { id: "c5", tag: "MISS", title: "B4 — Dr. Mabden, via the intercom", detail: "In the Timeloop room. TALK through the intercom first — starting the fight directly skips the conversation and he's lost (a reader learned this the hard way). This is typically the NPC who pops Lend an Ear." },
+      { id: "c1", tag: "WARN", title: "B1 switch: clear the room BEFORE flipping PURPLE → YELLOW", detail: "At the B1 switch with PURPLE and YELLOW options: kill every Hollow in the large room opposite the Timeloop first. Flip to YELLOW early and you lose Dr. Ballam Lamech when the doors open." },
+      { id: "c2", tag: "STORY", talk:true, title: "B3 — Dr. Marga Hamil", detail: "In the laboratory. Story-required." },
+      { id: "c3", tag: "STORY", talk:true, title: "B1 — Seo Kagin", detail: "In the training area. Story-required." },
+      { id: "c4", tag: "MISS", talk:true, title: "B1 — Dr. Ballam Lamech", detail: "In the large room opposite the Timeloop, once the enemies are dead and the doors are open. He's only here if you handled the switch correctly." },
+      { id: "c5", tag: "MISS", talk:true, title: "B4 — Dr. Mabden, via the intercom", detail: "In the Timeloop room. TALK through the intercom first — starting the fight directly skips the conversation and he's lost (a reader learned this the hard way). This is typically the NPC who pops Lend an Ear." },
     ],
   },
   {
@@ -418,13 +428,18 @@ const SECTIONS = [
 // BUILD split into number + codename (Roadmap 8, item 6). Display shape: "9.0 (FRONTIER)".
 // Used verbatim in the header kicker, the export payload's `build` field, and mirrored in
 // the README build log + the CLAUDE.md pin.
-const BUILD_N = "9.4";
-const BUILD_NAME = "KATOCHE";
+const BUILD_N = "9.5";
+const BUILD_NAME = "PARLEY";
 const BUILD = BUILD_N + " (" + BUILD_NAME + ")";
 // Inline vector gear — monochrome, inherits currentColor so it tracks --chrome / --chrome-active
 // like every other control (no OS colour emoji). Rounded "settings" cog. aria-hidden: the button
 // carries the label; pointer-events:none (in CSS) keeps taps landing on the button, not the path.
 const GEAR = '<svg class="gico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>';
+// Inline vector speech-bubble — marks conversation-target rows (talk:true) and the Standing
+// Orders legend (talkLegend). Same pattern as GEAR: monochrome, inherits currentColor (the
+// .talkico class pins it to the UI accent so it pops off the title); aria-hidden (decorative —
+// the title carries the meaning). A clean geometric rounded-rect chat bubble with a tail.
+const TALK = '<svg class="talkico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 4H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3v4l5-4h8a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg>';
 const KEY = "hiu-plat-v1";
 const ALL_ITEMS = SECTIONS.flatMap(s => s.items);
 const MISS_IDS = ALL_ITEMS.filter(i => i.tag === "MISS" || i.tag === "WARN").map(i => i.id);
@@ -731,6 +746,31 @@ function renderCompletionist(){
   h += '<div class="excl">Not tracked here: kill counts, one-off trophies, and story progress — your PS5 trophy list counts those. The Campaign\'s final phase has the pre-endgame audit.</div>';
   return h;
 }
+// Conversation glyph placement: titles read "Location — Name", so drop the speech-bubble right
+// before the NPC name (after the first " — "). The Standing-Orders legend has no such prefix, so
+// there the glyph leads. esc() leaves the em-dash + spaces intact, so we split the escaped string
+// (" — " is 3 chars: space, em-dash, space).
+function rowTitleHTML(it){
+  const t = esc(it.title);
+  if(!(it.talk || it.talkLegend)) return t;
+  // Legend (Standing Orders): glyph after the leading verb "Talk" — i.e. after the first word.
+  // Conversation rows: after the "Location — " prefix, right before the NPC name.
+  if(it.talkLegend){
+    const sp = t.indexOf(" ");
+    return sp === -1 ? TALK + t : t.slice(0, sp + 1) + TALK + t.slice(sp + 1);
+  }
+  const at = t.indexOf(" — ");
+  return at === -1 ? TALK + t : t.slice(0, at + 3) + TALK + t.slice(at + 3);
+}
+// Rich detail for the Standing-Orders legend (detailRich): inject the conversation glyph as a
+// parenthetical right after "flags", and lift the key habit to the theme's bright text for
+// emphasis. Injected post-escape (detail is trusted author copy); every other row stays plain.
+function detailHTML(it){
+  if(!it.detailRich) return esc(it.detail);
+  return esc(it.detail)
+    .replace("flags", "flags (" + TALK + ")")
+    .replace("Habit: exhaust dialogue immediately on first sight", '<span class="cue">Habit: exhaust dialogue immediately on first sight</span>');
+}
 // One Campaign phase block. inZone = rendered inside the COMPLETED zone (tucked, folded,
 // un-foldable for reference — no deadline/banner shown there).
 function phaseHTML(sec, inZone){
@@ -753,8 +793,8 @@ function phaseHTML(sec, inZone){
       '<button class="cb'+(on?" on":"")+'" data-act="check" data-id="'+it.id+'" aria-label="'+(on?"Mark incomplete":"Mark complete")+'">'+(on?"✓":"")+'</button>'+
       '<button class="rowlabel" data-act="open" data-id="'+it.id+'">'+
       '<span class="tag" style="--tagc:'+TAG_COLOR[it.tag]+'">'+TAG_LABEL[it.tag]+'</span>'+
-      '<span class="rowtitle">'+esc(it.title)+'</span><span class="plus">'+(op?"−":"+")+'</span></button></div>'+
-      (op ? '<div class="detail">'+esc(it.detail)+'</div>' : "")+'</div>';
+      '<span class="rowtitle">'+rowTitleHTML(it)+'</span><span class="plus">'+(op?"−":"+")+'</span></button></div>'+
+      (op ? '<div class="detail">'+detailHTML(it)+'</div>' : "")+'</div>';
   }
   // Secured: the done banner (badge + dynamic sentiment + Tuck) sits at the BOTTOM, where you
   // land after checking the last box; the ↓ points down to the COMPLETED zone it folds into.

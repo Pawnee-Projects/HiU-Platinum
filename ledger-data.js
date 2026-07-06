@@ -16,9 +16,10 @@
 // guessing, resolves sub-locations to their canonical parent: the Vaults (Prairie/
 // Mire/Mere/Beck/Knoll) → "Vaults of Forbidden Knowledge"; Pathem Abbey → "Acasa
 // Marshes"; forge-interior content the display loosely calls "Lake Cynon" → "Lymbic
-// Forge" (rl2/rl12/tl7, where detail names the forge explicitly). cap1 (starting cap,
-// carried from the opening — no region) has zones:[] and falls to the "Unverified"
-// group. F4 caps 7–10 were completed (see below), so no genuine zone-unknowns remain.
+// Forge" (rl2/rl12/tl7, where detail names the forge explicitly). cap1 (the "Worn" cap,
+// carried from the opening — no region; display zone "None (cap Rémi starts with)") has
+// zones:[] and falls to the trailing "No Zone" group (9.7 MILLINER, was "Unverified"). F4 caps
+// 7–10 were completed (see below), so no genuine zone-unknowns remain.
 // ————————————————————————————————————————————————————————————————
 
 const LEDGER = [
@@ -130,16 +131,16 @@ const LEDGER = [
 ]},
 
 { id:"caps", title:"Baseball Caps", count:10, trophy:"Passion for Fashion", items:[
- {id:"cap1", name:"Starting cap", zone:"—", zones:[], miss:false, campaignId:null, detail:"In your inventory from the beginning. Still needs to be worn once (no-hat toggle off)."},
- {id:"cap2", name:"Cap – Samo's chest", zone:"Marastan", zones:["Marastan"], miss:false, campaignId:null, detail:"Mystery #21: Lost Keys — chest in the back of Samo's General Store."},
- {id:"cap3", name:"Cap – Library car", zone:"Lethe – Library", zones:["Lethe – Library"], miss:false, campaignId:null, detail:"Mystery #33: Suspicious Activity — blue car trunk outside the Library."},
- {id:"cap4", name:"Cap – Sabinian", zone:"Acasa Marshes", zones:["Acasa Marshes"], miss:false, campaignId:null, detail:"Mystery #8: The Captain's Office — Captain Vaas' office in Jova (the caved-in-roof house; ramp up, ladder to the attic, drop to the balcony). Trade both mead bottles to the drunk soldier for Key – Jova Office; cap is on the hanger inside, with the Prison Manifest research item and the Vaas' Plan recording."},
- {id:"cap5", name:"Cap – Gilded", zone:"Eye of God", zones:["Eye of God"], miss:false, campaignId:null, detail:"Desk south of the final story Timeloop's location — grab during the ending area or post-story."},
- {id:"cap6", name:"Cap – Vyssa cave", zone:"Vyssa Hills", zones:["Vyssa Hills"], miss:false, campaignId:null, detail:"During the Keystone of Ecstasy return: cave NW of the Moon door, drop at the broken platform, tunnel right, ladder up, left then right to the wooden-platform ledge."},
- {id:"cap7", name:"Cap – Palomist", zone:"Talju", zones:["Talju"], miss:false, campaignId:null, detail:"In a chest inside the barn in the NW corner of town (the same barn as the Talju Timeloop); climb the ladder around the back to reach it."},
- {id:"cap8", name:"Cap – Quebec", zone:"Jeljin", zones:["Jeljin"], miss:false, campaignId:null, detail:"On the crane scaffolding during Good Deed #24: Separated — sitting directly below the ranged enemy you kill up top. Grab it while working the crane platform puzzle."},
- {id:"cap9", name:"Cap – Rage", zone:"Lethe – Ministry", zones:["Lethe – Ministry"], miss:false, campaignId:null, detail:"Just inside the Ministry of Cultural Primacy entrance: drop down and pick it up from underneath the stairs to the left."},
- {id:"cap10", name:"Cap – Veteran", zone:"Lake Cynon", zones:["Lake Cynon"], miss:false, campaignId:null, detail:"On a ledge reached by climbing the cliff to the left of the flower-filled area below the APC."},
+ {id:"cap1", name:"Worn", zone:"None (cap Rémi starts with)", zones:[], miss:false, campaignId:null, detail:"In your inventory from the beginning. Still needs to be worn once (no-hat toggle off)."},
+ {id:"cap2", name:"Terror", zone:"Marastan", zones:["Marastan"], miss:false, campaignId:null, detail:"Mystery #21: Lost Keys — chest in the back of Samo's General Store."},
+ {id:"cap3", name:"Ecstasy", zone:"Lethe – Library", zones:["Lethe – Library"], miss:false, campaignId:null, detail:"Mystery #33: Suspicious Activity — blue car trunk outside the Library."},
+ {id:"cap4", name:"Sabinian", zone:"Acasa Marshes", zones:["Acasa Marshes"], miss:false, campaignId:null, detail:"Mystery #8: The Captain's Office — Captain Vaas' office in Jova (the caved-in-roof house; ramp up, ladder to the attic, drop to the balcony). Trade both mead bottles to the drunk soldier for Key – Jova Office; cap is on the hanger inside, with the Prison Manifest research item and the Vaas' Plan recording."},
+ {id:"cap5", name:"Gilded", zone:"Eye of God", zones:["Eye of God"], miss:false, campaignId:null, detail:"Desk south of the final story Timeloop's location — grab during the ending area or post-story."},
+ {id:"cap6", name:"Grief", zone:"Vyssa Hills", zones:["Vyssa Hills"], miss:false, campaignId:null, detail:"During the Keystone of Ecstasy return: cave NW of the Moon door, drop at the broken platform, tunnel right, ladder up, left then right to the wooden-platform ledge."},
+ {id:"cap7", name:"Palomist", zone:"Talju", zones:["Talju"], miss:false, campaignId:null, detail:"In a chest inside the barn in the NW corner of town (the same barn as the Talju Timeloop); climb the ladder around the back to reach it."},
+ {id:"cap8", name:"Quebec", zone:"Jeljin", zones:["Jeljin"], miss:false, campaignId:null, detail:"On the crane scaffolding during Good Deed #24: Separated — sitting directly below the ranged enemy you kill up top. Grab it while working the crane platform puzzle."},
+ {id:"cap9", name:"Rage", zone:"Lethe – Ministry", zones:["Lethe – Ministry"], miss:false, campaignId:null, detail:"Just inside the Ministry of Cultural Primacy entrance: drop down and pick it up from underneath the stairs to the left."},
+ {id:"cap10", name:"Veteran", zone:"Lake Cynon", zones:["Lake Cynon"], miss:false, campaignId:null, detail:"On a ledge reached by climbing the cliff to the left of the flower-filled area below the APC."},
 ]},
 
 { id:"loops", title:"Timeloops", count:14, trophy:"End the Suffering → Legend of the Phol", items:[

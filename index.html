@@ -164,6 +164,15 @@
      and tracks the active theme; sized to the row text, sits just before the NPC name. Dims with
      a done row (inherits the row's .45 opacity). */
   .talkico{width:1em;height:1em;display:inline-block;vertical-align:-0.13em;margin-right:5px;color:var(--chrome-active)}
+  /* trophy marker on the two Ever-After deeds — trails the name; pinned to the UI accent like .talkico */
+  .trophyico{width:1em;height:1em;display:inline-block;vertical-align:-0.13em;margin-left:5px;color:var(--chrome-active)}
+  /* secondary context parenthetical (timing/step/trophy note): smaller like the location, but kept
+     WHITE (inherits --text) so it reads as "what/when", distinct from the green "where" label */
+  .ctxnote{font-size:11px}
+  /* on WARNING rows the timing note ("BEFORE …") takes the warning colour instead of white */
+  .ctxnote.warn{color:var(--warning)}
+  /* the trophy note "(… 🏆)" wraps as one unit so the trophy glyph + ")" never split off */
+  .tnote{white-space:nowrap}
   /* --tagc is set inline per row (the accent). Dark = outline (colour text + border, no fill);
      light (Parchment) flips to a filled chip with knockout text — see the light overrides below. */
   .tag{
@@ -229,6 +238,11 @@
   .tab.on{color:var(--bright);border-bottom-color:var(--chrome-active)}
   .tabsub{font-size:12px;color:var(--muted);margin:9px 0 18px;letter-spacing:.03em;line-height:1.5}
   .zone{font-size:11px;color:var(--dim);letter-spacing:.05em;white-space:nowrap}
+  /* campaign row trailing secondary context (Location / Good-Deed-N / Museum-floor), moved off the
+     front of the title and greened — same muted --dim as the Completionist trailing label. Sits
+     inline after the white Subject; a small left gap separates them, and nowrap keeps a multi-word
+     context (e.g. "Lethe, National Library") from splitting mid-phrase. */
+  .rctx{font-size:11px;color:var(--dim);letter-spacing:.05em;white-space:nowrap;margin-left:.5em}
   .excl{font-size:12px;color:var(--muted);border-top:1px solid var(--line2);padding-top:13px;margin-top:6px;line-height:1.65}
   /* first-visit notice: an app-status card, so its accent is bright neutral chrome, not a content hue */
   .notice{border:1px solid var(--chrome-active);background:color-mix(in srgb,var(--chrome-active) 6%,transparent);border-radius:4px;padding:14px 16px;margin-bottom:18px}
@@ -355,22 +369,22 @@ const SECTIONS = [
       "POINT OF NO RETURN: placing the first Keystone at Lake Cynon ends Act 1. Do not travel to Lake Cynon for the story until every box below is checked.",
     items: [
       { id: "a1", tag: "STORY", talk:true, title: "Senedra Forest — Ernest Caddel", detail: "In the basement of the first house. Story-required, can't be missed — listed so the NPC counter stays in order." },
-      { id: "a2", tag: "STORY", talk:true, title: "Senedra Forest — wounded soldier by the APC", detail: "Just after Caddel's house. Story-required." },
+      { id: "a2", tag: "STORY", talk:true, title: "Senedra Forest — wounded soldier (by the APC)", detail: "Just after Caddel's house. Story-required." },
       { id: "a3", tag: "MISS", talk:true, title: "Jova — Captain Vaas", detail: "On the platform at the entrance to the town of Jova. You lose access to him once Act 2 begins — if you never spoke to him, Lend an Ear is gone. Talk to him now." },
       { id: "a4", tag: "MISS", talk:true, title: "Jova — Abbot Jaffer", detail: "On the road between Captain Vaas and the blacksmith shop. He later relocates; safest to talk here." },
       { id: "a5", tag: "MISS", talk:true, title: "Jova — Rebecca", detail: "On the roof of the house with the treehouse in the yard, near Captain Vaas. She later relocates; talk here." },
-      { id: "a6", tag: "MISS", title: "Good Deed 3 — Land of Milk and Honey", detail: "Speak with the woman in the underground level of the house on Jova's west side. Take the empty baby bottles to Ernest Caddel in Senedra Forest, bring the milk back to her." },
-      { id: "a7", tag: "MISS", title: "Good Deed 4 — Love Thy Neighbour  ★ feeds Ever After", detail: "Speak to the woman in the house near Abbot Jaffer. Grab the Bloodied Plushie from the tree with the hanging bodies east of Jova, trade it to the man in the house above the milk-quest woman, then trade the picture you get back to the first woman. Must be done in Act 1 — one of the trophies for gathering everyone later depends on it." },
-      { id: "a8", tag: "MISS", title: "Good Deed 5 — Asunder", detail: "Find the 'Worried Wife' letter behind the house with the drunk soldier in Jova; deliver it to the man by the excavator at the area entrance." },
-      { id: "a9", tag: "MISS", title: "Good Deed 6 — Performance of a Lifetime (start)", detail: "Talk to the man playing violin on the truck near Captain Vaas. He needs TWO sheet musics: 'Our Pride' here in Jova (south, hostile end — on a table by the shops / the piano behind the graffiti house) and 'Losilus Dreaming' in Vyssa Hills. Grab 'Our Pride' now; you'll close this out below." },
+      { id: "a6", tag: "MISS", title: "Jova — Land of Milk and Honey", detail: "Speak with the woman in the underground level of the house on Jova's west side. Take the empty baby bottles to Ernest Caddel in Senedra Forest, bring the milk back to her." },
+      { id: "a7", tag: "MISS", trophy: "req. for Ever After", title: "Jova — Love Thy Neighbour", detail: "Speak to the woman in the house near Abbot Jaffer. Grab the Bloodied Plushie from the tree with the hanging bodies east of Jova, trade it to the man in the house above the milk-quest woman, then trade the picture you get back to the first woman. Must be done in Act 1 — one of the trophies for gathering everyone later depends on it." },
+      { id: "a8", tag: "MISS", title: "Jova — Asunder", detail: "Find the 'Worried Wife' letter behind the house with the drunk soldier in Jova; deliver it to the man by the excavator at the area entrance." },
+      { id: "a9", tag: "MISS", title: "Jova — Performance of a Lifetime (1 of 2)", detail: "Talk to the man playing violin on the truck near Captain Vaas. He needs TWO sheet musics: 'Our Pride' here in Jova (south, hostile end — on a table by the shops / the piano behind the graffiti house) and 'Losilus Dreaming' in Vyssa Hills. Grab 'Our Pride' now; you'll close this out below." },
       { id: "a10", tag: "STORY", talk:true, title: "Jova — Victor Gaz", detail: "At the blacksmith shop after the tunnel rescue. Story-required." },
-      { id: "a11", tag: "WARN", title: "Vyssa Hills — do NOT give Atticus the ON Vehicle Keys", detail: "Handing over the keys is Good Deed 10 and it empties the camp — done too early it permanently voids Good Deed 11. You'll find the keys after closing this area's Timeloop. Keep them in your pocket until the Act 2 step tells you otherwise." },
-      { id: "a12", tag: "MISS", title: "Good Deed 11 — On Death's Door", detail: "Find the Atenolol pill bottle in Vyssa Hills and give it to the woman at the camp in the north of the area. Must be done before Atticus gets the keys." },
+      { id: "a11", tag: "WARN", title: "Vyssa Hills — do NOT give Atticus the ON vehicle keys", detail: "Handing over the keys is Good Deed 10 and it empties the camp — done too early it permanently voids Good Deed 11. You'll find the keys after closing this area's Timeloop. Keep them in your pocket until the Act 2 step tells you otherwise." },
+      { id: "a12", tag: "MISS", title: "Vyssa Hills — On Death's Door", detail: "Find the Atenolol pill bottle in Vyssa Hills and give it to the woman at the camp in the north of the area. Must be done before Atticus gets the keys." },
       { id: "a13", tag: "STORY", talk:true, title: "Vyssa Hills — Vitalis", detail: "Northeast of the area. Story-required." },
       { id: "a14", tag: "STORY", talk:true, title: "Vyssa Hills — Tania Alver", detail: "West of the area. Story-required." },
-      { id: "a15", tag: "MISS", talk:true, title: "Vyssa Hills — Atticus (talk only, no keys)", detail: "On the paths between Tania's location and the hideout. Converse for the NPC counter. Keys stay put." },
+      { id: "a15", tag: "MISS", talk:true, title: "Vyssa Hills — Atticus (do not give keys yet)", detail: "On the paths between Tania's location and the hideout. Converse for the NPC counter. Keys stay put." },
       { id: "a16", tag: "MISS", talk:true, title: "Vyssa Hills — Gildas Brom", detail: "Inside the hideout, available after the story beat there. He's also who you'll return Good Deed rewards to all game — get him logged now." },
-      { id: "a17", tag: "MISS", title: "Good Deed 6 — Performance of a Lifetime (finish)", detail: "The second sheet music, 'Losilus Dreaming' (a Sabinian ballad), is in Vyssa Hills — northeast of the APC, by the suitcase SE of the statue tree. Carry BOTH pieces back to the violinist in Jova to complete the deed before Act 1 ends." },
+      { id: "a17", tag: "MISS", title: "Vyssa Hills — Performance of a Lifetime (2 of 2)", detail: "The second sheet music, 'Losilus Dreaming' (a Sabinian ballad), is in Vyssa Hills — northeast of the APC, by the suitcase SE of the statue tree. Carry BOTH pieces back to the violinist in Jova to complete the deed before Act 1 ends." },
     ],
   },
   {
@@ -381,23 +395,23 @@ const SECTIONS = [
     deadline:
       "POINT OF NO RETURN: collecting/placing the remaining Keystones. Simple safety rule from PowerPyx — stay out of the Plains of Mist and the Museum until every box below is checked.",
     items: [
-      { id: "b1", tag: "MISS", title: "FIRST: Good Deed 12 — Man's Best Friend  ★ feeds Ever After", detail: "Do this before anything else in Act 2, and strictly before touching anything related to the abbey (which relocates Jaffer and Rebecca). In Jova, release the dog the soldier was sitting beside, then take the collar to the man at the camp in Vyssa Hills. Done late, the dog never reaches the lake and Ever After is lost. (One reader reports the trophy still popped giving the collar after the couple moved near the mine — but the guide author's timing is the only verified-safe route.)" },
-      { id: "b2", tag: "MISS", title: "Good Deed 10 — Heart of Gold (NOW give Atticus the keys)", detail: "With Good Deeds 11 and 12 complete, hand Atticus the ON Vehicle Keys. Order matters; this is the moment." },
-      { id: "b3", tag: "MISS", talk:true, title: "Talju — Boro Juven, BEFORE entering town", detail: "In the garage near the APC at the area start. If ignored, your window to log him closes (he's one of the flare recipients below). Talk first, then proceed." },
-      { id: "b4", tag: "MISS", title: "Talju — Good Deeds 13–16: A Light in the Dark (all four flares)", detail: "Grab the flares in front of the Town Hall and hand one to each of the four people around town. Deadline: before killing the Hollow in the Town Hall parking lot (it makes all survivors leave). To be extra safe, finish all four before giving the radio to Lukhan. These count as four separate Good Deeds — missing one flare costs both Man of the People and a Relic." },
+      { id: "b1", tag: "MISS", trophy: "req. for Ever After", title: "FIRST: Jova — Man's Best Friend", detail: "Do this before anything else in Act 2, and strictly before touching anything related to the abbey (which relocates Jaffer and Rebecca). In Jova, release the dog the soldier was sitting beside, then take the collar to the man at the camp in Vyssa Hills. Done late, the dog never reaches the lake and Ever After is lost. (One reader reports the trophy still popped giving the collar after the couple moved near the mine — but the guide author's timing is the only verified-safe route.)" },
+      { id: "b2", tag: "MISS", title: "Vyssa Hills — Heart of Gold (NOW give Atticus the keys)", detail: "With Good Deeds 11 and 12 complete, hand Atticus the ON Vehicle Keys. Order matters; this is the moment." },
+      { id: "b3", tag: "MISS", talk:true, title: "Talju — Boro Juven (BEFORE entering town)", detail: "In the garage near the APC at the area start. If ignored, your window to log him closes (he's one of the flare recipients below). Talk first, then proceed." },
+      { id: "b4", tag: "MISS", title: "Talju — A Light in the Dark (all four flares)", detail: "Grab the flares in front of the Town Hall and hand one to each of the four people around town. Deadline: before killing the Hollow in the Town Hall parking lot (it makes all survivors leave). To be extra safe, finish all four before giving the radio to Lukhan. These count as four separate Good Deeds — missing one flare costs both Man of the People and a Relic." },
       { id: "b5", tag: "STORY", talk:true, title: "Talju — Caspian Fran", detail: "In the town hall. Story-required." },
-      { id: "b6", tag: "MISS", title: "Good Deed 2 — Forlorn Fate (start)", detail: "In the Vanderlyn Trust building in Talju, pick up the Flame symbol and the Senedra Mountain map." },
+      { id: "b6", tag: "MISS", title: "Talju — Forlorn Fate (1 of 2)", detail: "In the Vanderlyn Trust building in Talju, pick up the Flame symbol and the Senedra Mountain map." },
       { id: "b7", tag: "MISS", talk:true, title: "Talju — Lukhan Fran (BEFORE turning in the radio)", detail: "At the back of the school. Pre-patch-1.5 this was the infamous Lend an Ear killer — handing the radio without talking first voided the trophy. It's fixed now, but the safe order is still: converse, then quest item." },
-      { id: "b8", tag: "MISS", title: "Good Deed 7 — Waylaid (part 1 of 3)", detail: "Open the pharmacy in Talju and take the Metformin pill bottle. Two more pieces below." },
-      { id: "b9", tag: "MISS", title: "Senedra Forest — Good Deed 2 (finish)", detail: "Open the door in the trench area with the Flame symbol and trade the Senedra Mountain map to the woman inside." },
+      { id: "b8", tag: "MISS", title: "Talju — Waylaid (1 of 3)", detail: "Open the pharmacy in Talju and take the Metformin pill bottle. Two more pieces below." },
+      { id: "b9", tag: "MISS", title: "Senedra Forest — Forlorn Fate (2 of 2)", detail: "Open the door in the trench area with the Flame symbol and trade the Senedra Mountain map to the woman inside." },
       { id: "b10", tag: "MISS", talk:true, title: "Marastan — Talis", detail: "On a balcony in the upper town. Easy to walk past; he's a Lend an Ear requirement." },
       { id: "b11", tag: "MISS", talk:true, title: "Marastan — Father Bramante", detail: "In the fenced area in front of the statue, near the radio tower." },
       { id: "b12", tag: "STORY", talk:true, title: "Lethe, National Library — Iblis", detail: "Upper floor. Story-required. (The Library and the Ministry are two separate map destinations side by side.)" },
-      { id: "b13", tag: "WARN", title: "Lethe, Ministry — do not leave until Good Deed 22 is done", detail: "Leaving the Ministry mid-visit costs you the ON Soldier and instantly fails the deed. (One player reports leaving was safe because they hadn't talked to her yet — treat that as unverified and just finish before exiting.)" },
-      { id: "b14", tag: "MISS", talk:true, title: "Ministry — Maeve Tristana, BEFORE killing the ranged Hollow", detail: "The distressed woman locked in a room (left at the king's portrait; the enemy is to the right). Speak to her before defeating the ranged Hollow or she may never register in the People menu. If you botched it: players report she can appear later in the parking garage — check there before writing her off." },
-      { id: "b15", tag: "MISS", title: "Ministry — Good Deed 7 (part 2 of 3)", detail: "Find the Satellite Radio in this location." },
-      { id: "b16", tag: "MISS", title: "Ministry — Good Deed 22: Incognito", detail: "Use the keycard from the parking garage on the top-floor door to get the Woman's Clothing, then take it to the ON Soldier on the top floor. Only then is it safe to leave the Ministry." },
-      { id: "b17", tag: "MISS", title: "Acasa Marshes — Good Deed 7: Waylaid (finish)", detail: "Southwest of town at the stone pillar, two ON Soldiers wait in a room underneath. Trade them the Metformin and the Satellite Radio. This is the final missable Good Deed — after this, only the Museum NPCs remain time-sensitive." },
+      { id: "b13", tag: "WARN", title: "Complete Incognito (BEFORE leaving the Ministry)", detail: "Leaving the Ministry mid-visit costs you the ON Soldier and instantly fails the deed. (One player reports leaving was safe because they hadn't talked to her yet — treat that as unverified and just finish before exiting.)" },
+      { id: "b14", tag: "MISS", talk:true, title: "Ministry — Maeve Tristana (BEFORE killing the ranged Hollow)", detail: "The distressed woman locked in a room (left at the king's portrait; the enemy is to the right). Speak to her before defeating the ranged Hollow or she may never register in the People menu. If you botched it: players report she can appear later in the parking garage — check there before writing her off." },
+      { id: "b15", tag: "MISS", title: "Ministry — Waylaid (2 of 3)", detail: "Find the Satellite Radio in this location." },
+      { id: "b16", tag: "MISS", title: "Ministry — Incognito", detail: "Use the keycard from the parking garage on the top-floor door to get the Woman's Clothing, then take it to the ON Soldier on the top floor. Only then is it safe to leave the Ministry." },
+      { id: "b17", tag: "MISS", title: "Acasa Marshes — Waylaid (3 of 3)", detail: "Southwest of town at the stone pillar, two ON Soldiers wait in a room underneath. Trade them the Metformin and the Satellite Radio. This is the final missable Good Deed — after this, only the Museum NPCs remain time-sensitive." },
     ],
   },
   {
@@ -408,11 +422,11 @@ const SECTIONS = [
     deadline:
       "Last missable zone in the game. One switch here can permanently kill an NPC you need.",
     items: [
-      { id: "c1", tag: "WARN", title: "B1 switch: clear the room BEFORE flipping PURPLE → YELLOW", detail: "At the B1 switch with PURPLE and YELLOW options: kill every Hollow in the large room opposite the Timeloop first. Flip to YELLOW early and you lose Dr. Ballam Lamech when the doors open." },
+      { id: "c1", tag: "WARN", title: "Clear the room (BEFORE flipping B1 switch purple to yellow)", detail: "At the B1 switch with PURPLE and YELLOW options: kill every Hollow in the large room opposite the Timeloop first. Flip to YELLOW early and you lose Dr. Ballam Lamech when the doors open." },
       { id: "c2", tag: "STORY", talk:true, title: "B3 — Dr. Marga Hamil", detail: "In the laboratory. Story-required." },
       { id: "c3", tag: "STORY", talk:true, title: "B1 — Seo Kagin", detail: "In the training area. Story-required." },
       { id: "c4", tag: "MISS", talk:true, title: "B1 — Dr. Ballam Lamech", detail: "In the large room opposite the Timeloop, once the enemies are dead and the doors are open. He's only here if you handled the switch correctly." },
-      { id: "c5", tag: "MISS", talk:true, title: "B4 — Dr. Mabden, via the intercom", detail: "In the Timeloop room. TALK through the intercom first — starting the fight directly skips the conversation and he's lost (a reader learned this the hard way). This is typically the NPC who pops Lend an Ear." },
+      { id: "c5", tag: "MISS", talk:true, title: "B4 — Dr. Mabden (via the intercom)", detail: "In the Timeloop room. TALK through the intercom first — starting the fight directly skips the conversation and he's lost (a reader learned this the hard way). This is typically the NPC who pops Lend an Ear." },
     ],
   },
   {
@@ -422,10 +436,10 @@ const SECTIONS = [
     deadline:
       "One soft deadline left: audit your Haze counters BEFORE closing your final Timeloops. Everything else is safe after the credits.",
     items: [
-      { id: "d1", tag: "WARN", title: "Audit Phol trackers before closing the last Timeloops", detail: "Closing all Timeloops stops enemy respawns. Open the PS5 trophy list and check progress on the three 40-kill Haze trophies (tiers I, II, III) and the kill-every-enemy-type trophies. Farm any shortfall while things still respawn — tier III at 39/40 with nothing left alive is the classic heartbreak." },
+      { id: "d1", tag: "WARN", title: "Get all Haze kills (BEFORE closing the last Timeloop)", detail: "Closing all Timeloops stops enemy respawns. Open the PS5 trophy list and check progress on the three 40-kill Haze trophies (tiers I, II, III) and the kill-every-enemy-type trophies. Farm any shortfall while things still respawn — tier III at 39/40 with nothing left alive is the classic heartbreak." },
       { id: "d2", tag: "SAFE", title: "Upgrade trophies: Good Vibrations, Accessorizing, To the Teeth", detail: "Three separate trophies, worked at the Acasa blacksmith. GOOD VIBRATIONS: upgrade one weapon of EACH of the four types (Sword, Twin Axes, Polearm, Greatsword) to Grade 5. ACCESSORIZING: imbue any ONE Defensive Gear to Grade 4. TO THE TEETH: an EQUIP check, not an upgrade — once you own two Grade 5 weapons and two Grade 4 Defensive Gear, equip all four at once in your loadout. Upgrading that second gear piece to Grade 4 for the To the Teeth loadout also covers Accessorizing. If you hoarded shards per the ground rules, you'll have enough banked even after respawns end." },
       { id: "d3", tag: "SAFE", title: "Post-credits free roam", detail: "After Act 3, reloading your save drops you back in the final area with full travel. Clean up remaining Mysteries (43 total), Vaults, research items, caps, glyphs and drone modules at leisure — none are missable." },
-      { id: "d4", tag: "SAFE", title: "Legend of the Phol — clear every zone", detail: "Close all 14 Timeloops, then hunt every remaining enemy until each zone's APC map reads 'Threats: Clear.' Known snags from forum threads: a hidden mine room in Vyssa Hills (mine entrance in the ruin by the snake head → down the ladder → first left) holds two easily-missed enemies; and the map's hover status can display stale info — physically re-enter a zone to refresh it." },
+      { id: "d4", tag: "SAFE", trophy: "Legend of the Phol", title: "Clear every zone", detail: "Close all 14 Timeloops, then hunt every remaining enemy until each zone's APC map reads 'Threats: Clear.' Known snags from forum threads: a hidden mine room in Vyssa Hills (mine entrance in the ruin by the snake head → down the ladder → first left) holds two easily-missed enemies; and the map's hover status can display stale info — physically re-enter a zone to refresh it." },
       { id: "d5", tag: "SAFE", title: "If one thing slipped: the cross-save carryover", detail: "Multiple PowerPyx readers confirmed (Sept–Nov 2025) that Good Deed/Relic progression carries across save files — start a fresh save, beeline only the missed deed, and the cumulative trophy pops in 1–2 hours. Not re-verified on the 2026 patches, but it's your parachute before considering a full replay. A launch-era trophy-tracker turn-in exploit also existed; treat it as likely patched." },
     ],
   },
@@ -435,8 +449,8 @@ const SECTIONS = [
 // BUILD split into number + codename (Roadmap 8, item 6). Display shape: "9.0 (FRONTIER)".
 // Used verbatim in the header kicker, the export payload's `build` field, and mirrored in
 // the README build log + the CLAUDE.md pin.
-const BUILD_N = "9.6";
-const BUILD_NAME = "SURVEY";
+const BUILD_N = "9.7";
+const BUILD_NAME = "MILLINER";
 const BUILD = BUILD_N + " (" + BUILD_NAME + ")";
 // Inline vector gear — monochrome, inherits currentColor so it tracks --chrome / --chrome-active
 // like every other control (no OS colour emoji). Rounded "settings" cog. aria-hidden: the button
@@ -447,9 +461,27 @@ const GEAR = '<svg class="gico" viewBox="0 0 24 24" fill="none" stroke="currentC
 // .talkico class pins it to the UI accent so it pops off the title); aria-hidden (decorative —
 // the title carries the meaning). A clean geometric rounded-rect chat bubble with a tail.
 const TALK = '<svg class="talkico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 4H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3v4l5-4h8a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg>';
+// Inline vector trophy — appended inside a row's trophy note (`trophy:"…"` on the item, e.g. the two
+// Ever-After deeds and the Legend-of-the-Phol endgame row). Same idiom as GEAR/TALK: monochrome,
+// inherits currentColor (the .trophyico class pins it to the UI accent); aria-hidden (decorative).
+const TROPHY = '<svg class="trophyico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>';
 const KEY = "hiu-plat-v1";
 const ALL_ITEMS = SECTIONS.flatMap(s => s.items);
-const MISS_IDS = ALL_ITEMS.filter(i => i.tag === "MISS" || i.tag === "WARN").map(i => i.id);
+// Aggregate rows: one Campaign checkbox that stands for other checkboxes' state. The row is
+// "done" only when every member is; toggling it sets/clears all members. Two uses:
+//   b4  = the four "A Light in the Dark" flares gd13–16 (tracked individually in Completionist).
+//   b13 = the Incognito *warning* mirrors b16, the Incognito *deed* (single-member) — checking
+//         either ticks both, so the two Ministry rows (severity vs how-to) never double-track.
+//         (b16 is also gd22's shared key, so the Completionist stays in sync too.)
+const AGGREGATES = { b4: ["gd13","gd14","gd15","gd16"], b13: ["b16"] };
+// Missables counted in the header readout. Exclude an aggregate row whose member is itself a
+// counted Campaign row — b13 mirrors b16, so Incognito counts ONCE, not twice. (b4's members are
+// Completionist-only ledger ids, not Campaign rows, so b4 still counts as its own missable.)
+const ALL_ITEM_IDS = new Set(ALL_ITEMS.map(i => i.id));
+const MISS_IDS = ALL_ITEMS
+  .filter(i => i.tag === "MISS" || i.tag === "WARN")
+  .filter(i => !(AGGREGATES[i.id] && AGGREGATES[i.id].some(k => ALL_ITEM_IDS.has(k))))
+  .map(i => i.id);
 const TAG_COLOR = { MISS:"var(--missable)", WARN:"var(--warning)", STORY:"var(--story)", RULE:"var(--rule)", SAFE:"var(--safe)" };
 const TAG_LABEL = { MISS:"MISSABLE", WARN:"WARNING", STORY:"STORY", RULE:"RULE", SAFE:"SAFE" };
 // Completionist ledger (from ledger-data.js; empty-safe if that file fails to load)
@@ -462,7 +494,7 @@ function ledgerKey(it){ return it.campaignId || it.id; }
 // lists every canonical region it touches; the zone view groups by these. A multi-zone item
 // appears under EACH of its zones — same checkbox id (via ledgerKey), so state stays synced
 // across appearances. Items with an empty zones:[] (only cap1, the region-less starting cap)
-// collect into a trailing "Unverified" group rather than being guessed into a region.
+// collect into a trailing "No Zone" group rather than being guessed into a region.
 const ZONES = [
   "Senedra Forest","Arcas Spire","Acasa Marshes","Vyssa Hills","Lake Cynon","Lymbic Forge",
   "Talju","Marastan","Lethe – Library","Lethe – Ministry","Plains of Mist","Jeljin",
@@ -475,10 +507,6 @@ const ZONES = [
 // (the location in category view, the category TYPE in zone view). Title-case singular.
 const CAT_NAME = { deeds:"Good Deed", relics:"Relic", myst:"Mystery", caps:"Baseball Cap", loops:"Timeloop" };
 const LEDGER_ITEMS = CATS.flatMap(cat => cat.items.map(it => ({ it, cat })));
-// Aggregate rows: one Campaign checkbox that stands for several independent ledger items.
-// The Campaign row is "done" only when every member is; toggling it sets/clears all members.
-// (b4 = the four "A Light in the Dark" flares gd13–16, tracked individually in Completionist.)
-const AGGREGATES = { b4: ["gd13","gd14","gd15","gd16"] };
 function isDone(id){
   const m = AGGREGATES[id];
   return m ? m.every(k => !!state.checked[k]) : !!state.checked[id];
@@ -563,6 +591,13 @@ function migrateState(){
   if(state.checked.b4){
     (AGGREGATES.b4 || []).forEach(k => { state.checked[k] = true; });
     delete state.checked.b4;
+    persist();
+  }
+  // 9.7: b13 (Incognito warning) now mirrors b16 (the deed). A legacy standalone b13 tick meant
+  // "Incognito handled", so fan it onto b16, then drop the now-unread key (toggling b13 writes b16).
+  if(state.checked.b13){
+    state.checked.b16 = true;
+    delete state.checked.b13;
     persist();
   }
 }
@@ -724,6 +759,7 @@ function noticeHTML(){
     '<p>A companion for the <b>Hell is Us</b> platinum — the campaign’s missables in play order, plus an itemized ledger of every deed, relic, mystery, cap, and timeloop.</p>'+
     '<p><b>Light spoilers ahead.</b> Entries name NPCs, locations, and side-quest titles — no story or plot content.</p>'+
     '<p><b>Everything stays on this device.</b> Your progress and notes live in this browser’s storage; nothing is ever sent anywhere. Use <b>Export backup</b> for a portable copy.</p>'+
+    '<p><b>Best on your Home Screen</b> — full-screen and offline. iOS: Share → <b>Add to Home Screen</b>; Android or desktop: your browser’s <b>Install</b> option. On iOS, install <i>before</i> you start: a home-screen app keeps its own progress, separate from Safari.</p>'+
     '<button class="chip go" data-act="dismissnotice">Got it</button>'+
     '</div>';
 }
@@ -800,12 +836,13 @@ function renderCompletionist(){
       if(!rows.length) continue;   // canonical zone with no ledger content — skip silently
       h += ledgerSectionHTML("z:"+z, z, rows, true);
     }
-    // Trailing catch-all: region-less rows (only cap1). Named "Unverified" per spec — nothing
-    // is guessed into a region. Rendered only if such rows exist.
+    // Trailing catch-all: region-less rows (only cap1, the cap Rémi starts with). Titled "No Zone"
+    // to echo the "By zone" toggle; it has no map location, and nothing is guessed into a region.
+    // Rendered only if such rows exist.
     const unzoned = LEDGER_ITEMS.filter(x => !(x.it.zones && x.it.zones.length));
     if(unzoned.length){
-      h += ledgerSectionHTML("z:__unverified", "Unverified", unzoned, true, "",
-        "No fixed region — e.g. the starting cap you carry from the opening.");
+      h += ledgerSectionHTML("z:__none", "No Zone", unzoned, true, "",
+        "No map location — the cap Rémi starts the game carrying.");
     }
   } else {
     for(const cat of CATS){
@@ -815,21 +852,34 @@ function renderCompletionist(){
   h += '<div class="excl">Not tracked here: kill counts, one-off trophies, and story progress — your PS5 trophy list counts those. The Campaign\'s final phase has the pre-endgame audit.</div>';
   return h;
 }
-// Conversation glyph placement: titles read "Location — Name", so drop the speech-bubble right
-// before the NPC name (after the first " — "). The Standing-Orders legend has no such prefix, so
-// there the glyph leads. esc() leaves the em-dash + spaces intact, so we split the escaped string
-// (" — " is 3 chars: space, em-dash, space).
+// Row title = primary/secondary split, mirroring the Completionist title+trailing-label grammar.
+// Titles read "Context — Subject" (Location/Good-Deed-N/Museum-floor — Name/action). We lead with
+// the Subject (primary, white) and demote the Context to a trailing muted-green `.rctx` label
+// (secondary), instead of the source order (context-first). A conversation glyph sits right before
+// the Subject; a leading emphasis token like "FIRST:" stays bright at the front (not demoted).
+// Rows with no " — " (Standing-Orders rules, most endgame notes) render whole, no split.
+// The Standing-Orders "Talk ..." legend (talkLegend) has no Context — glyph follows the verb "Talk".
+// esc() leaves the em-dash + spaces intact (" — " is 3 chars: space, em-dash, space).
 function rowTitleHTML(it){
   const t = esc(it.title);
-  if(!(it.talk || it.talkLegend)) return t;
-  // Legend (Standing Orders): glyph after the leading verb "Talk" — i.e. after the first word.
-  // Conversation rows: after the "Location — " prefix, right before the NPC name.
   if(it.talkLegend){
     const sp = t.indexOf(" ");
     return sp === -1 ? TALK + t : t.slice(0, sp + 1) + TALK + t.slice(sp + 1);
   }
+  const glyph = it.talk ? TALK : "";
+  // trophy note: `it.trophy` text + the trophy glyph, in a parenthetical kept together (nowrap)
+  const trophy = it.trophy ? ' <span class="ctxnote tnote">(' + esc(it.trophy) + TROPHY + ')</span>' : "";
+  // context parentheticals in the title drop to the smaller secondary size but stay WHITE (the
+  // green trailing label is the location; white-vs-green separates "what/when" from "where") —
+  // EXCEPT on WARNING rows, where the timing note ("BEFORE …") takes the warning colour.
+  const noteCls = it.tag === "WARN" ? "ctxnote warn" : "ctxnote";
+  const note = s => s.replace(/(\([^)]*\))/g, '<span class="' + noteCls + '">$1</span>');
   const at = t.indexOf(" — ");
-  return at === -1 ? TALK + t : t.slice(0, at + 3) + TALK + t.slice(at + 3);
+  if(at === -1) return glyph + note(t) + trophy;        // no Context to split off
+  let context = t.slice(0, at), subject = t.slice(at + 3), lead = "";
+  const m = context.match(/^([A-Z]{2,}:\s+)(.*)$/);     // keep a leading "FIRST:"-style cue bright
+  if(m){ lead = m[1]; context = m[2]; }
+  return lead + glyph + note(subject) + trophy + '<span class="rctx">' + context + '</span>';
 }
 // Rich detail for the Standing-Orders legend (detailRich): inject the conversation glyph as a
 // parenthetical right after "flags", and lift the key habit to the theme's bright text for

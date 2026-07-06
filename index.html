@@ -117,7 +117,7 @@
   button:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid var(--chrome-active);outline-offset:2px}
   section{margin-bottom:30px}
   .sechead{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:10px;width:100%;background:none;border:none;padding:0;color:inherit;font-family:inherit;text-align:left;cursor:pointer}
-  .chev{color:var(--faint);font-size:13px;margin-right:8px}
+  .chev{color:var(--faint);font-size:16px;margin-right:8px}
   .secright{display:flex;align-items:baseline;gap:10px}
   .seccount{font-size:13px;color:var(--muted)}
   .deadline{
@@ -168,7 +168,10 @@
   .trophyico{width:1em;height:1em;display:inline-block;vertical-align:-0.13em;margin-left:5px;color:var(--chrome-active)}
   /* secondary context parenthetical (timing/step/trophy note): smaller like the location, but kept
      WHITE (inherits --text) so it reads as "what/when", distinct from the green "where" label */
-  .ctxnote{font-size:11px}
+  /* inline-block makes the parenthetical atomic for line placement: a note that fits on a line is
+     never split mid-way — it bumps to the next line as one unit. (A note too long for even a full
+     line still wraps internally, so this can't force horizontal overflow the way nowrap would.) */
+  .ctxnote{font-size:11px;display:inline-block}
   /* on WARNING rows the timing note ("BEFORE …") takes the warning colour instead of white */
   .ctxnote.warn{color:var(--warning)}
   /* the trophy note "(… 🏆)" wraps as one unit so the trophy glyph + ")" never split off */
@@ -183,7 +186,11 @@
      accents (success/warning) while staying warm; the one deliberate literal in the tokenised sheet */
   :root[data-theme="light"] .tag{background:var(--tagc);color:#FBF8F1}
   @media (prefers-color-scheme:light){:root:not([data-theme]) .tag{background:var(--tagc);color:#FBF8F1}}
-  .plus{color:var(--dim);margin-left:auto;flex-shrink:0}
+  /* Campaign tag chips are pinned to a uniform width (widest label = MISSABLE) with centred text,
+     so every row's title starts at the same x no matter which tag leads it. Scoped to .taglead
+     (box-sizing is border-box globally) so the Completionist MISSABLE chip is left untouched. */
+  .taglead .tag{width:74px;text-align:center}
+  .plus{color:var(--dim);margin-left:auto;flex-shrink:0;font-size:18px;line-height:1}
   .detail{
     font-size:14px;color:var(--detail);margin-left:10px;padding:0 0 14px 20px;
     border-left:2px solid var(--line);line-height:1.65;
@@ -378,7 +385,7 @@ const SECTIONS = [
       { id: "a8", tag: "MISS", title: "Jova — Asunder", detail: "Find the 'Worried Wife' letter behind the house with the drunk soldier in Jova; deliver it to the man by the excavator at the area entrance." },
       { id: "a9", tag: "MISS", title: "Jova — Performance of a Lifetime (1 of 2)", detail: "Talk to the man playing violin on the truck near Captain Vaas. He needs TWO sheet musics: 'Our Pride' here in Jova (south, hostile end — on a table by the shops / the piano behind the graffiti house) and 'Losilus Dreaming' in Vyssa Hills. Grab 'Our Pride' now; you'll close this out below." },
       { id: "a10", tag: "STORY", talk:true, title: "Jova — Victor Gaz", detail: "At the blacksmith shop after the tunnel rescue. Story-required." },
-      { id: "a11", tag: "WARN", title: "Vyssa Hills — do NOT give Atticus the ON vehicle keys", detail: "Handing over the keys is Good Deed 10 and it empties the camp — done too early it permanently voids Good Deed 11. You'll find the keys after closing this area's Timeloop. Keep them in your pocket until the Act 2 step tells you otherwise." },
+      { id: "a11", tag: "WARN", title: "Vyssa Hills — Do NOT give Atticus the ON vehicle keys", detail: "Handing over the keys is Good Deed 10 and it empties the camp — done too early it permanently voids Good Deed 11. You'll find the keys after closing this area's Timeloop. Keep them in your pocket until the Act 2 step tells you otherwise." },
       { id: "a12", tag: "MISS", title: "Vyssa Hills — On Death's Door", detail: "Find the Atenolol pill bottle in Vyssa Hills and give it to the woman at the camp in the north of the area. Must be done before Atticus gets the keys." },
       { id: "a13", tag: "STORY", talk:true, title: "Vyssa Hills — Vitalis", detail: "Northeast of the area. Story-required." },
       { id: "a14", tag: "STORY", talk:true, title: "Vyssa Hills — Tania Alver", detail: "West of the area. Story-required." },
@@ -422,7 +429,7 @@ const SECTIONS = [
     deadline:
       "Last missable zone in the game. One switch here can permanently kill an NPC you need.",
     items: [
-      { id: "c1", tag: "WARN", title: "Clear the room (BEFORE flipping B1 switch purple to yellow)", detail: "At the B1 switch with PURPLE and YELLOW options: kill every Hollow in the large room opposite the Timeloop first. Flip to YELLOW early and you lose Dr. Ballam Lamech when the doors open." },
+      { id: "c1", tag: "WARN", title: "Clear the room (BEFORE flipping the B1 switch)", detail: "At the B1 switch with PURPLE and YELLOW options: kill every Hollow in the large room opposite the Timeloop first. Flip to YELLOW early and you lose Dr. Ballam Lamech when the doors open." },
       { id: "c2", tag: "STORY", talk:true, title: "B3 — Dr. Marga Hamil", detail: "In the laboratory. Story-required." },
       { id: "c3", tag: "STORY", talk:true, title: "B1 — Seo Kagin", detail: "In the training area. Story-required." },
       { id: "c4", tag: "MISS", talk:true, title: "B1 — Dr. Ballam Lamech", detail: "In the large room opposite the Timeloop, once the enemies are dead and the doors are open. He's only here if you handled the switch correctly." },
@@ -449,7 +456,7 @@ const SECTIONS = [
 // BUILD split into number + codename (Roadmap 8, item 6). Display shape: "9.0 (FRONTIER)".
 // Used verbatim in the header kicker, the export payload's `build` field, and mirrored in
 // the README build log + the CLAUDE.md pin.
-const BUILD_N = "9.7";
+const BUILD_N = "9.7.1";
 const BUILD_NAME = "MILLINER";
 const BUILD = BUILD_N + " (" + BUILD_NAME + ")";
 // Inline vector gear — monochrome, inherits currentColor so it tracks --chrome / --chrome-active

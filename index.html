@@ -248,7 +248,7 @@
   /* campaign row trailing secondary context (Location / Good-Deed-N / Museum-floor), moved off the
      front of the title and greened — same muted --dim as the Completionist trailing label. Sits
      inline after the white Subject; a small left gap separates them, and nowrap keeps a multi-word
-     context (e.g. "Lethe, National Library") from splitting mid-phrase. */
+     context (e.g. "Lethe Library") from splitting mid-phrase. */
   .rctx{font-size:11px;color:var(--dim);letter-spacing:.05em;white-space:nowrap;margin-left:.5em}
   .excl{font-size:12px;color:var(--muted);border-top:1px solid var(--line2);padding-top:13px;margin-top:6px;line-height:1.65}
   /* first-visit notice: an app-status card, so its accent is bright neutral chrome, not a content hue */
@@ -385,7 +385,7 @@ const SECTIONS = [
       { id: "a8", tag: "MISS", title: "Jova — Asunder", detail: "Find the 'Worried Wife' letter behind the house with the drunk soldier in Jova; deliver it to the man by the excavator at the area entrance." },
       { id: "a9", tag: "MISS", title: "Jova — Performance of a Lifetime (1 of 2)", detail: "Talk to the man playing violin on the truck near Captain Vaas. He needs TWO sheet musics: 'Our Pride' here in Jova (south, hostile end — on a table by the shops / the piano behind the graffiti house) and 'Losilus Dreaming' in Vyssa Hills. Grab 'Our Pride' now; you'll close this out below." },
       { id: "a10", tag: "STORY", talk:true, title: "Jova — Victor Gaz", detail: "At the blacksmith shop after the tunnel rescue. Story-required." },
-      { id: "a11", tag: "WARN", title: "Vyssa Hills — Do NOT give Atticus the ON vehicle keys", detail: "Handing over the keys is Good Deed 10 and it empties the camp — done too early it permanently voids Good Deed 11. You'll find the keys after closing this area's Timeloop. Keep them in your pocket until the Act 2 step tells you otherwise." },
+      { id: "a11", tag: "WARN", title: "Vyssa Hills — Do NOT give Atticus the ON vehicle keys", detail: "Handing over the keys is the Heart of Gold good deed and it empties the camp — done too early it permanently voids the On Death's Door good deed. You'll find the keys after closing this area's Timeloop. Keep them in your pocket until the Act 2 step tells you otherwise." },
       { id: "a12", tag: "MISS", title: "Vyssa Hills — On Death's Door", detail: "Find the Atenolol pill bottle in Vyssa Hills and give it to the woman at the camp in the north of the area. Must be done before Atticus gets the keys." },
       { id: "a13", tag: "STORY", talk:true, title: "Vyssa Hills — Vitalis", detail: "Northeast of the area. Story-required." },
       { id: "a14", tag: "STORY", talk:true, title: "Vyssa Hills — Tania Alver", detail: "West of the area. Story-required." },
@@ -403,7 +403,7 @@ const SECTIONS = [
       "POINT OF NO RETURN: collecting/placing the remaining Keystones. Simple safety rule from PowerPyx — stay out of the Plains of Mist and the Museum until every box below is checked.",
     items: [
       { id: "b1", tag: "MISS", trophy: "req. for Ever After", title: "FIRST: Jova — Man's Best Friend", detail: "Do this before anything else in Act 2, and strictly before touching anything related to the abbey (which relocates Jaffer and Rebecca). In Jova, release the dog the soldier was sitting beside, then take the collar to the man at the camp in Vyssa Hills. Done late, the dog never reaches the lake and Ever After is lost. (One reader reports the trophy still popped giving the collar after the couple moved near the mine — but the guide author's timing is the only verified-safe route.)" },
-      { id: "b2", tag: "MISS", title: "Vyssa Hills — Heart of Gold (NOW give Atticus the keys)", detail: "With Good Deeds 11 and 12 complete, hand Atticus the ON Vehicle Keys. Order matters; this is the moment." },
+      { id: "b2", tag: "MISS", title: "Vyssa Hills — Heart of Gold (NOW give Atticus the keys)", detail: "With the On Death's Door and Man's Best Friend good deeds complete, hand Atticus the ON Vehicle Keys. Order matters; this is the moment." },
       { id: "b3", tag: "MISS", talk:true, title: "Talju — Boro Juven (BEFORE entering town)", detail: "In the garage near the APC at the area start. If ignored, your window to log him closes (he's one of the flare recipients below). Talk first, then proceed." },
       { id: "b4", tag: "MISS", title: "Talju — A Light in the Dark (all four flares)", detail: "Grab the flares in front of the Town Hall and hand one to each of the four people around town. Deadline: before killing the Hollow in the Town Hall parking lot (it makes all survivors leave). To be extra safe, finish all four before giving the radio to Lukhan. These count as four separate Good Deeds — missing one flare costs both Man of the People and a Relic." },
       { id: "b5", tag: "STORY", talk:true, title: "Talju — Caspian Fran", detail: "In the town hall. Story-required." },
@@ -413,7 +413,7 @@ const SECTIONS = [
       { id: "b9", tag: "MISS", title: "Senedra Forest — Forlorn Fate (2 of 2)", detail: "Open the door in the trench area with the Flame symbol and trade the Senedra Mountain map to the woman inside." },
       { id: "b10", tag: "MISS", talk:true, title: "Marastan — Talis", detail: "On a balcony in the upper town. Easy to walk past; he's a Lend an Ear requirement." },
       { id: "b11", tag: "MISS", talk:true, title: "Marastan — Father Bramante", detail: "In the fenced area in front of the statue, near the radio tower." },
-      { id: "b12", tag: "STORY", talk:true, title: "Lethe, National Library — Iblis", detail: "Upper floor. Story-required. (The Library and the Ministry are two separate map destinations side by side.)" },
+      { id: "b12", tag: "STORY", talk:true, title: "Lethe Library — Iblis", detail: "Upper floor. Story-required. (The Library and the Ministry are two separate map destinations side by side.)" },
       { id: "b13", tag: "WARN", title: "Complete Incognito (BEFORE leaving the Ministry)", detail: "Leaving the Ministry mid-visit costs you the ON Soldier and instantly fails the deed. (One player reports leaving was safe because they hadn't talked to her yet — treat that as unverified and just finish before exiting.)" },
       { id: "b14", tag: "MISS", talk:true, title: "Ministry — Maeve Tristana (BEFORE killing the ranged Hollow)", detail: "The distressed woman locked in a room (left at the king's portrait; the enemy is to the right). Speak to her before defeating the ranged Hollow or she may never register in the People menu. If you botched it: players report she can appear later in the parking garage — check there before writing her off." },
       { id: "b15", tag: "MISS", title: "Ministry — Waylaid (2 of 3)", detail: "Find the Satellite Radio in this location." },
@@ -456,8 +456,8 @@ const SECTIONS = [
 // BUILD split into number + codename (Roadmap 8, item 6). Display shape: "9.0 (FRONTIER)".
 // Used verbatim in the header kicker, the export payload's `build` field, and mirrored in
 // the README build log + the CLAUDE.md pin.
-const BUILD_N = "9.7.1";
-const BUILD_NAME = "MILLINER";
+const BUILD_N = "9.8";
+const BUILD_NAME = "RELAY";
 const BUILD = BUILD_N + " (" + BUILD_NAME + ")";
 // Inline vector gear — monochrome, inherits currentColor so it tracks --chrome / --chrome-active
 // like every other control (no OS colour emoji). Rounded "settings" cog. aria-hidden: the button
@@ -504,7 +504,7 @@ function ledgerKey(it){ return it.campaignId || it.id; }
 // collect into a trailing "No Zone" group rather than being guessed into a region.
 const ZONES = [
   "Senedra Forest","Arcas Spire","Acasa Marshes","Vyssa Hills","Lake Cynon","Lymbic Forge",
-  "Talju","Marastan","Lethe – Library","Lethe – Ministry","Plains of Mist","Jeljin",
+  "Talju","Marastan","Lethe Library","Lethe Ministry","Plains of Mist","Jeljin",
   "Auriga Museum","Eye of God","Vaults of Forbidden Knowledge",
 ];
 // Flatten the ledger once, tagging each item with its category — the zone view mixes
@@ -517,6 +517,85 @@ const LEDGER_ITEMS = CATS.flatMap(cat => cat.items.map(it => ({ it, cat })));
 function isDone(id){
   const m = AGGREGATES[id];
   return m ? m.every(k => !!state.checked[k]) : !!state.checked[id];
+}
+// ————— Multi-step Completionist items (By-zone view) —————
+// A multi-zone item decomposes into ordered steps, one per region it touches:
+//   src  — a pickup/source you can tick on its own (its own key); ticking it does NOT earn the deed
+//   and  — a delivery that ANDs into completion (deed earned iff EVERY `and` step is ticked)
+//   done — the single completion step; ticking it sets the real deed key (what Category reflects)
+//   {follows:"id"} — no steps of its own; earned exactly when the referenced item is (rewards)
+// Display rule: a step's box reads done if its own key is set OR the deed is complete — so ticking
+// the deed (or its completion step) lights every step, while ticking one source never earns it.
+const STEPS = {
+  gd2:  [{zone:"Talju",label:"step 1 of 2",src:1},{zone:"Senedra Forest",label:"step 2 of 2",done:1}],
+  gd6:  [{zone:"Vyssa Hills",label:"pickup",src:1},{zone:"Acasa Marshes",label:"turn in",done:1}],
+  gd7:  [{zone:"Talju",label:"pickup",src:1},{zone:"Lethe Ministry",label:"pickup",src:1},{zone:"Acasa Marshes",label:"turn in",done:1}],
+  gd12: [{zone:"Acasa Marshes",label:"step 1 of 2",src:1},{zone:"Vyssa Hills",label:"step 2 of 2",done:1}],
+  gd21: [{zone:"Lethe Ministry",label:"step 1 of 2",src:1},{zone:"Lethe Library",label:"step 2 of 2",done:1}],
+  gd23: [{zone:"Auriga Museum",label:"museum pickup",src:1},{zone:"Marastan",label:"deliver to Marastan",and:1},{zone:"Senedra Forest",label:"deliver to Senedra",and:1}],
+  gd25: [{zone:"Jeljin",label:"step 1 of 2",src:1},{zone:"Acasa Marshes",label:"step 2 of 2",done:1}],
+  gd26: [{zone:"Marastan",label:"step 1 of 2",src:1},{zone:"Jeljin",label:"step 2 of 2",done:1}],
+  my21: [{zone:"Lake Cynon",label:"step 1 of 2",src:1},{zone:"Marastan",label:"step 2 of 2",done:1}],
+  my22: [{zone:"Lake Cynon",label:"step 1 of 2",src:1},{zone:"Acasa Marshes",label:"step 2 of 2",done:1}],
+  my27: [{zone:"Talju",label:"step 1 of 2",src:1},{zone:"Lethe Library",label:"step 2 of 2",done:1}],
+  my34: [{zone:"Lethe Ministry",label:"step 1 of 2",src:1},{zone:"Lake Cynon",label:"step 2 of 2",done:1}],
+  my41: [{zone:"Auriga Museum",label:"step 1 of 2",src:1},{zone:"Lymbic Forge",label:"step 2 of 2",done:1}],
+  rl16: {follows:"gd23"},
+  rl25: {follows:"my22"},
+};
+const LEDGER_BY_ID = {}; LEDGER_ITEMS.forEach(x => { LEDGER_BY_ID[x.it.id] = x.it; });
+function stepKey(id, step){ return id + "@" + step.zone; }
+// Is a (possibly multi-step) item's deed complete? follows → its target; AND → every delivery ticked
+// (or a legacy whole-deed tick); else the plain key (also covers existing b4/b13 aggregates).
+function deedDone(it){
+  const s = STEPS[it.id];
+  if(s){
+    if(s.follows){ const t = LEDGER_BY_ID[s.follows]; return t ? deedDone(t) : false; }
+    const ands = s.filter(x => x.and);
+    if(ands.length) return !!state.checked[ledgerKey(it)] || ands.every(x => !!state.checked[stepKey(it.id, x)]);
+  }
+  return isDone(ledgerKey(it));
+}
+function stepChecked(it, step){
+  if(step.done) return deedDone(it);
+  if(step.and)  return !!state.checked[stepKey(it.id, step)] || !!state.checked[ledgerKey(it)];
+  return !!state.checked[stepKey(it.id, step)] || deedDone(it);   // source lights once the deed's earned
+}
+// Done-state of a row as shown in a given zone (drives per-zone counts + the Remaining filter).
+function rowDoneInZone(it, zone){
+  const s = STEPS[it.id];
+  if(s){
+    if(s.follows){ const t = LEDGER_BY_ID[s.follows]; return t ? deedDone(t) : false; }
+    const step = s.find(x => x.zone === zone);
+    if(step) return stepChecked(it, step);
+  }
+  return !!state.checked[ledgerKey(it)];
+}
+// Tick one step in the By-zone view. Completion step → the real deed key (+ campaign tuck logic via
+// toggleCheck); a source/delivery → its own key only (never earns the deed on its own).
+function toggleStep(id, zone){
+  const it = LEDGER_BY_ID[id]; if(!it) return;
+  const s = STEPS[id];
+  const step = Array.isArray(s) ? s.find(x => x.zone === zone) : null;
+  if(!step){ toggleDeed(id); return; }
+  if(step.done){ toggleCheck(ledgerKey(it)); return; }
+  const k = stepKey(id, step);
+  state.checked[k] = !state.checked[k];
+  persist(); render();
+}
+// Tick the whole deed (Category checkbox). follows → its target; AND → fan out to every delivery
+// (mirrors the b4 aggregate toggle); else the normal key.
+function toggleDeed(id){
+  const it = LEDGER_BY_ID[id]; if(!it) return;
+  const s = STEPS[id];
+  if(s && s.follows){ toggleDeed(s.follows); return; }
+  if(Array.isArray(s) && s.some(x => x.and)){
+    const now = deedDone(it);
+    s.filter(x => x.and).forEach(x => { state.checked[stepKey(id, x)] = !now; });
+    if(now) delete state.checked[ledgerKey(it)];
+    persist(); render(); return;
+  }
+  toggleCheck(ledgerKey(it));
 }
 // Phase completion for the opt-in tuck (Roadmap 8): a phase is tuckable when its
 // point-of-no-return work is finished. Standing Orders = all six understood; Acts =
@@ -605,6 +684,14 @@ function migrateState(){
   if(state.checked.b13){
     state.checked.b16 = true;
     delete state.checked.b13;
+    persist();
+  }
+  // 9.8: Mementos (gd23) became an AND of its two deliveries. Fan a legacy whole-deed tick out to
+  // the two delivery keys, then drop the dead direct key so it can be unchecked step-by-step.
+  if(state.checked.gd23){
+    state.checked["gd23@Marastan"] = true;
+    state.checked["gd23@Senedra Forest"] = true;
+    delete state.checked.gd23;
     persist();
   }
 }
@@ -784,19 +871,38 @@ function footerHTML(){
   const line = es.text ? '<button class="lastexp'+(es.stale?" stale":"")+'" data-act="export" title="Export backup now">'+esc(es.text)+'</button>' : "";
   return '<footer>'+line+'</footer>';
 }
+// A ledger name may carry a (sub-location) note, e.g. "Lymbic Chest (Vitalis' Basement)": style
+// that parenthetical as secondary context (11px), mirroring the Campaign row grammar — the primary
+// name leads, the sub-location trails smaller. (The redundant zone short-name that used to precede
+// it now lives only in the trailing .zone label, so it's dropped from the name.) Names without a
+// parenthetical pass through untouched.
+function ledgerNameHTML(name){
+  return esc(name).replace(/(\([^)]*\))/g, '<span class="ctxnote">$1</span>');
+}
 // One ledger row. The trailing muted label carries one grammar across both groupings: the
 // by-category view shows the item's LOCATION (showCat=false); the zone view's section already
 // IS the location, so it shows the category TYPE instead (showCat=true) and drops the location.
 // Same .zone styling either way (the muted teal-green trailing label) — category is treated
 // exactly like location, not a boxed tag. MISSABLE stays a tag (an alert flag, in both views).
-function ledgerRowHTML(it, cat, showCat){
-  const key = ledgerKey(it), on = !!state.checked[key], op = !!state.open[it.id];
+function ledgerRowHTML(it, cat, showCat, zone){
+  const op = !!state.open[it.id];
   const trail = showCat ? CAT_NAME[cat.id] : it.zone;
+  // In the By-zone view a multi-zone item renders as a per-zone STEP (its own tick + a "(step …)"
+  // tag); the completion step (and the Category checkbox) drive the real deed key. Everywhere else
+  // — Category view, and single-zone items — it's the plain whole-deed checkbox.
+  const s = zone ? STEPS[it.id] : null;
+  let on, act = "deed", actId = it.id, extra = "", tag = "";
+  if(s && s.follows){ on = deedDone(it); actId = s.follows; }   // earned iff its source deed is (Relic label + detail already read as a reward — no extra tag)
+  else if(Array.isArray(s) && s.find(x => x.zone === zone)){
+    const step = s.find(x => x.zone === zone);
+    on = stepChecked(it, step); act = "step"; extra = ' data-zone="'+esc(zone)+'"'; tag = step.label;
+  } else { on = deedDone(it); }                                                 // Category view / single-zone
+  const tagHTML = tag ? ' <span class="ctxnote">('+esc(tag)+')</span>' : "";
   return '<div class="row'+(on?" done":"")+'"><div class="rowtop">'+
-    '<button class="cb'+(on?" on":"")+'" data-act="check" data-id="'+key+'" aria-label="'+(on?"Mark incomplete":"Mark complete")+'">'+(on?"✓":"")+'</button>'+
+    '<button class="cb'+(on?" on":"")+'" data-act="'+act+'" data-id="'+actId+'"'+extra+' aria-label="'+(on?"Mark incomplete":"Mark complete")+'">'+(on?"✓":"")+'</button>'+
     '<button class="rowlabel" data-act="open" data-id="'+it.id+'">'+
     (it.miss ? '<span class="tag" style="--tagc:var(--missable)">MISSABLE</span>' : "")+
-    '<span class="rowtitle">'+esc(it.name)+'</span>'+
+    '<span class="rowtitle">'+ledgerNameHTML(it.name)+tagHTML+'</span>'+
     '<span class="zone">'+esc(trail)+'</span>'+
     '<span class="plus">'+(op?"−":"+")+'</span></button></div>'+
     (op ? '<div class="detail">'+esc(it.detail)+'</div>' : "")+'</div>';
@@ -804,9 +910,12 @@ function ledgerRowHTML(it, cat, showCat){
 // A Completionist section (a category OR a zone). rows = [{it, cat}]; done/total count the
 // full set, the Remaining filter only hides checked rows. foldId is namespaced ("z:…" for
 // zones) so zone folds never collide with category folds. `kicker`/`note` are optional trim.
-function ledgerSectionHTML(foldId, title, rows, showCat, kicker, note){
+function ledgerSectionHTML(foldId, title, rows, showCat, kicker, note, zone){
+  // Zone sections count per-step (a row is "done" for THIS zone via rowDoneInZone); category
+  // sections count the whole deed (deedDone). The Remaining filter hides whatever's done here.
+  const rowDone = zone ? (x => rowDoneInZone(x.it, zone)) : (x => deedDone(x.it));
   const total = rows.length;
-  const done = rows.filter(x => state.checked[ledgerKey(x.it)]).length;
+  const done = rows.filter(rowDone).length;
   const folded = !!state.ui.collapsed[foldId];
   let h = '<section><button class="sechead" data-act="fold" data-id="'+foldId+'">'+
     '<div>'+(kicker ? '<div class="kicker">'+esc(kicker)+'</div>' : "")+
@@ -814,9 +923,9 @@ function ledgerSectionHTML(foldId, title, rows, showCat, kicker, note){
     '<div class="secright"><span class="seccount">'+done+'/'+total+'</span></div></button>';
   if(folded) return h+'</section>';
   if(note) h += '<div class="notehint">'+esc(note)+'</div>';
-  const vis = state.filterRemaining ? rows.filter(x => !state.checked[ledgerKey(x.it)]) : rows;
+  const vis = state.filterRemaining ? rows.filter(x => !rowDone(x)) : rows;
   if(!vis.length) return h + '<div class="notehint">All '+total+' done.</div></section>';
-  for(const {it, cat} of vis) h += ledgerRowHTML(it, cat, showCat);
+  for(const {it, cat} of vis) h += ledgerRowHTML(it, cat, showCat, zone);
   return h+'</section>';
 }
 function renderCompletionist(){
@@ -841,7 +950,7 @@ function renderCompletionist(){
     for(const z of ZONES){
       const rows = LEDGER_ITEMS.filter(x => (x.it.zones || []).includes(z));
       if(!rows.length) continue;   // canonical zone with no ledger content — skip silently
-      h += ledgerSectionHTML("z:"+z, z, rows, true);
+      h += ledgerSectionHTML("z:"+z, z, rows, true, "", "", z);
     }
     // Trailing catch-all: region-less rows (only cap1, the cap Rémi starts with). Titled "No Zone"
     // to echo the "By zone" toggle; it has no map location, and nothing is guessed into a region.
@@ -856,7 +965,7 @@ function renderCompletionist(){
       h += ledgerSectionHTML(cat.id, cat.title, cat.items.map(it => ({ it, cat })), false, cat.trophy);
     }
   }
-  h += '<div class="excl">Not tracked here: kill counts, one-off trophies, and story progress — your PS5 trophy list counts those. The Campaign\'s final phase has the pre-endgame audit.</div>';
+  h += '<div class="excl">Not tracked here: kill counts, one-off trophies, and story progress — your PS5 trophy list counts those. The CAMPAIGN tab\'s final phase has the pre-endgame audit.</div>';
   return h;
 }
 // Row title = primary/secondary split, mirroring the Completionist title+trailing-label grammar.
@@ -979,7 +1088,7 @@ function render(){
     '</div>'+
     '<div class="tabsub">'+(tab==="campaign"
       ? "The playthrough in order—every point of no return flagged."
-      : "Itemized lists for deeds, relics, mysteries, caps, and timeloops.")+'</div>';
+      : "Itemized lists for good deeds, relics, mysteries, baseball caps, and timeloops.")+'</div>';
 
   if(tab==="completionist"){
     h += renderCompletionist() + footerHTML();
@@ -1056,6 +1165,8 @@ document.getElementById("app").addEventListener("click", e => {
   const b = e.target.closest("[data-act]"); if(!b) return;
   const act = b.dataset.act, id = b.dataset.id;
   if(act==="check") toggleCheck(id);
+  else if(act==="deed") toggleDeed(id);
+  else if(act==="step") toggleStep(id, b.getAttribute("data-zone"));
   else if(act==="open") toggleOpen(id);
   else if(act==="nudge") toggleHint(id);
   else if(act==="delnote") delNote(id);

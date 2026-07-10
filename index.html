@@ -257,8 +257,12 @@
   /* Trailing secondary place label on BOTH tabs (9.9 wrap-consistency pass): the Campaign row's
      context and the Completionist row's place/type label share this one class and mechanism —
      inline after the white title, small left gap, and nowrap keeps a multi-word place
-     (e.g. "National Library") from splitting mid-phrase (it bumps to the next line whole). */
-  .rctx{font-size:11px;color:var(--dim);letter-spacing:.05em;white-space:nowrap;margin-left:.5em}
+     (e.g. "National Library") from splitting mid-phrase (it bumps to the next line whole).
+     inline-block is LOAD-BEARING (same trick as .ctxnote, 9.7.1): the markup has no space
+     between the title text and this span, so as plain inline the label would fuse with the
+     title's last word and drag it down when wrapping ("Mark of the / Betrayed + label");
+     inline-block restores a break opportunity before the label without needing a space. */
+  .rctx{font-size:11px;color:var(--dim);letter-spacing:.05em;white-space:nowrap;margin-left:.5em;display:inline-block}
   /* Multi-Location route strings can outgrow a phone line (e.g. "Talju, Ministry of Cultural
      Primacy → Acasa Marshes") — let THOSE wrap internally at spaces instead of overflowing the
      viewport; plain place labels stay atomic (nowrap) so they drop below a long title whole. */
@@ -469,7 +473,7 @@ const SECTIONS = [
 // BUILD split into number + codename (Roadmap 8, item 6). Display shape: "9.0 (FRONTIER)".
 // Used verbatim in the header kicker, the export payload's `build` field, and mirrored in
 // the README build log + the CLAUDE.md pin.
-const BUILD_N = "9.9";
+const BUILD_N = "9.9.1";
 const BUILD_NAME = "ATLAS";
 const BUILD = BUILD_N + " (" + BUILD_NAME + ")";
 // Inline vector gear — monochrome, inherits currentColor so it tracks --chrome / --chrome-active

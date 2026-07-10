@@ -151,13 +151,16 @@
     color:inherit;font-family:inherit;font-size:15px;text-align:left;cursor:pointer;padding:0;
     flex:1;line-height:1.5;
   }
-  /* Campaign checklist rows are tag-led with no trailing label: keep the tag inline with the
-     title (the title fills the row and wraps its OWN text) instead of flex-wrap dropping the
-     long title onto a second line and orphaning the tag alone above it — which inflated every
-     tag-led row's height. Scoped to .taglead so it never touches Completionist rows, whose
-     trailing .zone label relies on flex-wrap to drop below a long title rather than be squished. */
-  .rowlabel.taglead{flex-wrap:nowrap}
-  .rowlabel.taglead .rowtitle{flex:1 1 auto;min-width:0}
+  /* Keep the tag inline with the title (the title fills the row and wraps its OWN text) instead
+     of flex-wrap dropping a long title onto a second line and orphaning the tag alone above it —
+     which inflated every tag-led row's height. Both tabs use this since the 9.9 wrap-consistency
+     pass: the Completionist's trailing place label moved INLINE into the rowtitle (an .rctx, the
+     same mechanism as the Campaign location), so no separate flex item needs to wrap anymore and
+     the two tabs drop text to a second line identically. .ledlead = the ledger variant (same
+     nowrap rules, but WITHOUT the Campaign's 74px uniform-tag pin below — the ledger's only tag
+     is the abbreviated MISS. flag, deliberately compact). */
+  .rowlabel.taglead,.rowlabel.ledlead{flex-wrap:nowrap}
+  .rowlabel.taglead .rowtitle,.rowlabel.ledlead .rowtitle{flex:1 1 auto;min-width:0}
   .row.done .rowtitle{text-decoration:line-through}
   /* speech-bubble marker on conversation-target rows (talk:true) + the Standing Orders legend.
      Pinned to the UI accent (--chrome-active) via currentColor so it pops off the --text title
@@ -244,12 +247,22 @@
   .tab{flex:1;font-family:var(--mono);font-size:13px;letter-spacing:.14em;background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);padding:11px 6px;cursor:pointer;text-align:center}
   .tab.on{color:var(--bright);border-bottom-color:var(--chrome-active)}
   .tabsub{font-size:12px;color:var(--muted);margin:9px 0 18px;letter-spacing:.03em;line-height:1.5}
-  .zone{font-size:11px;color:var(--dim);letter-spacing:.05em;white-space:nowrap}
-  /* campaign row trailing secondary context (Location / Good-Deed-N / Museum-floor), moved off the
-     front of the title and greened — same muted --dim as the Completionist trailing label. Sits
-     inline after the white Subject; a small left gap separates them, and nowrap keeps a multi-word
-     context (e.g. "Lethe Library") from splitting mid-phrase. */
+  /* Zone sub-header inside a By-location section (9.9 ATLAS) — non-collapsible. Set in the
+     interface accent with a short chrome underline (user-picked from mocked options): a grouping
+     header is interface chrome, not game content, so the accent is legitimate under the two-layer
+     colour model — and it stops the header reading as just another muted trailing label.
+     display:inline-block shrink-wraps the underline to the text. */
+  .subloc{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--chrome-active);
+    border-bottom:1px solid var(--chrome);padding-bottom:3px;display:inline-block;margin:16px 2px 4px}
+  /* Trailing secondary place label on BOTH tabs (9.9 wrap-consistency pass): the Campaign row's
+     context and the Completionist row's place/type label share this one class and mechanism —
+     inline after the white title, small left gap, and nowrap keeps a multi-word place
+     (e.g. "National Library") from splitting mid-phrase (it bumps to the next line whole). */
   .rctx{font-size:11px;color:var(--dim);letter-spacing:.05em;white-space:nowrap;margin-left:.5em}
+  /* Multi-Location route strings can outgrow a phone line (e.g. "Talju, Ministry of Cultural
+     Primacy → Acasa Marshes") — let THOSE wrap internally at spaces instead of overflowing the
+     viewport; plain place labels stay atomic (nowrap) so they drop below a long title whole. */
+  .rctx.route{white-space:normal}
   .excl{font-size:12px;color:var(--muted);border-top:1px solid var(--line2);padding-top:13px;margin-top:6px;line-height:1.65}
   /* first-visit notice: an app-status card, so its accent is bright neutral chrome, not a content hue */
   .notice{border:1px solid var(--chrome-active);background:color-mix(in srgb,var(--chrome-active) 6%,transparent);border-radius:4px;padding:14px 16px;margin-bottom:18px}
@@ -375,16 +388,16 @@ const SECTIONS = [
     deadline:
       "POINT OF NO RETURN: placing the first Keystone at Lake Cynon ends Act 1. Do not travel to Lake Cynon for the story until every box below is checked.",
     items: [
-      { id: "a1", tag: "STORY", talk:true, title: "Senedra Forest — Ernest Caddel", detail: "In the basement of the first house. Story-required, can't be missed — listed so the NPC counter stays in order." },
-      { id: "a2", tag: "STORY", talk:true, title: "Senedra Forest — wounded soldier (by the APC)", detail: "Just after Caddel's house. Story-required." },
-      { id: "a3", tag: "MISS", talk:true, title: "Jova — Captain Vaas", detail: "On the platform at the entrance to the town of Jova. You lose access to him once Act 2 begins — if you never spoke to him, Lend an Ear is gone. Talk to him now." },
-      { id: "a4", tag: "MISS", talk:true, title: "Jova — Abbot Jaffer", detail: "On the road between Captain Vaas and the blacksmith shop. He later relocates; safest to talk here." },
-      { id: "a5", tag: "MISS", talk:true, title: "Jova — Rebecca", detail: "On the roof of the house with the treehouse in the yard, near Captain Vaas. She later relocates; talk here." },
-      { id: "a6", tag: "MISS", title: "Jova — Land of Milk and Honey", detail: "Speak with the woman in the underground level of the house on Jova's west side. Take the empty baby bottles to Ernest Caddel in Senedra Forest, bring the milk back to her." },
-      { id: "a7", tag: "MISS", trophy: "req. for Ever After", title: "Jova — Love Thy Neighbour", detail: "Speak to the woman in the house near Abbot Jaffer. Grab the Bloodied Plushie from the tree with the hanging bodies east of Jova, trade it to the man in the house above the milk-quest woman, then trade the picture you get back to the first woman. Must be done in Act 1 — one of the trophies for gathering everyone later depends on it." },
-      { id: "a8", tag: "MISS", title: "Jova — Asunder", detail: "Find the 'Worried Wife' letter behind the house with the drunk soldier in Jova; deliver it to the man by the excavator at the area entrance." },
-      { id: "a9", tag: "MISS", title: "Jova — Performance of a Lifetime (1 of 2)", detail: "Talk to the man playing violin on the truck near Captain Vaas. He needs TWO sheet musics: 'Our Pride' here in Jova (south, hostile end — on a table by the shops / the piano behind the graffiti house) and 'Losilus Dreaming' in Vyssa Hills. Grab 'Our Pride' now; you'll close this out below." },
-      { id: "a10", tag: "STORY", talk:true, title: "Jova — Victor Gaz", detail: "At the blacksmith shop after the tunnel rescue. Story-required." },
+      { id: "a1", tag: "STORY", talk:true, title: "Senedra Forest — Ernest Caddell", detail: "In the basement of the first house. Story-required, can't be missed — listed so the NPC counter stays in order." },
+      { id: "a2", tag: "STORY", talk:true, title: "Senedra Forest — wounded soldier (by the APC)", detail: "Just after Caddell's house. Story-required." },
+      { id: "a3", tag: "MISS", talk:true, title: "Acasa Marshes (Village of Jova) — Captain Vaas", detail: "On the platform at the entrance to the town of Jova. You lose access to him once Act 2 begins — if you never spoke to him, Lend an Ear is gone. Talk to him now." },
+      { id: "a4", tag: "MISS", talk:true, title: "Acasa Marshes (Village of Jova) — Abbot Jaffer", detail: "On the road between Captain Vaas and the blacksmith shop. He later relocates; safest to talk here." },
+      { id: "a5", tag: "MISS", talk:true, title: "Acasa Marshes (Village of Jova) — Rebecca", detail: "On the roof of the house with the treehouse in the yard, near Captain Vaas. She later relocates; talk here." },
+      { id: "a6", tag: "MISS", title: "Acasa Marshes (Village of Jova) — Land of Milk and Honey", detail: "Speak with the woman in the underground level of the house on Jova's west side. Take the empty baby bottles to Ernest Caddell in Senedra Forest, bring the milk back to her." },
+      { id: "a7", tag: "MISS", trophy: "req. for Ever After", title: "Acasa Marshes (Village of Jova) — Love Thy Neighbour", detail: "Speak to the woman in the house near Abbot Jaffer. Grab the Bloodied Plushie from the tree with the hanging bodies east of Jova, trade it to the man in the house above the milk-quest woman, then trade the picture you get back to the first woman. Must be done in Act 1 — one of the trophies for gathering everyone later depends on it." },
+      { id: "a8", tag: "MISS", title: "Acasa Marshes (Village of Jova) — Asunder", detail: "Find the 'Worried Wife' letter behind the house with the drunk soldier in Jova; deliver it to the man by the excavator at the area entrance." },
+      { id: "a9", tag: "MISS", title: "Acasa Marshes (Village of Jova) — Performance of a Lifetime (1 of 2)", detail: "Talk to the man playing violin on the truck near Captain Vaas. He needs TWO sheet musics: 'Our Pride' here in Jova (south, hostile end — on a table by the shops / the piano behind the graffiti house) and 'Losilus Dreaming' in Vyssa Hills. Grab 'Our Pride' now; you'll close this out below." },
+      { id: "a10", tag: "STORY", talk:true, title: "Acasa Marshes (Village of Jova) — Victor Gaz", detail: "At the blacksmith shop after the tunnel rescue. Story-required." },
       { id: "a11", tag: "WARN", title: "Vyssa Hills — Do NOT give Atticus the ON vehicle keys", detail: "Handing over the keys is the Heart of Gold good deed and it empties the camp — done too early it permanently voids the On Death's Door good deed. You'll find the keys after closing this area's Timeloop. Keep them in your pocket until the Act 2 step tells you otherwise." },
       { id: "a12", tag: "MISS", title: "Vyssa Hills — On Death's Door", detail: "Find the Atenolol pill bottle in Vyssa Hills and give it to the woman at the camp in the north of the area. Must be done before Atticus gets the keys." },
       { id: "a13", tag: "STORY", talk:true, title: "Vyssa Hills — Vitalis", detail: "Northeast of the area. Story-required." },
@@ -402,7 +415,7 @@ const SECTIONS = [
     deadline:
       "POINT OF NO RETURN: collecting/placing the remaining Keystones. Simple safety rule from PowerPyx — stay out of the Plains of Mist and the Museum until every box below is checked.",
     items: [
-      { id: "b1", tag: "MISS", trophy: "req. for Ever After", title: "FIRST: Jova — Man's Best Friend", detail: "Do this before anything else in Act 2, and strictly before touching anything related to the abbey (which relocates Jaffer and Rebecca). In Jova, release the dog the soldier was sitting beside, then take the collar to the man at the camp in Vyssa Hills. Done late, the dog never reaches the lake and Ever After is lost. (One reader reports the trophy still popped giving the collar after the couple moved near the mine — but the guide author's timing is the only verified-safe route.)" },
+      { id: "b1", tag: "MISS", trophy: "req. for Ever After", title: "FIRST: Acasa Marshes (Village of Jova) — Man's Best Friend", detail: "Do this before anything else in Act 2, and strictly before touching anything related to the abbey (which relocates Jaffer and Rebecca). In Jova, release the dog the soldier was sitting beside, then take the collar to the man at the camp in Vyssa Hills. Done late, the dog never reaches the lake and Ever After is lost. (One reader reports the trophy still popped giving the collar after the couple moved near the mine — but the guide author's timing is the only verified-safe route.)" },
       { id: "b2", tag: "MISS", title: "Vyssa Hills — Heart of Gold (NOW give Atticus the keys)", detail: "With the On Death's Door and Man's Best Friend good deeds complete, hand Atticus the ON Vehicle Keys. Order matters; this is the moment." },
       { id: "b3", tag: "MISS", talk:true, title: "Talju — Boro Juven (BEFORE entering town)", detail: "In the garage near the APC at the area start. If ignored, your window to log him closes (he's one of the flare recipients below). Talk first, then proceed." },
       { id: "b4", tag: "MISS", title: "Talju — A Light in the Dark (all four flares)", detail: "Grab the flares in front of the Town Hall and hand one to each of the four people around town. Deadline: before killing the Hollow in the Town Hall parking lot (it makes all survivors leave). To be extra safe, finish all four before giving the radio to Lukhan. These count as four separate Good Deeds — missing one flare costs both Man of the People and a Relic." },
@@ -413,11 +426,11 @@ const SECTIONS = [
       { id: "b9", tag: "MISS", title: "Senedra Forest — Forlorn Fate (2 of 2)", detail: "Open the door in the trench area with the Flame symbol and trade the Senedra Mountain map to the woman inside." },
       { id: "b10", tag: "MISS", talk:true, title: "Marastan — Talis", detail: "On a balcony in the upper town. Easy to walk past; he's a Lend an Ear requirement." },
       { id: "b11", tag: "MISS", talk:true, title: "Marastan — Father Bramante", detail: "In the fenced area in front of the statue, near the radio tower." },
-      { id: "b12", tag: "STORY", talk:true, title: "Lethe Library — Iblis", detail: "Upper floor. Story-required. (The Library and the Ministry are two separate map destinations side by side.)" },
+      { id: "b12", tag: "STORY", talk:true, title: "National Library — Iblis", detail: "Upper floor. Story-required. (The Library and the Ministry are two separate map destinations side by side.)" },
       { id: "b13", tag: "WARN", title: "Complete Incognito (BEFORE leaving the Ministry)", detail: "Leaving the Ministry mid-visit costs you the ON Soldier and instantly fails the deed. (One player reports leaving was safe because they hadn't talked to her yet — treat that as unverified and just finish before exiting.)" },
-      { id: "b14", tag: "MISS", talk:true, title: "Ministry — Maeve Tristana (BEFORE killing the ranged Hollow)", detail: "The distressed woman locked in a room (left at the king's portrait; the enemy is to the right). Speak to her before defeating the ranged Hollow or she may never register in the People menu. If you botched it: players report she can appear later in the parking garage — check there before writing her off." },
-      { id: "b15", tag: "MISS", title: "Ministry — Waylaid (2 of 3)", detail: "Find the Satellite Radio in this location." },
-      { id: "b16", tag: "MISS", title: "Ministry — Incognito", detail: "Use the keycard from the parking garage on the top-floor door to get the Woman's Clothing, then take it to the ON Soldier on the top floor. Only then is it safe to leave the Ministry." },
+      { id: "b14", tag: "MISS", talk:true, title: "Ministry of Cultural Primacy — Maeve Tristana (BEFORE killing the ranged Hollow)", detail: "The distressed woman locked in a room (left at the king's portrait; the enemy is to the right). Speak to her before defeating the ranged Hollow or she may never register in the People menu. If you botched it: players report she can appear later in the parking garage — check there before writing her off." },
+      { id: "b15", tag: "MISS", title: "Ministry of Cultural Primacy — Waylaid (2 of 3)", detail: "Find the Satellite Radio in this location." },
+      { id: "b16", tag: "MISS", title: "Ministry of Cultural Primacy — Incognito", detail: "Use the keycard from the parking garage on the top-floor door to get the Woman's Clothing, then take it to the ON Soldier on the top floor. Only then is it safe to leave the Ministry." },
       { id: "b17", tag: "MISS", title: "Acasa Marshes — Waylaid (3 of 3)", detail: "Southwest of town at the stone pillar, two ON Soldiers wait in a room underneath. Trade them the Metformin and the Satellite Radio. This is the final missable Good Deed — after this, only the Museum NPCs remain time-sensitive." },
     ],
   },
@@ -430,10 +443,10 @@ const SECTIONS = [
       "Last missable zone in the game. One switch here can permanently kill an NPC you need.",
     items: [
       { id: "c1", tag: "WARN", title: "Clear the room (BEFORE flipping the B1 switch)", detail: "At the B1 switch with PURPLE and YELLOW options: kill every Hollow in the large room opposite the Timeloop first. Flip to YELLOW early and you lose Dr. Ballam Lamech when the doors open." },
-      { id: "c2", tag: "STORY", talk:true, title: "B3 — Dr. Marga Hamil", detail: "In the laboratory. Story-required." },
-      { id: "c3", tag: "STORY", talk:true, title: "B1 — Seo Kagin", detail: "In the training area. Story-required." },
-      { id: "c4", tag: "MISS", talk:true, title: "B1 — Dr. Ballam Lamech", detail: "In the large room opposite the Timeloop, once the enemies are dead and the doors are open. He's only here if you handled the switch correctly." },
-      { id: "c5", tag: "MISS", talk:true, title: "B4 — Dr. Mabden (via the intercom)", detail: "In the Timeloop room. TALK through the intercom first — starting the fight directly skips the conversation and he's lost (a reader learned this the hard way). This is typically the NPC who pops Lend an Ear." },
+      { id: "c2", tag: "STORY", talk:true, title: "Auriga Museum (B3) — Dr. Marga Hamil", detail: "In the laboratory. Story-required." },
+      { id: "c3", tag: "STORY", talk:true, title: "Auriga Museum (B1) — Seo Kagin", detail: "In the training area. Story-required." },
+      { id: "c4", tag: "MISS", talk:true, title: "Auriga Museum (B1) — Dr. Ballam Lamech", detail: "In the large room opposite the Timeloop, once the enemies are dead and the doors are open. He's only here if you handled the switch correctly." },
+      { id: "c5", tag: "MISS", talk:true, title: "Auriga Museum (B4) — Dr. Mabden (via the intercom)", detail: "In the Timeloop room. TALK through the intercom first — starting the fight directly skips the conversation and he's lost (a reader learned this the hard way). This is typically the NPC who pops Lend an Ear." },
     ],
   },
   {
@@ -456,8 +469,8 @@ const SECTIONS = [
 // BUILD split into number + codename (Roadmap 8, item 6). Display shape: "9.0 (FRONTIER)".
 // Used verbatim in the header kicker, the export payload's `build` field, and mirrored in
 // the README build log + the CLAUDE.md pin.
-const BUILD_N = "9.8";
-const BUILD_NAME = "RELAY";
+const BUILD_N = "9.9";
+const BUILD_NAME = "ATLAS";
 const BUILD = BUILD_N + " (" + BUILD_NAME + ")";
 // Inline vector gear — monochrome, inherits currentColor so it tracks --chrome / --chrome-active
 // like every other control (no OS colour emoji). Rounded "settings" cog. aria-hidden: the button
@@ -496,55 +509,62 @@ const CATS = (typeof LEDGER !== "undefined" && Array.isArray(LEDGER)) ? LEDGER :
 // Shared-checkbox key: ledger items with a campaignId tick the SAME storage id as their
 // Campaign row (so existing progress shows through automatically); others use their own id.
 function ledgerKey(it){ return it.campaignId || it.id; }
-// ————— Zone lens (Completionist "By zone" view) —————
-// Canonical regions in game-progression order. Each ledger item's zones:[] (ledger-data.js)
-// lists every canonical region it touches; the zone view groups by these. A multi-zone item
-// appears under EACH of its zones — same checkbox id (via ledgerKey), so state stays synced
-// across appearances. Items with an empty zones:[] (only cap1, the region-less starting cap)
-// collect into a trailing "No Zone" group rather than being guessed into a region.
-const ZONES = [
-  "Senedra Forest","Arcas Spire","Acasa Marshes","Vyssa Hills","Lake Cynon","Lymbic Forge",
-  "Talju","Marastan","Lethe Library","Lethe Ministry","Plains of Mist","Jeljin",
-  "Auriga Museum","Eye of God","Vaults of Forbidden Knowledge",
+// ————— Location lens (Completionist "By location" view) —————
+// Each ledger item's locations:[] (ledger-data.js) lists every canonical Location it
+// touches; this view groups by those. A multi-Location item appears under EACH of them
+// (as per-Location steps — see STEPS below). Items with an empty locations:[] (only cap1,
+// the starting cap) collect into a trailing "No Location" group, never guessed into one.
+// The game maps as Region → LOCATION → ZONE (per the Fextralife wiki; 9.9 ATLAS).
+// LOCATIONS = the 12 canonical Locations, in game-progression order — the grouping key
+// for the Completionist "By location" lens. Zones (Village of Jova, Lymbic Forge, the
+// Vaults, Pathem Abbey, …) live WITHIN a Location and ride each ledger item's optional
+// `zone` field (or a per-leg `zone` on STEPS below); they render as non-collapsible
+// sub-headers inside a Location section, never as sections of their own.
+const LOCATIONS = [
+  "Senedra Forest","Arcas Spire","Acasa Marshes","Vyssa Hills","Lake Cynon",
+  "Talju","Marastan","National Library","Ministry of Cultural Primacy",
+  "Plains of Mist","Jeljin","Auriga Museum",
 ];
-// Flatten the ledger once, tagging each item with its category — the zone view mixes
-// categories under a region, so each row must show its category. It's rendered as a plain
-// muted trailing label (the SAME .zone treatment the location gets in the by-category view),
+// Flatten the ledger once, tagging each item with its category — the location view mixes
+// categories under a Location, so each row must show its category. It's rendered as a plain
+// muted trailing label (the SAME .rctx treatment the place gets in the by-category view),
 // NOT a boxed tag — so both groupings share one grammar: title, then a muted trailing label
-// (the location in category view, the category TYPE in zone view). Title-case singular.
+// (the place in category view, the category TYPE in location view). Title-case singular.
 const CAT_NAME = { deeds:"Good Deed", relics:"Relic", myst:"Mystery", caps:"Baseball Cap", loops:"Timeloop" };
 const LEDGER_ITEMS = CATS.flatMap(cat => cat.items.map(it => ({ it, cat })));
 function isDone(id){
   const m = AGGREGATES[id];
   return m ? m.every(k => !!state.checked[k]) : !!state.checked[id];
 }
-// ————— Multi-step Completionist items (By-zone view) —————
-// A multi-zone item decomposes into ordered steps, one per region it touches:
+// ————— Multi-step Completionist items (By-location view) —————
+// A multi-Location item decomposes into ordered steps, one per Location it touches:
 //   src  — a pickup/source you can tick on its own (its own key); ticking it does NOT earn the deed
 //   and  — a delivery that ANDs into completion (deed earned iff EVERY `and` step is ticked)
 //   done — the single completion step; ticking it sets the real deed key (what Category reflects)
 //   {follows:"id"} — no steps of its own; earned exactly when the referenced item is (rewards)
+// loc = the step's Location (sub-keys in `checked` are id@loc); zone (optional) = the Zone
+// within it, for the sub-header grouping (9.9 ATLAS) — mirrors the item-level `zone` field.
 // Display rule: a step's box reads done if its own key is set OR the deed is complete — so ticking
 // the deed (or its completion step) lights every step, while ticking one source never earns it.
 const STEPS = {
-  gd2:  [{zone:"Talju",label:"step 1 of 2",src:1},{zone:"Senedra Forest",label:"step 2 of 2",done:1}],
-  gd6:  [{zone:"Vyssa Hills",label:"pickup",src:1},{zone:"Acasa Marshes",label:"turn in",done:1}],
-  gd7:  [{zone:"Talju",label:"pickup",src:1},{zone:"Lethe Ministry",label:"pickup",src:1},{zone:"Acasa Marshes",label:"turn in",done:1}],
-  gd12: [{zone:"Acasa Marshes",label:"step 1 of 2",src:1},{zone:"Vyssa Hills",label:"step 2 of 2",done:1}],
-  gd21: [{zone:"Lethe Ministry",label:"step 1 of 2",src:1},{zone:"Lethe Library",label:"step 2 of 2",done:1}],
-  gd23: [{zone:"Auriga Museum",label:"museum pickup",src:1},{zone:"Marastan",label:"deliver to Marastan",and:1},{zone:"Senedra Forest",label:"deliver to Senedra",and:1}],
-  gd25: [{zone:"Jeljin",label:"step 1 of 2",src:1},{zone:"Acasa Marshes",label:"step 2 of 2",done:1}],
-  gd26: [{zone:"Marastan",label:"step 1 of 2",src:1},{zone:"Jeljin",label:"step 2 of 2",done:1}],
-  my21: [{zone:"Lake Cynon",label:"step 1 of 2",src:1},{zone:"Marastan",label:"step 2 of 2",done:1}],
-  my22: [{zone:"Lake Cynon",label:"step 1 of 2",src:1},{zone:"Acasa Marshes",label:"step 2 of 2",done:1}],
-  my27: [{zone:"Talju",label:"step 1 of 2",src:1},{zone:"Lethe Library",label:"step 2 of 2",done:1}],
-  my34: [{zone:"Lethe Ministry",label:"step 1 of 2",src:1},{zone:"Lake Cynon",label:"step 2 of 2",done:1}],
-  my41: [{zone:"Auriga Museum",label:"step 1 of 2",src:1},{zone:"Lymbic Forge",label:"step 2 of 2",done:1}],
+  gd2:  [{loc:"Talju",label:"step 1 of 2",src:1},{loc:"Senedra Forest",label:"step 2 of 2",done:1}],
+  gd6:  [{loc:"Vyssa Hills",label:"pickup",src:1},{loc:"Acasa Marshes",zone:"Village of Jova",label:"turn in",done:1}],
+  gd7:  [{loc:"Talju",label:"pickup",src:1},{loc:"Ministry of Cultural Primacy",label:"pickup",src:1},{loc:"Acasa Marshes",label:"turn in",done:1}],
+  gd12: [{loc:"Acasa Marshes",label:"step 1 of 2",src:1},{loc:"Vyssa Hills",label:"step 2 of 2",done:1}],
+  gd21: [{loc:"Ministry of Cultural Primacy",label:"step 1 of 2",src:1},{loc:"National Library",label:"step 2 of 2",done:1}],
+  gd23: [{loc:"Auriga Museum",label:"museum pickup",src:1},{loc:"Marastan",label:"deliver to Marastan",and:1},{loc:"Senedra Forest",label:"deliver to Senedra",and:1}],
+  gd25: [{loc:"Jeljin",label:"step 1 of 2",src:1},{loc:"Acasa Marshes",zone:"Village of Jova",label:"step 2 of 2",done:1}],
+  gd26: [{loc:"Marastan",label:"step 1 of 2",src:1},{loc:"Jeljin",label:"step 2 of 2",done:1}],
+  my21: [{loc:"Lake Cynon",label:"step 1 of 2",src:1},{loc:"Marastan",label:"step 2 of 2",done:1}],
+  my22: [{loc:"Lake Cynon",label:"step 1 of 2",src:1},{loc:"Acasa Marshes",zone:"Pathem Abbey",label:"step 2 of 2",done:1}],
+  my27: [{loc:"Talju",label:"step 1 of 2",src:1},{loc:"National Library",label:"step 2 of 2",done:1}],
+  my34: [{loc:"Ministry of Cultural Primacy",label:"step 1 of 2",src:1},{loc:"Lake Cynon",label:"step 2 of 2",done:1}],
+  my41: [{loc:"Auriga Museum",label:"step 1 of 2",src:1},{loc:"Lake Cynon",zone:"Lymbic Forge",label:"step 2 of 2",done:1}],
   rl16: {follows:"gd23"},
   rl25: {follows:"my22"},
 };
 const LEDGER_BY_ID = {}; LEDGER_ITEMS.forEach(x => { LEDGER_BY_ID[x.it.id] = x.it; });
-function stepKey(id, step){ return id + "@" + step.zone; }
+function stepKey(id, step){ return id + "@" + step.loc; }
 // Is a (possibly multi-step) item's deed complete? follows → its target; AND → every delivery ticked
 // (or a legacy whole-deed tick); else the plain key (also covers existing b4/b13 aggregates).
 function deedDone(it){
@@ -561,22 +581,22 @@ function stepChecked(it, step){
   if(step.and)  return !!state.checked[stepKey(it.id, step)] || !!state.checked[ledgerKey(it)];
   return !!state.checked[stepKey(it.id, step)] || deedDone(it);   // source lights once the deed's earned
 }
-// Done-state of a row as shown in a given zone (drives per-zone counts + the Remaining filter).
-function rowDoneInZone(it, zone){
+// Done-state of a row as shown in a given Location (drives per-Location counts + the Remaining filter).
+function rowDoneInLoc(it, loc){
   const s = STEPS[it.id];
   if(s){
     if(s.follows){ const t = LEDGER_BY_ID[s.follows]; return t ? deedDone(t) : false; }
-    const step = s.find(x => x.zone === zone);
+    const step = s.find(x => x.loc === loc);
     if(step) return stepChecked(it, step);
   }
   return !!state.checked[ledgerKey(it)];
 }
-// Tick one step in the By-zone view. Completion step → the real deed key (+ campaign tuck logic via
-// toggleCheck); a source/delivery → its own key only (never earns the deed on its own).
-function toggleStep(id, zone){
+// Tick one step in the By-location view. Completion step → the real deed key (+ campaign tuck logic
+// via toggleCheck); a source/delivery → its own key only (never earns the deed on its own).
+function toggleStep(id, loc){
   const it = LEDGER_BY_ID[id]; if(!it) return;
   const s = STEPS[id];
-  const step = Array.isArray(s) ? s.find(x => x.zone === zone) : null;
+  const step = Array.isArray(s) ? s.find(x => x.loc === loc) : null;
   if(!step){ toggleDeed(id); return; }
   if(step.done){ toggleCheck(ledgerKey(it)); return; }
   const k = stepKey(id, step);
@@ -627,8 +647,9 @@ function loadUI(){
       state.ui.tab = (p && p.tab === "completionist") ? "completionist" : "campaign";
       state.ui.noticeSeen = !!(p && p.noticeSeen);
       state.ui.tucked = (p && p.tucked) || {};
-      // Completionist grouping lens — "category" (default) or "zone"; a Completionist-only pref.
-      state.ui.groupBy = (p && p.groupBy === "zone") ? "zone" : "category";
+      // Completionist grouping lens — "category" (default) or "location"; a Completionist-only
+      // pref. A stored pre-9.9 "zone" is honored as "location" (the lens was renamed, not changed).
+      state.ui.groupBy = (p && (p.groupBy === "location" || p.groupBy === "zone")) ? "location" : "category";
       // accept a stored "auto" as an explicit choice (so picking Auto survives reloads); anything
       // missing/invalid falls back to the Datapad default rather than Auto.
       state.ui.theme = (p && (p.theme === "dark" || p.theme === "light" || p.theme === "auto")) ? p.theme : "dark"; } }catch(e){}
@@ -694,6 +715,18 @@ function migrateState(){
     delete state.checked.gd23;
     persist();
   }
+  // 9.9 (ATLAS): "Lethe Ministry" was renamed to the wiki's "Ministry of Cultural Primacy",
+  // so the three source-step sub-keys that embedded the old Location name move to the new one.
+  // (No other renamed Location ever appeared in a stored sub-key: completion steps write the
+  // plain deed key, and my41's old "Lymbic Forge" leg was its completion step.)
+  ["gd7","gd21","my34"].forEach(id => {
+    const old = id + "@Lethe Ministry";
+    if(state.checked[old]){
+      state.checked[id + "@Ministry of Cultural Primacy"] = true;
+      delete state.checked[old];
+      persist();
+    }
+  });
 }
 
 // ————— hint handoff —————
@@ -874,46 +907,67 @@ function footerHTML(){
 // A ledger name may carry a (sub-location) note, e.g. "Lymbic Chest (Vitalis' Basement)": style
 // that parenthetical as secondary context (11px), mirroring the Campaign row grammar — the primary
 // name leads, the sub-location trails smaller. (The redundant zone short-name that used to precede
-// it now lives only in the trailing .zone label, so it's dropped from the name.) Names without a
+// it now lives only in the trailing .rctx place label, so it's dropped from the name.) Names without a
 // parenthetical pass through untouched.
 function ledgerNameHTML(name){
   return esc(name).replace(/(\([^)]*\))/g, '<span class="ctxnote">$1</span>');
 }
+// The derived place label for the by-category view: hand-authored route string for
+// multi-Location items (connector semantics are content), else "Location (Zone)" —
+// derived from the canonical fields so label and grouping can never drift (9.9 ATLAS).
+function placeLabel(it){
+  if(it.route) return it.route;
+  const L = it.locations && it.locations[0];
+  return L ? (it.zone ? L+" ("+it.zone+")" : L) : "";
+}
+// The Zone a row belongs to when shown under a given Location: a multi-Location item's
+// per-leg STEPS zone wins; otherwise the item-level zone. Null = directly in the Location.
+function zoneInLoc(it, loc){
+  const s = STEPS[it.id];
+  if(Array.isArray(s)){ const step = s.find(x => x.loc === loc); if(step) return step.zone || null; }
+  return it.zone || null;
+}
 // One ledger row. The trailing muted label carries one grammar across both groupings: the
-// by-category view shows the item's LOCATION (showCat=false); the zone view's section already
-// IS the location, so it shows the category TYPE instead (showCat=true) and drops the location.
-// Same .zone styling either way (the muted teal-green trailing label) — category is treated
-// exactly like location, not a boxed tag. MISSABLE stays a tag (an alert flag, in both views).
-function ledgerRowHTML(it, cat, showCat, zone){
+// by-category view shows the item's PLACE (showCat=false; placeLabel above); the location
+// view's section already IS the place, so it shows the category TYPE instead (showCat=true).
+// The label is an .rctx INLINE in the rowtitle — the exact Campaign mechanism — so both tabs
+// wrap to a second line identically (9.9 wrap-consistency pass); category is treated exactly
+// like the place, not a boxed tag. The missable flag stays a gold tag but reads "MISS." here:
+// on the ledger it's an occasional alert among 122 rows (the gold box is the cue), unlike the
+// Campaign where the full-width tag column is the row grammar — the short form buys title room.
+// Long route strings get .route (wrap internally instead of overflowing the viewport).
+function ledgerRowHTML(it, cat, showCat, loc){
   const op = !!state.open[it.id];
-  const trail = showCat ? CAT_NAME[cat.id] : it.zone;
-  // In the By-zone view a multi-zone item renders as a per-zone STEP (its own tick + a "(step …)"
-  // tag); the completion step (and the Category checkbox) drive the real deed key. Everywhere else
-  // — Category view, and single-zone items — it's the plain whole-deed checkbox.
-  const s = zone ? STEPS[it.id] : null;
+  const trail = showCat ? CAT_NAME[cat.id] : placeLabel(it);
+  const trailCls = (!showCat && it.route) ? "rctx route" : "rctx";
+  // In the By-location view a multi-Location item renders as a per-Location STEP (its own tick +
+  // a "(step …)" tag); the completion step (and the Category checkbox) drive the real deed key.
+  // Everywhere else — Category view, and single-Location items — it's the plain whole-deed checkbox.
+  const s = loc ? STEPS[it.id] : null;
   let on, act = "deed", actId = it.id, extra = "", tag = "";
   if(s && s.follows){ on = deedDone(it); actId = s.follows; }   // earned iff its source deed is (Relic label + detail already read as a reward — no extra tag)
-  else if(Array.isArray(s) && s.find(x => x.zone === zone)){
-    const step = s.find(x => x.zone === zone);
-    on = stepChecked(it, step); act = "step"; extra = ' data-zone="'+esc(zone)+'"'; tag = step.label;
-  } else { on = deedDone(it); }                                                 // Category view / single-zone
+  else if(Array.isArray(s) && s.find(x => x.loc === loc)){
+    const step = s.find(x => x.loc === loc);
+    on = stepChecked(it, step); act = "step"; extra = ' data-loc="'+esc(loc)+'"'; tag = step.label;
+  } else { on = deedDone(it); }                                                 // Category view / single-Location
   const tagHTML = tag ? ' <span class="ctxnote">('+esc(tag)+')</span>' : "";
   return '<div class="row'+(on?" done":"")+'"><div class="rowtop">'+
     '<button class="cb'+(on?" on":"")+'" data-act="'+act+'" data-id="'+actId+'"'+extra+' aria-label="'+(on?"Mark incomplete":"Mark complete")+'">'+(on?"✓":"")+'</button>'+
-    '<button class="rowlabel" data-act="open" data-id="'+it.id+'">'+
-    (it.miss ? '<span class="tag" style="--tagc:var(--missable)">MISSABLE</span>' : "")+
-    '<span class="rowtitle">'+ledgerNameHTML(it.name)+tagHTML+'</span>'+
-    '<span class="zone">'+esc(trail)+'</span>'+
+    '<button class="rowlabel ledlead" data-act="open" data-id="'+it.id+'">'+
+    (it.miss ? '<span class="tag" style="--tagc:var(--missable)">MISS.</span>' : "")+
+    '<span class="rowtitle">'+ledgerNameHTML(it.name)+tagHTML+
+    '<span class="'+trailCls+'">'+esc(trail)+'</span></span>'+
     '<span class="plus">'+(op?"−":"+")+'</span></button></div>'+
     (op ? '<div class="detail">'+esc(it.detail)+'</div>' : "")+'</div>';
 }
-// A Completionist section (a category OR a zone). rows = [{it, cat}]; done/total count the
+// A Completionist section (a category OR a Location). rows = [{it, cat}]; done/total count the
 // full set, the Remaining filter only hides checked rows. foldId is namespaced ("z:…" for
-// zones) so zone folds never collide with category folds. `kicker`/`note` are optional trim.
-function ledgerSectionHTML(foldId, title, rows, showCat, kicker, note, zone){
-  // Zone sections count per-step (a row is "done" for THIS zone via rowDoneInZone); category
-  // sections count the whole deed (deedDone). The Remaining filter hides whatever's done here.
-  const rowDone = zone ? (x => rowDoneInZone(x.it, zone)) : (x => deedDone(x.it));
+// Locations — the prefix predates the Location/Zone split and is kept so pre-9.9 stored folds
+// survive) so Location folds never collide with category folds. `kicker`/`note` are optional trim.
+function ledgerSectionHTML(foldId, title, rows, showCat, kicker, note, loc){
+  // Location sections count per-step (a row is "done" for THIS Location via rowDoneInLoc);
+  // category sections count the whole deed (deedDone). Remaining hides whatever's done here.
+  const rowDone = loc ? (x => rowDoneInLoc(x.it, loc)) : (x => deedDone(x.it));
   const total = rows.length;
   const done = rows.filter(rowDone).length;
   const folded = !!state.ui.collapsed[foldId];
@@ -925,39 +979,53 @@ function ledgerSectionHTML(foldId, title, rows, showCat, kicker, note, zone){
   if(note) h += '<div class="notehint">'+esc(note)+'</div>';
   const vis = state.filterRemaining ? rows.filter(x => !rowDone(x)) : rows;
   if(!vis.length) return h + '<div class="notehint">All '+total+' done.</div></section>';
-  for(const {it, cat} of vis) h += ledgerRowHTML(it, cat, showCat, zone);
+  if(loc){
+    // Within a Location, rows group under their Zone (non-collapsible .subloc sub-headers —
+    // only Locations fold): rows directly in the Location first, then each Zone in order of
+    // first appearance. A Zone whose rows are all hidden by Remaining emits no header.
+    const groups = new Map([["", []]]);
+    for(const r of vis){ const z = zoneInLoc(r.it, loc) || "";
+      if(!groups.has(z)) groups.set(z, []); groups.get(z).push(r); }
+    for(const [z, rs] of groups){
+      if(!rs.length) continue;
+      if(z) h += '<div class="subloc">'+esc(z)+'</div>';
+      for(const {it, cat} of rs) h += ledgerRowHTML(it, cat, showCat, loc);
+    }
+    return h+'</section>';
+  }
+  for(const {it, cat} of vis) h += ledgerRowHTML(it, cat, showCat, loc);
   return h+'</section>';
 }
 function renderCompletionist(){
-  const byZone = state.ui.groupBy === "zone";
+  const byLoc = state.ui.groupBy === "location";
   // Grouping = a mode switch (segmented control), deliberately a different shape from the
   // FILTER toggle beside it so the two don't read as sibling filters. Composes with Remaining.
   let h = '<div class="controls">'+
     '<div class="seg">'+
-      '<button class="'+(byZone?"":"on")+'" data-act="groupby" data-group="category">By category</button>'+
-      '<button class="'+(byZone?"on":"")+'" data-act="groupby" data-group="zone">By zone</button>'+
+      '<button class="'+(byLoc?"":"on")+'" data-act="groupby" data-group="category">By category</button>'+
+      '<button class="'+(byLoc?"on":"")+'" data-act="groupby" data-group="location">By location</button>'+
     '</div>'+
     '<button class="chip'+(state.filterRemaining?" on":"")+'" data-act="filterrem">'+(state.filterRemaining?"◉":"○")+' FILTER: remaining only</button>'+
     '</div>';
   if(!CATS.length){
     return h + '<div class="notehint">Ledger data unavailable — ledger-data.js did not load.</div>';
   }
-  if(byZone){
-    // Fixed canonical order (Roadmap: Zone lens req 3). NOTE — this view does NOT adopt the
-    // Campaign tab's Tuck mechanic: req 3 pins zone order, which conflicts with tuck's
+  if(byLoc){
+    // Fixed canonical order (Roadmap: lens req 3). NOTE — this view does NOT adopt the
+    // Campaign tab's Tuck mechanic: req 3 pins Location order, which conflicts with tuck's
     // sink-completed-to-bottom, so canonical order wins (and the by-category view never
-    // tucked either). A finished zone stays in its slot; fold it by hand if you like.
-    for(const z of ZONES){
-      const rows = LEDGER_ITEMS.filter(x => (x.it.zones || []).includes(z));
-      if(!rows.length) continue;   // canonical zone with no ledger content — skip silently
-      h += ledgerSectionHTML("z:"+z, z, rows, true, "", "", z);
+    // tucked either). A finished Location stays in its slot; fold it by hand if you like.
+    for(const L of LOCATIONS){
+      const rows = LEDGER_ITEMS.filter(x => (x.it.locations || []).includes(L));
+      if(!rows.length) continue;   // canonical Location with no ledger content — skip silently
+      h += ledgerSectionHTML("z:"+L, L, rows, true, "", "", L);
     }
-    // Trailing catch-all: region-less rows (only cap1, the cap Rémi starts with). Titled "No Zone"
-    // to echo the "By zone" toggle; it has no map location, and nothing is guessed into a region.
-    // Rendered only if such rows exist.
-    const unzoned = LEDGER_ITEMS.filter(x => !(x.it.zones && x.it.zones.length));
-    if(unzoned.length){
-      h += ledgerSectionHTML("z:__none", "No Zone", unzoned, true, "",
+    // Trailing catch-all: location-less rows (only cap1, the cap Rémi starts with). Titled
+    // "No Location" to echo the "By location" toggle; nothing is guessed into a Location.
+    // Rendered only if such rows exist. (Fold key kept from pre-9.9 for continuity.)
+    const unlocated = LEDGER_ITEMS.filter(x => !(x.it.locations && x.it.locations.length));
+    if(unlocated.length){
+      h += ledgerSectionHTML("z:__none", "No Location", unlocated, true, "",
         "No map location — the cap Rémi starts the game carrying.");
     }
   } else {
@@ -1166,7 +1234,7 @@ document.getElementById("app").addEventListener("click", e => {
   const act = b.dataset.act, id = b.dataset.id;
   if(act==="check") toggleCheck(id);
   else if(act==="deed") toggleDeed(id);
-  else if(act==="step") toggleStep(id, b.getAttribute("data-zone"));
+  else if(act==="step") toggleStep(id, b.getAttribute("data-loc"));
   else if(act==="open") toggleOpen(id);
   else if(act==="nudge") toggleHint(id);
   else if(act==="delnote") delNote(id);
@@ -1177,7 +1245,7 @@ document.getElementById("app").addEventListener("click", e => {
   else if(act==="copynotes") copyNotes();
   else if(act==="filter"){ state.filterMiss = !state.filterMiss; render(); }
   else if(act==="filterrem"){ state.filterRemaining = !state.filterRemaining; render(); }
-  else if(act==="groupby"){ state.ui.groupBy = b.dataset.group === "zone" ? "zone" : "category"; saveUI(); render(); }
+  else if(act==="groupby"){ state.ui.groupBy = b.dataset.group === "location" ? "location" : "category"; saveUI(); render(); }
   else if(act==="tab"){ state.ui.tab = b.dataset.tab === "completionist" ? "completionist" : "campaign"; saveUI(); render(); }
   else if(act==="dismissnotice"){ state.ui.noticeSeen = true; saveUI(); render(); }
   else if(act==="fold"){ const s = b.dataset.id;

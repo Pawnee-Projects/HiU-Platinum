@@ -25,6 +25,16 @@
 // derived as "Location (Zone)" so label and grouping can never drift apart.
 // cap1 (the "Worn" cap, carried from the opening — no map location) has
 // locations:[] + a route note and falls to the trailing "No Location" group.
+//
+// lede (optional) = the one fact you must read BEFORE the rest of the detail; it
+// renders as an accented first line (the .cue class, reused from the Standing-Orders
+// legend — see ledeHTML in index.html). Two uses: a Timeloop's required Amine Prism,
+// and rl30's edition caveat. A "[trophy]" token in a lede injects the trophy glyph.
+// bonus:true = the row is listed and tickable but NEVER counted — it exists so the app
+// mirrors the game's own list, while every trophy denominator stays the REQUIRED set.
+// Each category's `count:` is that required total, so it deliberately no longer equals
+// items.length wherever a bonus row sits (Relics: 30 listed, count 29). Only rl30
+// (Deluxe Edition) carries it. See ledgerSectionHTML in index.html.
 // ————————————————————————————————————————————————————————————————
 
 const LEDGER = [
@@ -57,6 +67,10 @@ const LEDGER = [
  {id:"gd26", name:"Family Feud", locations:["Marastan", "Jeljin"], route:"Marastan → Jeljin", miss:false, campaignId:null, detail:"Urn + letter from the room above the garage west of the church; lantern man south of the Jeljin APC blesses it and gives Key – Columbarium; place the Urn in the columbarium building by the dig site."},
 ]},
 
+// 30 rows, count 29: rl30 (Mark of the Griffon) is Deluxe-only and carries bonus:true, so it
+// lists but never counts. The 29 here are exactly the game's 30 minus rl30 — verified name-by-name
+// against Game8's relic list, 14 Jul 2026. PowerPyx omits rl30 entirely, which is why it was
+// missing from this file: the ledger was compiled from PowerPyx (see the header).
 { id:"relics", title:"Relics", count:29, trophy:"Antiquarian", items:[
  {id:"rl1", name:"Aarlon's Last Stand", locations:["Acasa Marshes"], miss:false, campaignId:null, detail:"From the Hermit mystery."},
  {id:"rl2", name:"Aster's Band of Domination", locations:["Lake Cynon"], zone:"Lymbic Forge", miss:false, campaignId:null, detail:"Story, Act 1 — stone coffin in the Lymbic Forge."},
@@ -71,6 +85,7 @@ const LEDGER = [
  {id:"rl11", name:"Knell of Waning Grief", locations:["Vyssa Hills"], miss:false, campaignId:null, detail:"Close Timeloop – Francis' Church → Gildas."},
  {id:"rl12", name:"Kolig's Providence", locations:["Lake Cynon"], zone:"Lymbic Forge", miss:false, campaignId:null, detail:"Close Timeloop – Lymbic Forge → Gildas."},
  {id:"rl13", name:"Mark of the Betrayed", locations:["Vyssa Hills"], zone:"Watcher's Nest", miss:false, campaignId:null, detail:"Story, Act 1 — stone coffin in the Watcher's Nest."},
+ {id:"rl30", name:"Mark of the Griffon", locations:["Senedra Forest"], miss:false, campaignId:null, bonus:true, lede:"Deluxe Edition only — not required for Antiquarian[trophy].", detail:"Keypad locker in the APC — the top-left storage, between the Ziel Server and the driver's seat: code 199301. The two halves are printed on the OMSIF Special Requisition documents: 199 on the one you start with, 301 on the OMSIF captain's body (the same corpse that gives you the APC key). The locker also holds a Lymbic Capacitor – Small and a Drone Bypass – Single."},
  {id:"rl14", name:"Memoria of the Phol", locations:["Lake Cynon"], zone:"Vault of the Mere", miss:false, campaignId:null, detail:"Inside the Vault of the Mere."},
  {id:"rl15", name:"Orison of Valour", locations:["Marastan"], zone:"Vault of the Beck", miss:false, campaignId:null, detail:"Inside the Vault of the Beck."},
  {id:"rl16", name:"The Benediction of Palom", locations:["Senedra Forest", "Marastan", "Auriga Museum"], route:"Auriga Museum → Marastan, Senedra Forest", miss:false, campaignId:null, detail:"Reward for the Mementos good deed (via Gildas)."},
@@ -79,9 +94,9 @@ const LEDGER = [
  {id:"rl19", name:"The Crucible of Fire", locations:["Acasa Marshes"], miss:false, campaignId:null, detail:"From the Enlightenment mystery — pick it up from the opened room."},
  {id:"rl20", name:"The Dream Aculeus", locations:["Arcas Spire"], miss:false, campaignId:null, detail:"Close Timeloop – Arcas Spire (story) → Gildas."},
  {id:"rl21", name:"The Entropic Enigma", locations:["Talju"], miss:false, campaignId:null, detail:"Close Timeloop – Talju → Gildas."},
- {id:"rl22", name:"The Eternal Sands", locations:["Marastan"], miss:false, campaignId:null, detail:"Close Timeloop – Marastan → Gildas."},
+ {id:"rl22", name:"The Eternal Sands", locations:["Marastan"], miss:false, campaignId:null, detail:"Close Timeloop – Marastan Woods → Gildas."},
  {id:"rl23", name:"The Heart of Aria", locations:["Acasa Marshes"], zone:"Pathem Abbey", miss:false, campaignId:null, detail:"Close Timeloop – Pathem Abbey → Gildas."},
- {id:"rl24", name:"The Omen of Oblivion", locations:["Senedra Forest"], miss:false, campaignId:null, detail:"Close Timeloop – Senedra Hilltop → Gildas (requires the Lymbic Door (Hilltop) mystery to reach)."},
+ {id:"rl24", name:"The Omen of Oblivion", locations:["Senedra Forest"], miss:false, campaignId:null, detail:"Close Timeloop – Senedra Forest → Gildas (requires the Lymbic Door (Hilltop) mystery to reach)."},
  {id:"rl25", name:"The Panoptic Eudemon", locations:["Lake Cynon", "Acasa Marshes"], route:"Lake Cynon → Acasa Marshes (Pathem Abbey)", miss:false, campaignId:null, detail:"From the Safekeeping mystery."},
  {id:"rl26", name:"The Relentless Assault", locations:["Acasa Marshes"], miss:true, campaignId:null, detail:"Reward for the Waylaid good deed (via Gildas). Missable with the deed."},
  {id:"rl27", name:"The Unbound Delusion", locations:["Vyssa Hills"], zone:"Vault of the Knoll", miss:false, campaignId:null, detail:"Inside the Vault of the Knoll."},
@@ -92,7 +107,7 @@ const LEDGER = [
 { id:"myst", title:"Mysteries", count:43, trophy:"Super-Sleuth", items:[
  {id:"my1", name:"Caddell Family Treasure", locations:["Senedra Forest"], miss:false, campaignId:null, detail:"Rusted Key at the red cairn above the OMSIF camp (follow the work light); chest at the blue cairn."},
  {id:"my2", name:"Secrets of the Ram", locations:["Senedra Forest"], miss:false, campaignId:null, detail:"Two Ram Head Medallions (ruins right side; underground second room); place them facing each other at the circle door."},
- {id:"my3", name:"Lymbic Door (Hilltop)", locations:["Senedra Forest"], miss:false, campaignId:null, detail:"Grief rods from the Vigil Hideout coffin room and the Francis' Church mine (needs Key – Mine); door at the hilltop ruins. Gates the Hilltop Timeloop."},
+ {id:"my3", name:"Lymbic Door (Hilltop)", locations:["Senedra Forest"], miss:false, campaignId:null, detail:"Grief rods from the Vigil Hideout coffin room and the Francis' Church mine (needs Key – Mine); door at the hilltop ruins. Gates the Senedra Forest Timeloop."},
  {id:"my4", name:"Lymbic Door (Underground)", locations:["Senedra Forest"], miss:false, campaignId:null, detail:"Rage rods from the Talju circled house (Key – Talju House at the playground) and the Marastan cave; door in the room from the Forlorn Fate good deed."},
  {id:"my5", name:"Emergency Stash", locations:["Arcas Spire"], miss:false, campaignId:null, detail:"Rusted Key via the cave off the third save point; chest past the pillar near the elevator scaffolding."},
  {id:"my6", name:"Righteous Protection", locations:["Arcas Spire"], miss:false, campaignId:null, detail:"Key – Brass in the hole in the corpse stairway; chest in the elevator room at the top."},
@@ -148,21 +163,29 @@ const LEDGER = [
  {id:"cap10", name:"Veteran", locations:["Lake Cynon"], miss:false, campaignId:null, detail:"On a ledge reached by climbing the cliff to the left of the flower-filled area below the APC."},
 ]},
 
+// Names are the game's own, verbatim (the in-game list shows them as "Timeloop - <name>"), even
+// where a name just repeats its Location — matching the menu for lookup beats avoiding redundancy
+// (user's call, 14 Jul 2026; reverses the 9.7.2 descriptive names, which broke menu lookup).
+// Verified against the Fextralife wiki, cross-checked vs Game8; ids and locations untouched.
+// The required Amine Prism leads each detail as a `lede` (NOT "Anima" — every source says Amine).
+// tl2/tl12: guides genuinely disagree (Fextralife says Arcas=Rho + Jeljin=Theta; PowerPyx and the
+// in-game menu say the reverse — a suspiciously clean transposition). Both listed rather than
+// guessed; user confirms in-game when he reaches them.
 { id:"loops", title:"Timeloops", count:14, trophy:"Legend of the Phol", items:[
- {id:"tl1", name:"Hilltop", locations:["Senedra Forest"], miss:false, campaignId:null, detail:"Prism: Sigma. Reach via the Lymbic Door (Hilltop) mystery. Stragglers: start-of-game underground, OMSIF camp, Arcas Spire path, forest between APC and Caddell's house."},
- {id:"tl2", name:"Spire Rooftop", locations:["Arcas Spire"], miss:false, campaignId:null, detail:"Story-required (Keystone of Terror). Stragglers: cell Hollows in the plate/lever room — plates marked 4 open each section's cells."},
- {id:"tl3", name:"Beyond the Bridge", locations:["Acasa Marshes"], miss:false, campaignId:null, detail:"Prism: Sigma. East of Jova past the bridge. Stragglers: enemies hidden in the shallow marsh pools (walk through to trigger), tunnels under Jova, Victor's rescue tunnel."},
- {id:"tl4", name:"Pathem Abbey", locations:["Acasa Marshes"], zone:"Pathem Abbey", miss:false, campaignId:null, detail:"Prism: Theta. Underground past the Abbot Jaffer conversation."},
- {id:"tl5", name:"Northwest of Watcher's Nest", locations:["Vyssa Hills"], miss:false, campaignId:null, detail:"Prism: Sigma. Center of the area by the mine entrance. Stragglers: mine tunnels + hilltop entrance, lower water pools — and the hidden mine room (ladder down, first left) from the trophy-guide comments."},
- {id:"tl6", name:"Francis' Church", locations:["Vyssa Hills"], miss:false, campaignId:null, detail:"Prism: Theta. Hollow-statue area before the third stone tunnel. Stragglers: mine tunnels between the first and second stone tunnels."},
- {id:"tl7", name:"Below the Forge", locations:["Lake Cynon"], zone:"Lymbic Forge", miss:false, campaignId:null, detail:"Prism: Theta. Bottom of the Act 1 elevator. Stragglers: story side paths, check dead ends."},
- {id:"tl8", name:"Sphere Antechamber", locations:["Lake Cynon"], zone:"Lymbic Forge", miss:false, campaignId:null, detail:"Story-required in Act 3; no Gildas reward."},
- {id:"tl9", name:"City Outskirts", locations:["Talju"], miss:false, campaignId:null, detail:"Prism: Theta. NW corner past the barn. Stragglers: north/south edge paths, garage by the APC."},
- {id:"tl10", name:"Outside the Ruins", locations:["Marastan"], miss:false, campaignId:null, detail:"Prism: Theta. West ruins, hug the left wall into the forest. Stragglers: forest paths east of APC, church crypt, Blood Queen statue caves."},
- {id:"tl11", name:"Temple of the Fallen", locations:["Plains of Mist"], zone:"Temple of the Fallen", miss:false, campaignId:null, detail:"Prism: Rho. Lower level at the temple entrance. Known map bug: Plains of Mist hover status can show the previously hovered zone's state — re-enter to verify."},
- {id:"tl12", name:"Jeljin Cemetery", locations:["Jeljin"], miss:false, campaignId:null, detail:"Prism: Rho. Underground at the dig site via the tunnel under the stairs. Stragglers: 'dead' Hollows near the cemetery APC that stand up when approached."},
- {id:"tl13", name:"Auriga Museum B1", locations:["Auriga Museum"], miss:false, campaignId:null, detail:"Through the Training Room. Stragglers: B2 green/red doors, B3 blue/orange doors."},
- {id:"tl14", name:"Auriga Museum B4", locations:["Auriga Museum"], miss:false, campaignId:null, detail:"Prism: Rho. Keystone of Rage room — computer code 7584 spawns the Guardians."},
+ {id:"tl1", name:"Senedra Forest", locations:["Senedra Forest"], miss:false, campaignId:null, lede:"Amine Prism – Sigma.", detail:"Reach via the Lymbic Door (Hilltop) mystery. Stragglers: start-of-game underground, OMSIF camp, Arcas Spire path, forest between APC and Caddell's house."},
+ {id:"tl2", name:"Arcas Spire", locations:["Arcas Spire"], miss:false, campaignId:null, lede:"Amine Prism – Theta or Rho (reports differ — bring both).", detail:"Story-required (Keystone of Terror). Stragglers: cell Hollows in the plate/lever room — plates marked 4 open each section's cells."},
+ {id:"tl3", name:"Acasa Marshes", locations:["Acasa Marshes"], miss:false, campaignId:null, lede:"Amine Prism – Sigma.", detail:"East of Jova past the bridge. Stragglers: enemies hidden in the shallow marsh pools (walk through to trigger), tunnels under Jova, Victor's rescue tunnel."},
+ {id:"tl4", name:"Pathem Abbey", locations:["Acasa Marshes"], zone:"Pathem Abbey", miss:false, campaignId:null, lede:"Amine Prism – Theta.", detail:"Underground past the Abbot Jaffer conversation."},
+ {id:"tl5", name:"Vyssa Hills", locations:["Vyssa Hills"], miss:false, campaignId:null, lede:"Amine Prism – Sigma.", detail:"Center of the area by the mine entrance. Stragglers: mine tunnels + hilltop entrance, lower water pools — and the hidden mine room (ladder down, first left) from the trophy-guide comments."},
+ {id:"tl6", name:"Francis' Church", locations:["Vyssa Hills"], miss:false, campaignId:null, lede:"Amine Prism – Theta.", detail:"Hollow-statue area before the third stone tunnel. Stragglers: mine tunnels between the first and second stone tunnels."},
+ {id:"tl7", name:"Lymbic Forge", locations:["Lake Cynon"], zone:"Lymbic Forge", miss:false, campaignId:null, lede:"Amine Prism – Theta.", detail:"Bottom of the Act 1 elevator. Stragglers: story side paths, check dead ends."},
+ {id:"tl8", name:"Sphere Antechamber", locations:["Lake Cynon"], zone:"Lymbic Forge", miss:false, campaignId:null, lede:"Amine Prism – Rho.", detail:"Story-required in Act 3; no Gildas reward."},
+ {id:"tl9", name:"Talju", locations:["Talju"], miss:false, campaignId:null, lede:"Amine Prism – Theta.", detail:"NW corner past the barn. Stragglers: north/south edge paths, garage by the APC."},
+ {id:"tl10", name:"Marastan Woods", locations:["Marastan"], miss:false, campaignId:null, lede:"Amine Prism – Theta.", detail:"West ruins, hug the left wall into the forest. Stragglers: forest paths east of APC, church crypt, Blood Queen statue caves."},
+ {id:"tl11", name:"Temple of the Fallen", locations:["Plains of Mist"], zone:"Temple of the Fallen", miss:false, campaignId:null, lede:"Amine Prism – Rho.", detail:"Lower level at the temple entrance. Known map bug: Plains of Mist hover status can show the previously hovered zone's state — re-enter to verify."},
+ {id:"tl12", name:"Jeljin Cemetery", locations:["Jeljin"], miss:false, campaignId:null, lede:"Amine Prism – Rho or Theta (reports differ — bring both).", detail:"Underground at the dig site via the tunnel under the stairs. Stragglers: 'dead' Hollows near the cemetery APC that stand up when approached."},
+ {id:"tl13", name:"Auriga Museum B1", locations:["Auriga Museum"], miss:false, campaignId:null, lede:"Amine Prism – Rho.", detail:"Through the Training Room. Stragglers: B2 green/red doors, B3 blue/orange doors."},
+ {id:"tl14", name:"Auriga Museum B4", locations:["Auriga Museum"], miss:false, campaignId:null, lede:"Amine Prism – Rho.", detail:"Keystone of Rage room — computer code 7584 spawns the Guardians."},
 ]},
 ];
 

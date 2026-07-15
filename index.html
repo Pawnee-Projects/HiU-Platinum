@@ -473,8 +473,8 @@ const SECTIONS = [
 // BUILD split into number + codename (Roadmap 8, item 6). Display shape: "9.0 (FRONTIER)".
 // Used verbatim in the header kicker, the export payload's `build` field, and mirrored in
 // the README build log + the CLAUDE.md pin.
-const BUILD_N = "9.9.1";
-const BUILD_NAME = "ATLAS";
+const BUILD_N = "9.10";
+const BUILD_NAME = "MENUCARD";
 const BUILD = BUILD_N + " (" + BUILD_NAME + ")";
 // Inline vector gear — monochrome, inherits currentColor so it tracks --chrome / --chrome-active
 // like every other control (no OS colour emoji). Rounded "settings" cog. aria-hidden: the button
@@ -916,13 +916,30 @@ function footerHTML(){
 function ledgerNameHTML(name){
   return esc(name).replace(/(\([^)]*\))/g, '<span class="ctxnote">$1</span>');
 }
+// The lede (`lede` on a ledger item): the one fact that must be read BEFORE the rest of the
+// detail, so it leads and takes the .cue accent the Standing-Orders legend already uses — a
+// Timeloop's required Amine Prism, or rl30's Deluxe-only caveat. No new CSS: .detail .cue and
+// .trophyico are both existing class selectors. A "[trophy]" token injects the trophy glyph
+// (post-esc replace — the same idiom as detailHTML), so a lede can name a trophy inline.
+function ledeHTML(s){
+  return '<span class="cue">'+esc(s).replace("[trophy]", TROPHY)+'</span> ';
+}
 // The derived place label for the by-category view: hand-authored route string for
 // multi-Location items (connector semantics are content), else "Location (Zone)" —
 // derived from the canonical fields so label and grouping can never drift (9.9 ATLAS).
+// 9.10: the Zone is suppressed where it exactly repeats the item's NAME — once Timeloops
+// took their in-game names, tl4/tl7/tl11 read "Pathem Abbey — Acasa Marshes (Pathem Abbey)".
+// ONLY that exact echo is dropped: the other 23 zoned rows carry real information the name
+// doesn't (Watcher's Nest, Eye of God, the Vaults, Village of Jova — and tl8 Sphere
+// Antechamber, whose "(Lymbic Forge)" is the only thing placing it within Lake Cynon).
+// The name/Location echo ("Talju — Talju") deliberately STAYS: that one preserves the
+// in-game name, which is the whole point of the 9.10 renames. By-location is unaffected —
+// that lens labels rows with their category and headers its own Zones (see ledgerRowHTML).
 function placeLabel(it){
   if(it.route) return it.route;
   const L = it.locations && it.locations[0];
-  return L ? (it.zone ? L+" ("+it.zone+")" : L) : "";
+  if(!L) return "";
+  return (it.zone && it.zone !== it.name) ? L+" ("+it.zone+")" : L;
 }
 // The Zone a row belongs to when shown under a given Location: a multi-Location item's
 // per-leg STEPS zone wins; otherwise the item-level zone. Null = directly in the Location.
@@ -962,7 +979,7 @@ function ledgerRowHTML(it, cat, showCat, loc){
     '<span class="rowtitle">'+ledgerNameHTML(it.name)+tagHTML+
     '<span class="'+trailCls+'">'+esc(trail)+'</span></span>'+
     '<span class="plus">'+(op?"−":"+")+'</span></button></div>'+
-    (op ? '<div class="detail">'+esc(it.detail)+'</div>' : "")+'</div>';
+    (op ? '<div class="detail">'+(it.lede ? ledeHTML(it.lede) : "")+esc(it.detail)+'</div>' : "")+'</div>';
 }
 // A Completionist section (a category OR a Location). rows = [{it, cat}]; done/total count the
 // full set, the Remaining filter only hides checked rows. foldId is namespaced ("z:…" for
@@ -972,8 +989,13 @@ function ledgerSectionHTML(foldId, title, rows, showCat, kicker, note, loc){
   // Location sections count per-step (a row is "done" for THIS Location via rowDoneInLoc);
   // category sections count the whole deed (deedDone). Remaining hides whatever's done here.
   const rowDone = loc ? (x => rowDoneInLoc(x.it, loc)) : (x => deedDone(x.it));
-  const total = rows.length;
-  const done = rows.filter(rowDone).length;
+  // `bonus` rows (rl30, the Deluxe-only relic) render and tick like any other, but are excluded
+  // from BOTH sides of the count: every denominator here is a trophy requirement, and the trophy
+  // set doesn't include them. So Relics reads /29 with 30 rows listed — the app mirrors the game's
+  // own list without ever implying a standard-edition player is short. Ticking one moves nothing.
+  const counted = rows.filter(x => !x.it.bonus);
+  const total = counted.length;
+  const done = counted.filter(rowDone).length;
   const folded = !!state.ui.collapsed[foldId];
   let h = '<section><button class="sechead" data-act="fold" data-id="'+foldId+'">'+
     '<div>'+(kicker ? '<div class="kicker">'+esc(kicker)+'</div>' : "")+
